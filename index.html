@@ -357,6 +357,19 @@ details.which{margin-top:8px;font-size:13.5px;border:1px solid var(--line);borde
 details.which summary{cursor:pointer;font-weight:600}
 details.which ul{margin:6px 0 2px;padding-left:18px}
 footer.disc{max-width:1280px;margin:0 auto;padding:0 18px 90px;color:var(--muted);font-size:12.5px}
+.bodyfig{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
+.bodyfig svg{flex:none}
+.rcell{font-size:12px;font-weight:600;color:#fff;text-align:center;border-radius:6px;padding:4px 2px;min-width:64px}
+.rcell.none{background:#eef0ec;color:var(--muted);font-weight:400}
+.rotlist{list-style:none;padding:0;margin:8px 0 0}
+.rotlist li.task{border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:#fff}
+.rotlist li.link{font-size:12.5px;padding:3px 0 3px 18px}
+.rchips{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.rchips span{font-size:11.5px;color:#fff;border-radius:999px;padding:1px 8px}
+.rotpick{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:4px 14px;margin:6px 0 8px}
+.rotpick label{display:flex;gap:8px;align-items:center;font-size:13.5px}
+.roigrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px 14px}
+.roigrid label{display:flex;flex-direction:column;font-size:13px;gap:4px}
 .langsw{font-weight:600;font-size:13px;text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:5px 12px;background:#fff;color:var(--ink)}
 .langsw:hover{border-color:#c9cec8}
 select.need{border-color:#dc2626;box-shadow:0 0 0 3px #dc262633}
@@ -477,6 +490,7 @@ select.need{border-color:#dc2626;box-shadow:0 0 0 3px #dc262633}
       <div class="stickyCol">
         <div class="toolbar">
           <div class="seg" id="facingSeg"><button data-f="1">Kişi sağa bakıyor →</button><button data-f="-1">← Sola bakıyor</button></div>
+          <button id="autoBtn" class="primary" title="Kişinin eklemlerini görüntüden bulur; görüntü cihazdan çıkmaz">Noktaları otomatik bul</button>
           <button id="undoBtn">Son noktayı sil</button>
           <button id="clearBtn">Noktaları temizle</button>
           <button id="mzBtn">📏 Mesafe ölç</button>
@@ -634,6 +648,12 @@ select.need{border-color:#dc2626;box-shadow:0 0 0 3px #dc262633}
     <p class="about" style="margin-top:8px">Her istasyon × risk alanı bir satırdır. Değerler yöntem sonucundan önerilir; “Düzenle” ile işyerine göre düzelt. Tablo Excel ve PDF raporuna aynen girer.</p>
     <div id="riskTbl"></div>
   </div>
+  <div class="card">
+    <h2 style="margin:0">Vücut bölgeleri ve iş rotasyonu <button class="linkbtn hl" data-help="rot">Nasıl?</button></h2>
+    <p class="about" style="margin-top:8px">Her görevin hangi vücut bölgesini ne düzeyde zorladığı kayıtlı analizlerden çıkarılır. Rotasyon için görevleri seç: uygulama, art arda gelen iki görevin aynı bölgeyi yüksek düzeyde zorlamadığı bir sıra önerir.</p>
+    <div id="bodyMap"></div>
+    <h3>İş rotasyonu planı</h3><div id="rotPlan"></div>
+  </div>
   <div id="stList" class="view"></div>
   <div class="card">
     <h2>Dışa / içe aktar</h2>
@@ -659,6 +679,11 @@ select.need{border-color:#dc2626;box-shadow:0 0 0 3px #dc262633}
     <div class="filters" style="margin-top:12px"><select id="acSt"></select><select id="acStatus"><option value="">Tüm durumlar</option><option value="open">Açık</option><option value="late">Gecikmiş</option><option value="done">Tamamlandı</option><option value="cancel">İptal</option></select></div>
   </div>
   <div id="acList" class="view"></div>
+  <div class="card">
+    <h2 style="margin:0">Maliyet ve geri ödeme <button class="linkbtn hl" data-help="roi">Nasıl?</button></h2>
+    <p class="about" style="margin-top:8px">Önlemlere ayrılacak bütçeyi kas-iskelet rahatsızlıklarının yıllık maliyetiyle karşılaştır. Rakamlar senin tahminlerindir; sonuç kaba bir yönetim hesabıdır.</p>
+    <div id="roiBox"></div>
+  </div>
 </section>
 </main>
 <footer class="disc">Duruş bir karar destek aracıdır: sonuçlar risk değerlendirmesine girdi sağlar, iş güvenliği uzmanının ve işyeri hekiminin değerlendirmesinin yerine geçmez. <button class="linkbtn" data-help="law">Mevzuat ve sorumluluk</button> · <button class="linkbtn" data-help="limits">Sonuçların sınırları</button></footer>
@@ -1410,6 +1435,7 @@ Object.assign(FORMS,{
       if(oth.vb>=4) tips.push(['Titreşim','Titreşimli alet süresini ölç; düşük titreşimli alet, rotasyon. İleri düzey “Titreşim” hesaplayıcısıyla A(8) hesapla.']);
       if(oth.dr>=4) tips.push(['Araç kullanma','Koltuk ayarı, mola düzeni ve süreyi gözden geçir.']);
       return {v:Math.round(100*R[worst]/MX[worst]),txt:String(R[worst]),lv,tips,
+        reg:{back:lvOf('back',R.back),sh:lvOf('sh',R.sh),wr:lvOf('wr',R.wr),neck:lvOf('nk',R.nk)},
         nm:AN[worst]+' · '+NM[lv],
         ac:lv>=3?'Yüksek maruziyet: en çok puan veren etkileşimlerden başlayarak hızla azalt.':lv===2?'Orta maruziyet: maruziyet azaltılmalı.':'Düşük maruziyet; 8 ve üzeri puan alan tek tek etkileşimlere yine de bak.',
         bd:ks.map(k=>`<b>${AN[k]}</b> ${R[k]} → ${NM[lvOf(k,R[k])]} <span style="opacity:.8">(${IA[k].map(x=>x[0]+' '+x[1]).join(' · ')})</span>`).join('<br>')+
@@ -1955,6 +1981,44 @@ $$('[data-adj]').forEach(el=>el.addEventListener(el.type==='number'?'input':'cha
 $('#undoBtn').onclick=()=>{if(!cur)return; const ks=PTS.map(p=>p.k).filter(k=>cur.points[k]); const k=ks[ks.length-1]; if(k){delete cur.points[k]; updateAll();}};
 $('#clearBtn').onclick=()=>{if(!cur)return; cur.points={}; activeKey=null; updateAll();};
 $('#cancelBtn').onclick=()=>{cur=null; $('#workCard').hidden=true;};
+
+/* ---------- otomatik nokta bulma (MediaPipe Pose; tarayıcıda çalışır, görüntü cihazdan çıkmaz) ---------- */
+const MP_BASE='https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/';
+let poseP=null;
+function loadPose(){
+  if(!poseP)poseP=new Promise((res,rej)=>{const s=document.createElement('script'); s.src=MP_BASE+'pose.js'; s.crossOrigin='anonymous';
+    s.onload=()=>{try{const p=new window.Pose({locateFile:f=>MP_BASE+f}); p.setOptions({modelComplexity:1,staticImageMode:true,smoothLandmarks:false,enableSegmentation:false,minDetectionConfidence:.3}); res(p);}catch(e){rej(e);}};
+    s.onerror=()=>rej(new Error('pose')); document.head.appendChild(s);}).catch(e=>{poseP=null; throw e;});
+  return poseP;
+}
+// Bir görüntüde 33 vücut noktası bulur; Duruş'un 8 noktasına çevirir (yandan görünen taraf).
+async function detectPose(img){
+  const pose=await loadPose();
+  const res=await new Promise((ok,no)=>{pose.onResults(ok); pose.send({image:img}).catch(no);});
+  const L=res.poseLandmarks; if(!L)return null;
+  const W=img.naturalWidth||img.width, H=img.naturalHeight||img.height, v=i=>L[i].visibility??1;
+  const RS={ear:8,sh:12,el:14,wr:16,pk:18,ix:20,hip:24,kn:26,an:28}, LS_={ear:7,sh:11,el:13,wr:15,pk:17,ix:19,hip:23,kn:25,an:27};
+  const sum=m=>Object.values(m).reduce((a,i)=>a+v(i),0);
+  const right=cur&&cur.side==='sag'?true:cur&&cur.side==='sol'?false:sum(RS)>=sum(LS_), I=right?RS:LS_;
+  const P=i=>({x:clamp(L[i].x*W,0,W),y:clamp(L[i].y*H,0,H)}), ok=i=>v(i)>=.3, pts={};
+  ['ear','sh','el','wr','hip','kn','an'].forEach(k=>{if(ok(I[k]))pts[k]=P(I[k]);});
+  if(ok(I.ix)||ok(I.pk)){const a=P(I.ix),c=P(I.pk); pts.hd={x:(a.x+c.x)/2,y:(a.y+c.y)/2};}
+  return {pts,right,facing:L[0].x>=L[I.ear].x?1:-1};
+}
+async function autoPoints(){
+  if(!cur||!imgEl){toast('Önce bir kare seç.');return;}
+  const b=$('#autoBtn'), old=b.textContent; b.disabled=true; b.textContent='Aranıyor…';
+  try{
+    const d=await detectPose(imgEl);
+    if(!d||!Object.keys(d.pts).length){toast('Karede kişi bulunamadı. Kişinin tamamen göründüğü, yandan çekilmiş bir kare dene ya da noktaları elle koy.');return;}
+    cur.points=d.pts; cur.facing=d.facing; cur.auto=true; if(!cur.side){cur.side=d.right?'sag':'sol'; $('#pSide').value=cur.side;}
+    activeKey=null; updateAll();
+    const miss=PTS.filter(p=>!d.pts[p.k]).map(p=>p.n);
+    toast(Object.keys(d.pts).length+' nokta yerleştirildi'+(miss.length?' · bulunamayan: '+miss.join(', '):'')+'. Her noktayı kontrol et, gerekirse sürükle.');
+  }catch(e){toast('Otomatik bulma çalışmadı: ilk kullanımda model internetten indirilir. Noktaları elle koyabilirsin.');}
+  finally{b.disabled=false; b.textContent=old;}
+}
+$('#autoBtn').onclick=autoPoints;
 function setPtab(t){S.ptab=t; $$('#ptabs button').forEach(b=>b.classList.toggle('on',b.dataset.ptab===t)); $$('[data-pane]').forEach(p=>p.hidden=p.dataset.pane!==t); $$('.tile').forEach(x=>x.classList.toggle('on',x.dataset.m===t)); persist();}
 $$('#ptabs button').forEach(b=>b.onclick=()=>setPtab(b.dataset.ptab));
 
@@ -1999,6 +2063,7 @@ function updateScores(){
     if(near!=null){if(!tag){tag=document.createElement('span'); tag.className='edge'; cell.querySelector('b').after(tag);} tag.textContent='sınırda ('+near+'°)'; tag.title='Puanı değiştiren eşik '+near+'°. Ölçüm hatası puanı bir basamak değiştirebilir.';}
     else if(tag)tag.remove();});
   const W=[], j=cur.adj||{};
+  if(cur.auto)W.push('<b>Noktalar otomatik bulundu.</b> Her noktanın yerini kontrol et ve gerekirse sürükle; el, bilek ve kulak en sık kayan noktalardır. Kişinin arkası dönük ya da bir kısmı görünmüyorsa elle düzelt.');
   if(imgEl&&!(+j.loadKg>0)&&r.miss.length<4)W.push('<b>Yük girilmedi</b>, 0 kg sayıldı. Elde yük ya da uygulanan kuvvet varsa “Taşınan yük” alanına yaz: 5 kg ve üstü REBA’yı, 2 kg ve üstü RULA’yı artırabilir.');
   const edges=ANG.filter(d=>cur.ov[d.k]==null&&nearEdge(d.k,r.a[d.k])!=null).map(d=>d.n);
   if(edges.length)W.push('<b>Sınırdaki açılar:</b> '+edges.join(', ')+'. Bu açılarda birkaç derecelik ölçüm hatası puanı değiştirebilir; açıölçerle doğrula ya da yakın karelere de bak.');
@@ -2171,7 +2236,7 @@ $('#csvBtn').onclick=()=>{
   });
   copyText([hd.join(';'),...rows].join('\n'),'CSV');
 };
-function backupJSON(){return JSON.stringify({app:'durus',v:4,records:S.records,sites:S.sites,stations:S.stations,tasks:S.tasks,actions:S.actions,riskOv:S.riskOv,field:S.field.map(c=>({...c,photos:c.photos.map(p=>({id:p.id,th:p.th,t:p.t,vname:p.vname}))}))});}
+function backupJSON(){return JSON.stringify({app:'durus',v:4,records:S.records,sites:S.sites,stations:S.stations,tasks:S.tasks,actions:S.actions,riskOv:S.riskOv,rot:S.rot,roi:S.roi,field:S.field.map(c=>({...c,photos:c.photos.map(p=>({id:p.id,th:p.th,t:p.t,vname:p.vname}))}))});}
 $('#jsonBtn').onclick=()=>{if(!S.records.length){toast('Kopyalanacak kayıt yok.');return;} copyText(backupJSON(),'JSON');};
 async function downloadBackup(){
   if(!S.records.length&&!S.field.length&&!S.stations.length){toast('Yedeklenecek kayıt yok.');return;}
@@ -2185,7 +2250,7 @@ $('#importBtn').onclick=()=>{$('#ioBox').hidden=false; $('#ioLoad').hidden=false
 $('#ioClose').onclick=()=>$('#ioBox').hidden=true;
 $('#ioLoad').onclick=()=>{
   try{const d=JSON.parse($('#ioText').value); const ids=new Set(S.records.map(i=>i.id)); let k=0;
-    ['sites','stations','tasks','actions','field'].forEach(key=>{if(Array.isArray(d[key])){const have=new Set(S[key].map(x=>x.id)); d[key].forEach(x=>{if(x&&x.id&&!have.has(x.id))S[key].push(x);});}}); if(d.riskOv)S.riskOv={...d.riskOv,...S.riskOv};
+    ['sites','stations','tasks','actions','field'].forEach(key=>{if(Array.isArray(d[key])){const have=new Set(S[key].map(x=>x.id)); d[key].forEach(x=>{if(x&&x.id&&!have.has(x.id))S[key].push(x);});}}); if(d.roi)S.roi={...d.roi,...(S.roi||{})}; if(d.riskOv)S.riskOv={...d.riskOv,...S.riskOv};
     if(Array.isArray(d.records)) d.records.forEach(r=>{if(r&&r.type&&!ids.has(r.id)){if(r.type==='posture')r.adj=migrateAdj(r.adj); S.records.push(r); k++;}});
     else if(Array.isArray(d.items)) d.items.forEach(i=>{if(i&&i.points&&!ids.has(i.id)){S.records.push({id:i.id,type:'posture',task:'İçe aktarılan',note:i.note||'',created:new Date().toISOString(),time:i.time,src:i.src,img:i.img,thumb:i.thumb,points:i.points,facing:i.facing||1,ov:i.ov||{},adj:migrateAdj(i.adj),side:''}); k++;}});
     else throw 0;
@@ -2541,6 +2606,7 @@ function openActionDlg(id,preset={}){
     {id:'status',l:'Durum',t:'sel',v:b.status||'plan',o:ASTAT},
     {id:'owner',l:'Sorumlu',v:b.owner,ph:'Ad Soyad / birim'},
     {id:'due',l:'Termin',t:'date',v:b.due},
+    {id:'cost',l:'Tahmini maliyet',t:'num',v:b.cost,ph:'isteğe bağlı'},
     {id:'note',l:'Not',t:'area',v:b.note}],
    onSave:v=>{if(!v.title.trim()){toast('Önlemi yaz.');return false;} if(!v.tk){toast('İstasyon ve görevi seç.');return false;}
      const st=tkOf(v.tk).st;
@@ -2569,7 +2635,7 @@ function actionCard(a){
     <div class="row" style="justify-content:space-between;align-items:flex-start"><div><b>${esc(a.title)}</b><div class="muted">${esc(tkLabel(a.tk))}</div></div>
       <select data-ast="${a.id}" class="stsel">${ASTAT.map(([v,l])=>`<option value="${v}"${a.status===v?' selected':''}>${l}</option>`).join('')}</select></div>
     ${a.detail?`<div style="font-size:13.5px;margin-top:4px">${esc(a.detail)}</div>`:''}
-    <div class="row" style="gap:6px;margin-top:6px;font-size:13px"><span class="lvl" style="background:#475569">${esc(ctl)}</span>${a.owner?`<span>Sorumlu: <b>${esc(a.owner)}</b></span>`:''}${a.due?`<span style="color:${overdue(a)?LV[4]:'inherit'}">Termin: <b>${dateTR(a.due)}</b>${overdue(a)?' · gecikmiş':''}</span>`:''}${a.done?`<span>Tamamlandı: ${dateTR(a.done)}</span>`:''}</div>
+    <div class="row" style="gap:6px;margin-top:6px;font-size:13px"><span class="lvl" style="background:#475569">${esc(ctl)}</span>${a.owner?`<span>Sorumlu: <b>${esc(a.owner)}</b></span>`:''}${+a.cost?`<span>Maliyet: <b>${Math.round(+a.cost).toLocaleString('tr-TR')}</b></span>`:''}${a.due?`<span style="color:${overdue(a)?LV[4]:'inherit'}">Termin: <b>${dateTR(a.due)}</b>${overdue(a)?' · gecikmiş':''}</span>`:''}${a.done?`<span>Tamamlandı: ${dateTR(a.done)}</span>`:''}</div>
     ${a.before?`<div style="margin-top:8px;font-size:13px">${after?deltaHTML(a.before,after):`Önce: <span class="badge" style="background:${LV[a.before.lv]}">${esc(a.before.n)} ${a.before.txt}</span> <span class="muted">· sonrası henüz ölçülmedi</span>`}</div>`:''}
     <div class="acts row" style="margin-top:8px;gap:6px"><button class="small" data-aedit="${a.id}">Düzenle</button>${a.before?`<button class="small" data-arem="${a.id}">Yeniden ölç</button>`:''}</div></div>`;
 }
@@ -2588,7 +2654,7 @@ function renderActions(){
   const rows=all.filter(a=>(!fs||a.st===fs)&&(!ft||(ft==='open'?(a.status==='plan'||a.status==='prog'):ft==='late'?overdue(a):a.status===ft)))
     .sort((x,y)=>(overdue(y)-overdue(x))||((x.status==='done')-(y.status==='done'))||(x.due||'9').localeCompare(y.due||'9'));
   $('#acList').innerHTML=rows.length?rows.map(actionCard).join(''):`<div class="card empty">${all.length?'Filtreye uyan önlem yok.':'Henüz önlem yok. Bir analizin “Ne yapılabilir?” listesindeki “+ Önlem” düğmesiyle veya buradan önlem ekleyebilirsin.'}</div>`;
-  bindActions($('#acList'));
+  bindActions($('#acList')); renderRoi();
 }
 $('#acSt').onchange=renderActions; $('#acStatus').onchange=renderActions;
 $('#acAdd').onclick=()=>openActionDlg(null,{});
@@ -2614,7 +2680,7 @@ function renderStations(){
   $('#stList').innerHTML=sts.map(s=>stationCard(s)).join('');
   sts.forEach(s=>S.tasks.filter(t=>t.st===s.id).forEach(t=>{const pr=recsOfTask(t.id).filter(r=>r.type==='posture'&&r.time!=null); const el=$('#chart_'+t.id); if(el&&pr.length>=2)renderChart(el,pr,S.chartM[t.id]||'reba');}));
   bindStations($('[data-view="stations"]'));
-  renderRiskTable();
+  renderRiskTable(); renderBody();
 }
 /* ---------- günlük maruziyet (istasyon) ---------- */
 const TASKC=['#0f6b5f','#2563eb','#b45309','#7c3aed','#0e7490','#be185d','#4d7c0f','#475569'];
@@ -2652,6 +2718,112 @@ function exposureHTML(s){
   const subH=E.subs.length?`<div class="exrow"><b>Alt faaliyetler</b> <span class="muted">· elle taşıma, tekrarlı iş ve diğer formlar</span><div class="tblwrap"><table class="cmp" style="min-width:520px"><thead><tr><th>Görev</th><th>Yöntem</th><th>Sonuç</th><th>Görev süresi</th></tr></thead><tbody>${E.subs.map(x=>`<tr><td>${esc(x.t.name)}</td><td>${esc(typeName(x.r.type))}</td><td><span class="badge" style="background:${LV[x.p.m.lv]}">${x.p.m.txt}</span> ${esc(x.p.m.nm)}</td><td>${+x.t.min>0?`${x.t.min} dk (%${Math.round(x.t.min/E.shiftMin*100)})`:'—'}</td></tr>`).join('')}</tbody></table></div>
     ${E.subs.some(x=>['kim19','kimpp','kim'].includes(x.r.type))?'<div class="muted" style="font-size:12.5px">KIM puanları her alt faaliyet için ayrıdır; BAuA günlük toplam için ayrı bir birleştirme algoritması (LMM-E) kullanır, uygulamada bu toplama yapılmaz. En yüksek puanlı alt faaliyet önceliklidir.</div>':''}</div>`:'';
   return `<h3>Günlük maruziyet</h3><div class="expanel">${prof}${posH||'<div class="muted">Duruş maruziyeti için görevlere duruş analizi kaydet.</div>'}${subH}</div>`;
+}
+
+/* ---------- vücut bölgeleri ve iş rotasyonu ---------- */
+// Bir kaydın hangi vücut bölgesini hangi düzeyde zorladığı (1 düşük … 4 çok yüksek).
+// Duruş analizinde REBA bileşen skorları, QEC'te bölge puanları, diğer yöntemlerde yöntemin ilgilendiği bölgeler kullanılır.
+const BR=[['neck','Boyun'],['back','Sırt / bel'],['sh','Omuz / üst kol'],['elb','Dirsek / ön kol'],['wr','El / bilek'],['leg','Bacak / diz']];
+const BR_K=BR.map(b=>b[0]), BR_N=Object.fromEntries(BR);
+const NMQ_BR={neck:'neck',sh:'sh',ub:'back',lb:'back',elb:'elb',hw:'wr',hip:'leg',knee:'leg',ft:'leg'};
+const REG_OF={niosh:['back'],cli:['back'],kim19:['back'],kim:['back'],lifft:['back'],kimpp:['back','sh'],ocra:['sh','elb','wr'],duet:['elb','wr'],rsi:['wr'],si:['wr'],hal:['wr'],rosa:['neck','back','wr'],office:['neck','back'],height:['back','sh']};
+function regionLv(rec){
+  const o={}, put=(k,l)=>{if(l>0&&(o[k]==null||l>o[k]))o[k]=l;};
+  if(rec.type==='posture'){const r=postureCompute(rec), p=r.reba.p, a=r.a;
+    if(a.trunk!=null)put('back',Math.min(4,p.trunk)); if(a.neck!=null)put('neck',p.neck);
+    if(a.ua!=null)put('sh',Math.min(4,p.ua)); if(a.la!=null)put('elb',p.la); if(a.wr!=null)put('wr',p.wr); if(a.kn!=null)put('leg',p.legs);
+    return o;}
+  const p=primary(rec); if(!p)return o;
+  if(p.m.reg){Object.entries(p.m.reg).forEach(([k,l])=>put(k,l)); return o;}
+  let ks=REG_OF[rec.type]; if(rec.type==='lmm')ks=(rec.data&&rec.data.task)==='carry'?['back']:['back','sh'];
+  (ks||[]).forEach(k=>put(k,p.m.lv)); return o;
+}
+// Görevin güncel ölçümlerinden bölge profili: her bölgede en kötü düzey ve onu veren yöntemler
+function taskRegions(tkId){const lv={}, src={};
+  currentRecs(recsOfTask(tkId)).forEach(r=>{Object.entries(regionLv(r)).forEach(([k,l])=>{if(lv[k]==null||l>lv[k]){lv[k]=l; src[k]=new Set();} if(l===lv[k])src[k].add(typeName(r.type));});});
+  return {lv,src};}
+function nmqRegions(recs){const n=recs.filter(r=>r.type==='nmq'); if(!n.length)return null; const c={};
+  n.forEach(r=>{const hit=new Set(); Object.entries((r.data&&r.data.g)||{}).forEach(([k,x])=>{if(x&&(x.y12||x.d7||x.blk)&&NMQ_BR[k])hit.add(NMQ_BR[k]);}); hit.forEach(k=>c[k]=(c[k]||0)+1);});
+  return {n:n.length,c};}
+const siteTasks=()=>S.tasks.filter(t=>{const s=stOf(t.st); return s&&s.site===curSite();}).sort((a,b)=>tkLabel(a.id).localeCompare(tkLabel(b.id),'tr'));
+const rcell=l=>l?`<div class="rcell" style="background:${LV[l]}">${LVT[l]}</div>`:'<div class="rcell none">—</div>';
+function bodySVG(lv){const c=k=>lv[k]?LV[lv[k]]:'#dfe3dd', t=k=>`<title>${BR_N[k]}: ${lv[k]?LVT[lv[k]]:'veri yok'}</title>`;
+  return `<svg width="120" height="230" viewBox="0 0 120 230" role="img" aria-label="Vücut bölgeleri">
+    <circle cx="60" cy="20" r="15" fill="#c9cec8"/>
+    <rect x="53" y="35" width="14" height="12" rx="3" fill="${c('neck')}">${t('neck')}</rect>
+    <rect x="40" y="47" width="40" height="66" rx="8" fill="${c('back')}">${t('back')}</rect>
+    <rect x="23" y="49" width="15" height="44" rx="7" fill="${c('sh')}">${t('sh')}</rect><rect x="82" y="49" width="15" height="44" rx="7" fill="${c('sh')}">${t('sh')}</rect>
+    <rect x="21" y="95" width="13" height="38" rx="6" fill="${c('elb')}">${t('elb')}</rect><rect x="86" y="95" width="13" height="38" rx="6" fill="${c('elb')}">${t('elb')}</rect>
+    <circle cx="27" cy="142" r="8" fill="${c('wr')}">${t('wr')}</circle><circle cx="93" cy="142" r="8" fill="${c('wr')}">${t('wr')}</circle>
+    <rect x="43" y="115" width="15" height="105" rx="7" fill="${c('leg')}">${t('leg')}</rect><rect x="62" y="115" width="15" height="105" rx="7" fill="${c('leg')}">${t('leg')}</rect></svg>`;}
+function renderBody(){
+  const el=$('#bodyMap'); if(!el)return;
+  const tks=siteTasks().map(t=>({t,...taskRegions(t.id)})).filter(x=>Object.keys(x.lv).length);
+  const recs=S.stations.filter(s=>s.site===curSite()).flatMap(s=>recsOfStation(s.id)), nq=nmqRegions(recs);
+  if(!tks.length&&!nq){el.innerHTML='<div class="empty">Bölge profili için görevlere duruş analizi ya da bir form kaydet.</div>'; $('#rotPlan').innerHTML=''; return;}
+  const all={}; tks.forEach(x=>BR_K.forEach(k=>{if(x.lv[k]&&(!all[k]||x.lv[k]>all[k]))all[k]=x.lv[k];}));
+  el.innerHTML=`<div class="bodyfig">${bodySVG(all)}<div class="tblwrap" style="flex:1;min-width:300px"><table class="cmp"><thead><tr><th>Görev</th>${BR.map(b=>`<th>${b[1]}</th>`).join('')}</tr></thead><tbody>
+    ${tks.map(x=>`<tr><td><b>${esc(tkLabel(x.t.id))}</b></td>${BR_K.map(k=>`<td title="${x.src[k]?esc([...x.src[k]].join(', ')):''}">${rcell(x.lv[k])}</td>`).join('')}</tr>`).join('')}
+    ${nq?`<tr><td><b>Şikâyet bildirenler</b><div class="muted" style="font-size:12px">Nordik anketi, ${nq.n} kişi</div></td>${BR_K.map(k=>{const n=nq.c[k]||0, p=n/nq.n; return `<td><div class="rcell${n?'':' none'}" style="${n?`background:${p>=.5?LV[3]:LV[2]}`:''}">${n?'%'+Math.round(p*100):'—'}</div></td>`;}).join('')}</tr>`:''}
+    </tbody></table></div></div>
+    <div class="muted" style="font-size:12.5px;margin-top:6px">Figür, işyerindeki tüm görevlerde her bölgenin en kötü düzeyini gösterir. Duruş analizinde düzey REBA bileşen skorundan, QEC’te bölge puanından gelir; diğer formlarda yöntemin sonucu ilgili bölgelere yazılır. Hücrenin üzerine gelince kaynağı görünür.</div>`;
+  renderRot(tks);
+}
+// Rotasyon sırası: art arda iki görevde aynı bölge yüksek (3+) ise ceza; döngüsel (son görevden ilkine dönülür)
+function rotCost(a,b){let c=0; BR_K.forEach(k=>{const x=a.lv[k]||0,y=b.lv[k]||0; if(x>=3&&y>=3)c+=10*(x+y); c+=Math.min(x,y)*.1;}); return c;}
+function bestOrder(xs){
+  const n=xs.length, cost=o=>o.reduce((s,_,i)=>s+(n>2||i<n-1?rotCost(xs[o[i]],xs[o[(i+1)%n]]):0),0);
+  let best=[...Array(n).keys()], bc=cost(best);
+  if(n<=8){const perm=(a,l)=>{if(l===n){const c=cost(a); if(c<bc){bc=c; best=[...a];} return;} for(let i=l;i<n;i++){[a[l],a[i]]=[a[i],a[l]]; perm(a,l+1); [a[l],a[i]]=[a[i],a[l]];}}; perm([...Array(n).keys()],1);}
+  else {const used=new Set([0]), o=[0]; while(o.length<n){let bi=-1,bv=1e9; for(let i=0;i<n;i++)if(!used.has(i)){const v=rotCost(xs[o.at(-1)],xs[i]); if(v<bv){bv=v;bi=i;}} o.push(bi); used.add(bi);} best=o; bc=cost(o);}
+  return best.map(i=>xs[i]);
+}
+function renderRot(tks){
+  const el=$('#rotPlan'); if(!el)return; S.rot=S.rot||{sel:[]};
+  const sel=S.rot.sel.filter(id=>tks.some(x=>x.t.id===id));
+  const pick=`<div class="rotpick">${tks.map(x=>`<label><input type="checkbox" data-rot="${x.t.id}"${sel.includes(x.t.id)?' checked':''}> ${esc(tkLabel(x.t.id))}</label>`).join('')}</div>`;
+  const chips=x=>`<div class="rchips">${BR_K.filter(k=>x.lv[k]>=2).map(k=>`<span style="background:${LV[x.lv[k]]}">${BR_N[k]} · ${LVT[x.lv[k]]}</span>`).join('')||'<span style="background:'+LV[1]+'">Belirgin zorlanma yok</span>'}</div>`;
+  let out='';
+  if(sel.length<2)out='<div class="muted">Rotasyona girecek en az iki görev seç.</div>';
+  else {
+    const xs=bestOrder(sel.map(id=>tks.find(x=>x.t.id===id))), n=xs.length, warn=[];
+    BR_K.forEach(k=>{if(xs.every(x=>(x.lv[k]||0)>=3))warn.push(`<b>${BR_N[k]}</b> seçilen tüm görevlerde yüksek: rotasyon bu bölgeyi dinlendirmez. Önce görevleri iyileştir ya da bu bölgeyi zorlamayan bir görev ekle.`);});
+    xs.filter(x=>BR_K.some(k=>x.lv[k]===4)).forEach(x=>warn.push(`<b>${esc(tkLabel(x.t.id))}</b> bir bölgede çok yüksek (${BR_K.filter(k=>x.lv[k]===4).map(k=>BR_N[k]).join(', ')}): rotasyon riski yalnızca daha çok kişiye dağıtır; bu görevi önce düzelt.`));
+    const link=(a,b)=>{const both=BR_K.filter(k=>(a.lv[k]||0)>=3&&(b.lv[k]||0)>=3); return both.length?`<li class="link" style="color:${LV[4]}">⚠ ${both.map(k=>BR_N[k]).join(', ')} iki görevde de yüksek</li>`:`<li class="link" style="color:${LV[1]}">✓ Farklı bölgeler çalışır</li>`;};
+    out=`<ol class="rotlist">${xs.map((x,i)=>`<li class="task"><b>${i+1}. ${esc(tkLabel(x.t.id))}</b>${x.t.min?` <span class="muted">· ${x.t.min} dk/vardiya</span>`:''}${chips(x)}</li>${i<n-1?link(x,xs[i+1]):(n>2?link(x,xs[0]).replace('</li>',' (son görevden ilkine dönüş)</li>'):'')}`).join('')}</ol>
+      ${warn.length?`<div class="pwarn" style="margin-top:8px">${warn.map(w=>'<div>'+w+'</div>').join('')}</div>`:''}
+      <div class="muted" style="font-size:12.5px;margin-top:6px">Sıra döngüseldir: son görevden sonra ilkine dönülür. Değişim aralığını işin yoğunluğuna göre belirle; çalışanlar rotasyondaki tüm görevler için eğitilmiş olmalı. Rotasyon bir idari önlemdir; teknik önlemin yerine geçmez.</div>`;
+  }
+  el.innerHTML=pick+out;
+  el.querySelectorAll('[data-rot]').forEach(c=>c.onchange=()=>{const id=c.dataset.rot; S.rot.sel=c.checked?[...S.rot.sel.filter(x=>x!==id),id]:S.rot.sel.filter(x=>x!==id); persist(); renderRot(tks);});
+}
+
+/* ---------- maliyet ve geri ödeme ---------- */
+const ROI_F=[
+  ['cases','Yılda kas-iskelet rahatsızlığı nedeniyle iş göremezlik vakası','adet','Geçmiş kayıtlardan; bu işyeri ya da seçili istasyonlar için'],
+  ['days','Vaka başına kayıp iş günü','gün','Rapor ve hafif işe geçiş dahil'],
+  ['dayCost','Bir iş gününün işverene maliyeti','para','Ücret, yan haklar ve işveren payları'],
+  ['direct','Vaka başına diğer doğrudan maliyet','para','Tedavi, ulaşım, idari işler'],
+  ['ind','Dolaylı maliyet çarpanı','×','Yerine adam, fazla mesai, verim ve kalite kaybı; doğrudan maliyetin katı olarak. Bilmiyorsan 0 bırak.'],
+  ['red','Önlemlerle beklenen azalma','%','Vakalarda beklenen yüzde azalma'],
+  ['cost','Önlemlerin toplam maliyeti','para','Boş bırakılırsa önlemlere girilen maliyetlerin toplamı kullanılır']];
+function renderRoi(){
+  const el=$('#roiBox'); if(!el)return; const site=curSite(); S.roi=S.roi||{}; const R=S.roi[site]=S.roi[site]||{cur:document.documentElement.lang==='tr'?'₺':'€'};
+  const acts=S.actions.filter(a=>{const s=stOf(a.st); return s&&s.site===site&&a.status!=='cancel';}), sumA=acts.reduce((a,x)=>a+(+x.cost||0),0), nA=acts.filter(x=>+x.cost>0).length;
+  const num=k=>+String(R[k]??'').replace(',','.')||0, cur=esc(R.cur||'');
+  const cost=R.cost!==''&&R.cost!=null?num('cost'):sumA, caseC=num('days')*num('dayCost')+num('direct'), annual=num('cases')*caseC*(1+num('ind')), save=annual*num('red')/100;
+  const f=v=>Math.round(v).toLocaleString('tr-TR')+' '+cur;
+  const pay=save>0&&cost>0?cost/save*12:null;
+  el.innerHTML=`<div class="roigrid">${ROI_F.map(([k,l,u,h])=>`<label>${l} <span class="muted" style="font-size:12px">${u==='para'?cur:u}</span><input type="number" min="0" step="any" inputmode="decimal" data-roi="${k}" value="${esc(R[k]??'')}"${k==='cost'&&sumA?` placeholder="${Math.round(sumA)}"`:''} title="${esc(h)}"></label>`).join('')}
+    <label>Para birimi<input data-roi="cur" value="${cur}" maxlength="4"></label></div>
+    ${!R.cost&&R.cost!==0&&nA?`<div class="muted" style="font-size:12.5px;margin-top:6px">Önlem maliyeti: ${nA} önlemde girilen tutarların toplamı (${f(sumA)}).</div>`:''}
+    <div class="stats" style="margin-top:12px">
+      <div class="stat"><b>${annual?f(annual):'—'}</b><span>yıllık tahmini maliyet</span></div>
+      <div class="stat"><b>${save?f(save):'—'}</b><span>yıllık beklenen tasarruf</span></div>
+      <div class="stat"><b>${pay!=null?(pay<1?'1 aydan az':Math.ceil(pay)+' ay'):'—'}</b><span>geri ödeme süresi</span></div>
+      <div class="stat"><b style="color:${save*3-cost<0?LV[4]:'inherit'}">${save||cost?f(save*3-cost):'—'}</b><span>3 yıllık net kazanç</span></div></div>
+    <div class="muted" style="font-size:12.5px;margin-top:6px">Hesap: vaka maliyeti = kayıp gün × günlük maliyet + diğer doğrudan maliyet; yıllık maliyet = vaka sayısı × vaka maliyeti × (1 + dolaylı çarpan); tasarruf = yıllık maliyet × beklenen azalma. Önlemlerin işletme giderleri ve verimlilik etkisi dahil değildir.</div>`;
+  el.querySelectorAll('[data-roi]').forEach(i=>i.onchange=()=>{const k=i.dataset.roi; R[k]=k==='cur'?i.value.trim():(i.value===''?'':+i.value); persist(); renderRoi();});
 }
 
 function stationCard(s){
@@ -3131,6 +3303,29 @@ const HELP=[
   <li>Önlem türünü (ortadan kaldırma, teknik, idari, KKD, eğitim), sorumluyu ve termini gir. Termini geçen açık önlem kırmızı görünür.</li>
   <li>Önlem uygulanınca önlem kartında “Yeniden ölç”e bas: form eski girdilerle açılır, değişen koşulları düzeltip kaydet.</li>
   <li>Kart önce → sonra farkını ve “iyileşti / aynı / kötüleşti” sonucunu gösterir. Risk haritası her zaman en son ölçümü kullanır.</li></ol>`},
+ {id:'auto',t:'Noktaları otomatik bulma',b:`<p>Duruş analizinde kare seçtikten sonra “Noktaları otomatik bul” düğmesi kişinin eklemlerini görüntüden bulur ve sekiz noktayı yerleştirir; açılar ve REBA, RULA, OWAS hemen hesaplanır.</p>
+<ul>
+  <li><b>Gizlilik:</b> Görüntü cihazdan çıkmaz. Web sürümünde yalnızca ilk kullanımda tanıma modeli (MediaPipe Pose, yaklaşık 10 MB) internetten indirilir; masaüstü sürümünde model uygulamanın içindedir.</li>
+  <li><b>Taraf ve yön:</b> “Değerlendirilen taraf” seçiliyse o taraf, seçili değilse kameraya daha iyi görünen taraf kullanılır. Kişinin baktığı yön de otomatik ayarlanır.</li>
+  <li><b>Kontrol şart:</b> Model iki boyutlu görüntüden tahmin yapar. El, bilek ve kulak en sık kayan noktalardır; kişi kameraya dönükse ya da bir yeri kapalıysa açılar yanlış çıkar. Her noktayı kontrol et ve gerekirse sürükle.</li>
+  <li>Bulunamayan noktalar boş kalır; onları elle koy.</li>
+</ul>`},
+ {id:'rot',t:'Vücut bölgeleri ve iş rotasyonu',b:`<p>İstasyonlar sayfasındaki bölge tablosu, her görevin altı vücut bölgesini (boyun, sırt-bel, omuz-üst kol, dirsek-ön kol, el-bilek, bacak-diz) ne düzeyde zorladığını gösterir. Düzeyler görevin güncel kayıtlarından gelir:</p>
+<ul>
+  <li><b>Duruş analizi:</b> REBA bileşen skorları (gövde, boyun, üst kol, ön kol, bilek, bacak). Açısı ölçülmeyen bölge boş kalır.</li>
+  <li><b>QEC:</b> sırt, omuz-kol, el-bilek ve boyun için yöntemin kendi düzeyleri.</li>
+  <li><b>Diğer formlar:</b> yöntemin sonucu, yöntemin değerlendirdiği bölgelere yazılır (ör. NIOSH ve KIM kaldırma → sırt-bel; OCRA → omuz, dirsek, el-bilek; ROSA → boyun, sırt, el-bilek).</li>
+  <li><b>Nordik anketi:</b> son 12 ayda ya da son 7 günde şikâyet bildirenlerin oranı ayrı satırda.</li>
+</ul>
+<p><b>İş rotasyonu planı:</b> Rotasyona girecek görevleri seç. Uygulama, art arda gelen iki görevin aynı bölgeyi yüksek ya da çok yüksek düzeyde zorlamadığı sırayı arar (en fazla 8 görevde tüm sıralar denenir) ve sorunlu geçişleri işaretler. Bir bölge tüm görevlerde yüksekse ya da bir görev çok yüksekse uyarır: bu durumda rotasyon riski azaltmaz, yalnızca daha çok kişiye dağıtır. Rotasyon idari bir önlemdir; önce görevin kendisini iyileştir.</p>`},
+ {id:'roi',t:'Maliyet ve geri ödeme',b:`<p>Önlemler sayfasındaki hesap, önlemlere ayrılacak bütçeyi kas-iskelet rahatsızlıklarının yıllık maliyetiyle karşılaştırır.</p>
+<ul>
+  <li><b>Vaka maliyeti</b> = vaka başına kayıp iş günü × bir iş gününün maliyeti + diğer doğrudan maliyet (tedavi, ulaşım, idari işler).</li>
+  <li><b>Yıllık maliyet</b> = yıllık vaka sayısı × vaka maliyeti × (1 + dolaylı maliyet çarpanı). Dolaylı maliyetler (yerine adam, fazla mesai, verim ve kalite kaybı) çoğu zaman doğrudan maliyetten büyüktür; ama işyerine göre çok değişir, bilinmiyorsa 0 bırak.</li>
+  <li><b>Tasarruf</b> = yıllık maliyet × önlemlerle beklenen azalma; <b>geri ödeme süresi</b> = önlem maliyeti ÷ yıllık tasarruf.</li>
+  <li>Önlem maliyeti boş bırakılırsa önlemlere girilen tahmini maliyetlerin toplamı kullanılır.</li>
+  <li>Rakamlar senin tahminlerin olduğundan sonuç kesin değildir; yönetime sunarken varsayımları da yaz. Beklenen azalma için yeniden ölçümle doğrulanan iyileşmeler iyi bir dayanaktır.</li>
+</ul>`},
  {id:'risk',t:'Risk değerlendirme tablosu (Fine-Kinney / 5×5)',b:`<p>İstasyonlar sayfasındaki tablo, her istasyonun her risk alanını bir satır yapar. Üstteki düğmeyle Fine-Kinney veya 5×5 matris seçilir.</p><ul>
   <li><b>Önerilen değerler:</b> Olasılık yöntemin risk düzeyinden, frekans görev süresinden (vardiyada 120 dk ve üstü “sürekli”), şiddet tehlike türünden gelir.</li>
   <li><b>Düzelt:</b> “Düzenle” ile tehlike, olası zarar, olasılık, frekans ve şiddeti işyerine göre değiştir. Değiştirilen satır “elle düzeltildi” olarak işaretlenir; “Önerilen değerlere dön” ile geri alınır.</li>

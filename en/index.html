@@ -357,6 +357,19 @@ details.which{margin-top:8px;font-size:13.5px;border:1px solid var(--line);borde
 details.which summary{cursor:pointer;font-weight:600}
 details.which ul{margin:6px 0 2px;padding-left:18px}
 footer.disc{max-width:1280px;margin:0 auto;padding:0 18px 90px;color:var(--muted);font-size:12.5px}
+.bodyfig{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
+.bodyfig svg{flex:none}
+.rcell{font-size:12px;font-weight:600;color:#fff;text-align:center;border-radius:6px;padding:4px 2px;min-width:64px}
+.rcell.none{background:#eef0ec;color:var(--muted);font-weight:400}
+.rotlist{list-style:none;padding:0;margin:8px 0 0}
+.rotlist li.task{border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:#fff}
+.rotlist li.link{font-size:12.5px;padding:3px 0 3px 18px}
+.rchips{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.rchips span{font-size:11.5px;color:#fff;border-radius:999px;padding:1px 8px}
+.rotpick{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:4px 14px;margin:6px 0 8px}
+.rotpick label{display:flex;gap:8px;align-items:center;font-size:13.5px}
+.roigrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px 14px}
+.roigrid label{display:flex;flex-direction:column;font-size:13px;gap:4px}
 .langsw{font-weight:600;font-size:13px;text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:5px 12px;background:#fff;color:var(--ink)}
 .langsw:hover{border-color:#c9cec8}
 select.need{border-color:#dc2626;box-shadow:0 0 0 3px #dc262633}
@@ -477,6 +490,7 @@ select.need{border-color:#dc2626;box-shadow:0 0 0 3px #dc262633}
       <div class="stickyCol">
         <div class="toolbar">
           <div class="seg" id="facingSeg"><button data-f="1">Person faces right →</button><button data-f="-1">← Faces left</button></div>
+          <button id="autoBtn" class="primary" title="Finds the person's joints in the image; the image never leaves your device">Find points automatically</button>
           <button id="undoBtn">Delete last point</button>
           <button id="clearBtn">Clear points</button>
           <button id="mzBtn">📏 Measure distance</button>
@@ -634,6 +648,12 @@ select.need{border-color:#dc2626;box-shadow:0 0 0 3px #dc262633}
     <p class="about" style="margin-top:8px">Each workstation × risk area is one row. Values are suggested from the method result; adjust them to the site with “Edit”. The table goes into the Excel and PDF report as is.</p>
     <div id="riskTbl"></div>
   </div>
+  <div class="card">
+    <h2 style="margin:0">Body regions and job rotation <button class="linkbtn hl" data-help="rot">How?</button></h2>
+    <p class="about" style="margin-top:8px">How much each task loads each body region is derived from the saved analyses. Select tasks for rotation: the app suggests an order in which two consecutive tasks do not load the same region at a high level.</p>
+    <div id="bodyMap"></div>
+    <h3>Job rotation plan</h3><div id="rotPlan"></div>
+  </div>
   <div id="stList" class="view"></div>
   <div class="card">
     <h2>Export / import</h2>
@@ -659,6 +679,11 @@ select.need{border-color:#dc2626;box-shadow:0 0 0 3px #dc262633}
     <div class="filters" style="margin-top:12px"><select id="acSt"></select><select id="acStatus"><option value="">All statuses</option><option value="open">Open</option><option value="late">Overdue</option><option value="done">Completed</option><option value="cancel">Cancelled</option></select></div>
   </div>
   <div id="acList" class="view"></div>
+  <div class="card">
+    <h2 style="margin:0">Cost and payback <button class="linkbtn hl" data-help="roi">How?</button></h2>
+    <p class="about" style="margin-top:8px">Compare the budget for actions with the annual cost of musculoskeletal disorders. The figures are your estimates; the result is a rough management calculation.</p>
+    <div id="roiBox"></div>
+  </div>
 </section>
 </main>
 <footer class="disc">Duruş is a decision-support tool: its results are an input to risk assessment and do not replace the judgement of an occupational safety specialist or occupational physician. <button class="linkbtn" data-help="law">Legislation and responsibility</button> · <button class="linkbtn" data-help="limits">Limits of the results</button></footer>
@@ -910,7 +935,7 @@ const FORMS={
       {id:'dur',t:'sel',l:'Total work duration',def:'2',o:DUR_OPTS},
       {sec:'Lifting tasks'},
       {id:'rows',t:'rows',l:'Subtasks',rl:'Task',min:2,max:8,h:'H, V, D, A: cm and degrees, as defined in the NIOSH form. F: lifts per minute for that task.',
-        cols:[{id:'kg',l:'Load',u:'kg'},{id:'H',l:'H',u:'cm'},{id:'V',l:'V',u:'cm'},{id:'D',l:'D',u:'cm'},{id:'A',l:'A',u:'°'},{id:'F',l:'F',u:'/min',step:.1},{id:'cp',l:'Coupling',t:'sel',o:[['0','Good'],['1','Fair'],['2','Poor']]}],
+        cols:[{id:'kg',l:'Load',u:'kg'},{id:'H',l:'H',u:'cm'},{id:'V',l:'V',u:'cm'},{id:'D',l:'D',u:'cm'},{id:'A',l:'A',u:'°'},{id:'F',l:'F',u:'/min',step:.1},{id:'cp',l:'Coupling',t:'sel',o:[['0','Good'],['1','Medium'],['2','Poor']]}],
         def:[{kg:15,H:40,V:15,D:60,A:0,F:1,cp:'1'},{kg:15,H:35,V:75,D:30,A:0,F:1,cp:'1'},{kg:15,H:45,V:140,D:40,A:30,F:.5,cp:'1'}],
         newRow:{kg:10,H:30,V:75,D:40,A:0,F:1,cp:'0'}}],
     calc(d){
@@ -1395,7 +1420,7 @@ Object.assign(FORMS,{
         nk:[['Neck posture × duration',X(J,G)],['Visual demand × duration',X(J,L)]]};
       const sum=a=>a.reduce((t,x)=>t+x[1],0), R={back:sum(IA.back),sh:sum(IA.sh),wr:sum(IA.wr),nk:sum(IA.nk)};
       const LIM={back:st?[15,22,29]:[20,30,40],sh:[20,30,40],wr:[20,30,40],nk:[6,10,14]}, MX={back:st?42:56,sh:56,wr:46,nk:18};
-      const lvOf=(k,v)=>v<=LIM[k][0]?1:v<=LIM[k][1]?2:v<=LIM[k][2]?3:4, NM=['','Low','Fair','High','Very high'];
+      const lvOf=(k,v)=>v<=LIM[k][0]?1:v<=LIM[k][1]?2:v<=LIM[k][2]?3:4, NM=['','Low','Medium','High','Very high'];
       const AN={back:'Back',sh:'Shoulder-arm',wr:'Wrist-hand',nk:'Neck'}, ks=['back','sh','wr','nk'];
       const L3=v=>v===1?1:v===2?4:9, oth={dr:L3(n('M')),vb:L3(n('N')),wp:L3(n('P')),stv:[1,4,9,16][n('Q')-1]};
       const olv=v=>v===1?1:v===4?2:v===9?3:4;
@@ -1410,6 +1435,7 @@ Object.assign(FORMS,{
       if(oth.vb>=4) tips.push(['Vibration','Measure vibrating tool time; low-vibration tools, rotation. Calculate A(8) with the advanced “Vibration” calculator.']);
       if(oth.dr>=4) tips.push(['Driving','Review seat adjustment, breaks and driving time.']);
       return {v:Math.round(100*R[worst]/MX[worst]),txt:String(R[worst]),lv,tips,
+        reg:{back:lvOf('back',R.back),sh:lvOf('sh',R.sh),wr:lvOf('wr',R.wr),neck:lvOf('nk',R.nk)},
         nm:AN[worst]+' · '+NM[lv],
         ac:lv>=3?'High exposure: reduce quickly, starting with the highest-scoring interactions.':lv===2?'Moderate exposure: exposure should be reduced.':'Low exposure; still look at any single interaction scoring 8 or more.',
         bd:ks.map(k=>`<b>${AN[k]}</b> ${R[k]} → ${NM[lvOf(k,R[k])]} <span style="opacity:.8">(${IA[k].map(x=>x[0]+' '+x[1]).join(' · ')})</span>`).join('<br>')+
@@ -1627,7 +1653,7 @@ const LIB=[
   {k:'duet',cat:'Repetitive work',tag:'Observation',n:'DUET',full:'Distal Upper Extremity Tool (DUET)',what:'Cumulative damage and probability of discomfort for hand-wrist-elbow from exertion difficulty (OMNI-RES) and daily repetitions.',when:'Repetitive hand work; several movements of different difficulty.',need:'0–10 difficulty rating and daily count for each type of movement.',scale:[['<%25',1],['%25–50',2],['>%50',4]],lim:'Later web versions of the tool may have updated the coefficients; the published article values are used.',go:['tasks','duet']},
   {k:'rsi',cat:'Repetitive work',tag:'Measurement / observation',n:'Revised Strain Index',full:'Revised Strain Index (2017)',what:'A continuous risk index from force (%MVC), frequency, duration per exertion, wrist angle and daily duration.',when:'Repetitive hand work; more precise than the original Strain Index when numerical measurements are available.',need:'%MVC (or Borg × 10), exertions per minute, seconds per exertion, wrist angle, daily hours.',scale:[['≤10',1],['>10',4]],lim:'For a single task; multi-task composite (COSI/CUSI) rules are not included.',go:['tasks','rsi']},
   {k:'ocra',cat:'Repetitive work',tag:'Observation',n:'OCRA',full:'OCRA checklist (classic version)',what:'Combines recovery, frequency, force, posture and additional factor scores with a duration multiplier.',when:'Repetitive upper-limb work on assembly and packing lines; ISO 11228-3 approach.',need:'Break pattern, movement frequency, force durations, observation of shoulder-elbow-wrist-grip, net repetitive time.',scale:[['≤7,5',1],['≤11',2],['≤14',3],['>14',4]],lim:'The classic version is applied; the tables of the 2011 revised version could not be verified. No fully worked example exists in the sources.',go:['tasks','ocra']},
-  {k:'qec',cat:'Whole-body screening',tag:'Observation + worker',n:'QEC',full:'Quick Exposure Check',what:'Separate exposure levels for the back, shoulder-arm, wrist-hand and neck from observer and worker answers; driving, vibration, work pace and stress are also asked.',when:'Seeing quickly which body region a job strains; before-after comparison of measures; bringing the worker’s view into the assessment.',need:'Observing the job for a few cycles and asking the worker 8 short questions.',scale:[['Low',1],['Fair',2],['High',3],['Very high',4]],lim:'Regional scores are not added together; there is no single overall score. The lower bound of ‘very high’ for the static back is printed differently in some copies of the guide; 30 is used here.',go:['tasks','qec']},
+  {k:'qec',cat:'Whole-body screening',tag:'Observation + worker',n:'QEC',full:'Quick Exposure Check',what:'Separate exposure levels for the back, shoulder-arm, wrist-hand and neck from observer and worker answers; driving, vibration, work pace and stress are also asked.',when:'Seeing quickly which body region a job strains; before-after comparison of measures; bringing the worker’s view into the assessment.',need:'Observing the job for a few cycles and asking the worker 8 short questions.',scale:[['Low',1],['Medium',2],['High',3],['Very high',4]],lim:'Regional scores are not added together; there is no single overall score. The lower bound of ‘very high’ for the static back is printed differently in some copies of the guide; 30 is used here.',go:['tasks','qec']},
   {k:'rosa',cat:'Workstation design',tag:'Observation',n:'ROSA',full:'Rapid Office Strain Assessment',what:'Office risk score of 1–10 from chair, monitor, telephone, mouse and keyboard.',when:'Computer work; a scored, comparable office assessment.',need:'A choice for each item while looking at the workstation, plus daily usage durations.',scale:[['1–2',1],['3–4',2],['5–7',3],['8–10',4]],lim:'Only the action level of 5 is published; the extra point for depth adjustment could not be verified.',go:['tasks','rosa']},
 ];
 const LIBK=Object.fromEntries(LIB.map(x=>[x.k,x]));
@@ -1955,6 +1981,44 @@ $$('[data-adj]').forEach(el=>el.addEventListener(el.type==='number'?'input':'cha
 $('#undoBtn').onclick=()=>{if(!cur)return; const ks=PTS.map(p=>p.k).filter(k=>cur.points[k]); const k=ks[ks.length-1]; if(k){delete cur.points[k]; updateAll();}};
 $('#clearBtn').onclick=()=>{if(!cur)return; cur.points={}; activeKey=null; updateAll();};
 $('#cancelBtn').onclick=()=>{cur=null; $('#workCard').hidden=true;};
+
+/* ---------- otomatik nokta bulma (MediaPipe Pose; tarayıcıda çalışır, görüntü cihazdan çıkmaz) ---------- */
+const MP_BASE='https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/';
+let poseP=null;
+function loadPose(){
+  if(!poseP)poseP=new Promise((res,rej)=>{const s=document.createElement('script'); s.src=MP_BASE+'pose.js'; s.crossOrigin='anonymous';
+    s.onload=()=>{try{const p=new window.Pose({locateFile:f=>MP_BASE+f}); p.setOptions({modelComplexity:1,staticImageMode:true,smoothLandmarks:false,enableSegmentation:false,minDetectionConfidence:.3}); res(p);}catch(e){rej(e);}};
+    s.onerror=()=>rej(new Error('pose')); document.head.appendChild(s);}).catch(e=>{poseP=null; throw e;});
+  return poseP;
+}
+// Bir görüntüde 33 vücut noktası bulur; Duruş'un 8 noktasına çevirir (yandan görünen taraf).
+async function detectPose(img){
+  const pose=await loadPose();
+  const res=await new Promise((ok,no)=>{pose.onResults(ok); pose.send({image:img}).catch(no);});
+  const L=res.poseLandmarks; if(!L)return null;
+  const W=img.naturalWidth||img.width, H=img.naturalHeight||img.height, v=i=>L[i].visibility??1;
+  const RS={ear:8,sh:12,el:14,wr:16,pk:18,ix:20,hip:24,kn:26,an:28}, LS_={ear:7,sh:11,el:13,wr:15,pk:17,ix:19,hip:23,kn:25,an:27};
+  const sum=m=>Object.values(m).reduce((a,i)=>a+v(i),0);
+  const right=cur&&cur.side==='sag'?true:cur&&cur.side==='sol'?false:sum(RS)>=sum(LS_), I=right?RS:LS_;
+  const P=i=>({x:clamp(L[i].x*W,0,W),y:clamp(L[i].y*H,0,H)}), ok=i=>v(i)>=.3, pts={};
+  ['ear','sh','el','wr','hip','kn','an'].forEach(k=>{if(ok(I[k]))pts[k]=P(I[k]);});
+  if(ok(I.ix)||ok(I.pk)){const a=P(I.ix),c=P(I.pk); pts.hd={x:(a.x+c.x)/2,y:(a.y+c.y)/2};}
+  return {pts,right,facing:L[0].x>=L[I.ear].x?1:-1};
+}
+async function autoPoints(){
+  if(!cur||!imgEl){toast('Pick a frame first.');return;}
+  const b=$('#autoBtn'), old=b.textContent; b.disabled=true; b.textContent='Searching…';
+  try{
+    const d=await detectPose(imgEl);
+    if(!d||!Object.keys(d.pts).length){toast('No person found in the frame. Try a side-on frame in which the whole person is visible, or place the points by hand.');return;}
+    cur.points=d.pts; cur.facing=d.facing; cur.auto=true; if(!cur.side){cur.side=d.right?'sag':'sol'; $('#pSide').value=cur.side;}
+    activeKey=null; updateAll();
+    const miss=PTS.filter(p=>!d.pts[p.k]).map(p=>p.n);
+    toast(Object.keys(d.pts).length+' points placed'+(miss.length?' · not found: '+miss.join(', '):'')+'. Check every point and drag it if needed.');
+  }catch(e){toast('Automatic detection did not work: on first use the model is downloaded from the internet. You can place the points by hand.');}
+  finally{b.disabled=false; b.textContent=old;}
+}
+$('#autoBtn').onclick=autoPoints;
 function setPtab(t){S.ptab=t; $$('#ptabs button').forEach(b=>b.classList.toggle('on',b.dataset.ptab===t)); $$('[data-pane]').forEach(p=>p.hidden=p.dataset.pane!==t); $$('.tile').forEach(x=>x.classList.toggle('on',x.dataset.m===t)); persist();}
 $$('#ptabs button').forEach(b=>b.onclick=()=>setPtab(b.dataset.ptab));
 
@@ -1999,6 +2063,7 @@ function updateScores(){
     if(near!=null){if(!tag){tag=document.createElement('span'); tag.className='edge'; cell.querySelector('b').after(tag);} tag.textContent='borderline ('+near+'°)'; tag.title='Threshold that changes the score: '+near+'°. Measurement error can shift the score by one step.';}
     else if(tag)tag.remove();});
   const W=[], j=cur.adj||{};
+  if(cur.auto)W.push('<b>Points found automatically.</b> Check where each point is and drag it if needed; the hand, wrist and ear are the points that slip most often. If the person has their back to the camera or part of the body is hidden, correct by hand.');
   if(imgEl&&!(+j.loadKg>0)&&r.miss.length<4)W.push('<b>No load entered</b>; 0 kg assumed. If there is a load in the hands or a force applied, enter it under “Load carried”: 5 kg or more can raise REBA, 2 kg or more can raise RULA.');
   const edges=ANG.filter(d=>cur.ov[d.k]==null&&nearEdge(d.k,r.a[d.k])!=null).map(d=>d.n);
   if(edges.length)W.push('<b>Borderline angles:</b> '+edges.join(', ')+'. At these angles a measurement error of a few degrees can change the score; check with a goniometer or look at neighbouring frames too.');
@@ -2171,7 +2236,7 @@ $('#csvBtn').onclick=()=>{
   });
   copyText([hd.join(';'),...rows].join('\n'),'CSV');
 };
-function backupJSON(){return JSON.stringify({app:'durus',v:4,records:S.records,sites:S.sites,stations:S.stations,tasks:S.tasks,actions:S.actions,riskOv:S.riskOv,field:S.field.map(c=>({...c,photos:c.photos.map(p=>({id:p.id,th:p.th,t:p.t,vname:p.vname}))}))});}
+function backupJSON(){return JSON.stringify({app:'durus',v:4,records:S.records,sites:S.sites,stations:S.stations,tasks:S.tasks,actions:S.actions,riskOv:S.riskOv,rot:S.rot,roi:S.roi,field:S.field.map(c=>({...c,photos:c.photos.map(p=>({id:p.id,th:p.th,t:p.t,vname:p.vname}))}))});}
 $('#jsonBtn').onclick=()=>{if(!S.records.length){toast('No records to copy.');return;} copyText(backupJSON(),'JSON');};
 async function downloadBackup(){
   if(!S.records.length&&!S.field.length&&!S.stations.length){toast('No records to back up.');return;}
@@ -2185,7 +2250,7 @@ $('#importBtn').onclick=()=>{$('#ioBox').hidden=false; $('#ioLoad').hidden=false
 $('#ioClose').onclick=()=>$('#ioBox').hidden=true;
 $('#ioLoad').onclick=()=>{
   try{const d=JSON.parse($('#ioText').value); const ids=new Set(S.records.map(i=>i.id)); let k=0;
-    ['sites','stations','tasks','actions','field'].forEach(key=>{if(Array.isArray(d[key])){const have=new Set(S[key].map(x=>x.id)); d[key].forEach(x=>{if(x&&x.id&&!have.has(x.id))S[key].push(x);});}}); if(d.riskOv)S.riskOv={...d.riskOv,...S.riskOv};
+    ['sites','stations','tasks','actions','field'].forEach(key=>{if(Array.isArray(d[key])){const have=new Set(S[key].map(x=>x.id)); d[key].forEach(x=>{if(x&&x.id&&!have.has(x.id))S[key].push(x);});}}); if(d.roi)S.roi={...d.roi,...(S.roi||{})}; if(d.riskOv)S.riskOv={...d.riskOv,...S.riskOv};
     if(Array.isArray(d.records)) d.records.forEach(r=>{if(r&&r.type&&!ids.has(r.id)){if(r.type==='posture')r.adj=migrateAdj(r.adj); S.records.push(r); k++;}});
     else if(Array.isArray(d.items)) d.items.forEach(i=>{if(i&&i.points&&!ids.has(i.id)){S.records.push({id:i.id,type:'posture',task:'Imported',note:i.note||'',created:new Date().toISOString(),time:i.time,src:i.src,img:i.img,thumb:i.thumb,points:i.points,facing:i.facing||1,ov:i.ov||{},adj:migrateAdj(i.adj),side:''}); k++;}});
     else throw 0;
@@ -2215,13 +2280,13 @@ function loadExcel(){
 const XC={hd:'FF0F6B5F',sec:'FFE6F2EF',line:'FFE2E5E0',muted:'FF67706B',white:'FFFFFFFF'};
 const xfill=c=>({type:'pattern',pattern:'solid',fgColor:{argb:c}});
 const lvFill=lv=>xfill('FF'+LV[lv].slice(1).toUpperCase());
-const LVN=['Neutral','Low','Fair','High','Very high'];
+const LVN=['Neutral','Low','Medium','High','Very high'];
 const plain=h=>String(h??'').replace(/<br\s*\/?>/g,'\n').replace(/<sup>(.*?)<\/sup>/g,'^$1').replace(/<sub>(.*?)<\/sub>/g,'$1').replace(/<[^>]+>/g,'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
 const today=()=>new Date().toISOString().slice(0,10);
 const slug=s=>String(s||'kayit').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/ı/g,'i').replace(/[^A-Za-z0-9]+/g,'_').replace(/^_|_$/g,'').slice(0,40)||'kayit';
 function sheetName(wb,n){n=String(n).replace(/[\[\]:*?\/\\]/g,'-').slice(0,31); let s=n,i=2; while(wb.getWorksheet(s))s=n.slice(0,27)+' ('+(i++)+')'; return s;}
 const ADJ_LBL={trunkTwist:'Trunk twisted',trunkSide:'Trunk side-bent',neckTwist:'Neck twisted',neckSide:'Neck side-bent',uaAbd:'Arm abducted/rotated',uaRaised:'Shoulder raised',uaSupported:'Arm supported',wristDev:'Wrist deviated',shock:'Sudden/jerky force',actStatic:'Static posture over 1 min',actRepeat:'4+ repetitions per minute',actRapid:'Rapid change in posture',laMidline:'Forearm crosses the midline',wristTwistEnd:'Wrist twist near end of range'};
-const CPL=['Good','Fair','Poor','Unacceptable'];
+const CPL=['Good','Medium','Poor','Unacceptable'];
 const LEGL={stand2:'Standing, both feet balanced',stand1:'Standing, one foot / unstable',sit:'Sitting',kneel:'Kneeling',walk:'Walking'};
 function methodTitle(rec){return rec.type==='posture'?'Posture analysis (REBA · RULA · OWAS)':(LIBK[rec.type]?LIBK[rec.type].full:FORMS[rec.type].n);}
 const optLabel=(o,v)=>(o.find(x=>x[0]===String(v))||[,v??'—'])[1];
@@ -2388,7 +2453,7 @@ $('#pXl').onclick=()=>{const r=draftPostureRecord(); if(r)exportRecord(r);};
    ===================================================================== */
 const AREA_OF={reba:'pos',rula:'pos',owas:'pos',posture:'pos',qec:'pos',niosh:'mmh',cli:'mmh',kim19:'mmh',kim:'mmh',kimpp:'mmh',lmm:'mmh',lifft:'mmh',ocra:'rep',rsi:'rep',si:'rep',hal:'rep',duet:'rep',rosa:'off',office:'off',height:'off',noise:'noise',vib:'vib',heat:'heat',light:'light',nmq:'nmq'};
 const AREA_N={pos:'Duruş',mmh:'Manual handling',rep:'Repetitive work',off:'Office',noise:'Noise',vib:'Vibration',heat:'Heat',light:'Lighting',nmq:'Complaints'};
-const LVT=['—','Low','Fair','High','Very high'];
+const LVT=['—','Low','Medium','High','Very high'];
 const CTRL=[['elim','Elimination / substitution'],['eng','Technical (engineering) measure'],['adm','Administrative / organisational measure'],['ppe','Personal protective equipment'],['trn','Training / information']];
 const ASTAT=[['plan','Planned'],['prog','In progress'],['done','Completed'],['cancel','Cancelled']];
 const todayISO=()=>new Date().toISOString().slice(0,10);
@@ -2541,6 +2606,7 @@ function openActionDlg(id,preset={}){
     {id:'status',l:'Status',t:'sel',v:b.status||'plan',o:ASTAT},
     {id:'owner',l:'Responsible',v:b.owner,ph:'Name / unit'},
     {id:'due',l:'Due date',t:'date',v:b.due},
+    {id:'cost',l:'Estimated cost',t:'num',v:b.cost,ph:'optional'},
     {id:'note',l:'Note',t:'area',v:b.note}],
    onSave:v=>{if(!v.title.trim()){toast('Describe the action.');return false;} if(!v.tk){toast('Choose the workstation and task.');return false;}
      const st=tkOf(v.tk).st;
@@ -2569,7 +2635,7 @@ function actionCard(a){
     <div class="row" style="justify-content:space-between;align-items:flex-start"><div><b>${esc(a.title)}</b><div class="muted">${esc(tkLabel(a.tk))}</div></div>
       <select data-ast="${a.id}" class="stsel">${ASTAT.map(([v,l])=>`<option value="${v}"${a.status===v?' selected':''}>${l}</option>`).join('')}</select></div>
     ${a.detail?`<div style="font-size:13.5px;margin-top:4px">${esc(a.detail)}</div>`:''}
-    <div class="row" style="gap:6px;margin-top:6px;font-size:13px"><span class="lvl" style="background:#475569">${esc(ctl)}</span>${a.owner?`<span>Responsible: <b>${esc(a.owner)}</b></span>`:''}${a.due?`<span style="color:${overdue(a)?LV[4]:'inherit'}">Due: <b>${dateTR(a.due)}</b>${overdue(a)?' · overdue':''}</span>`:''}${a.done?`<span>Completed: ${dateTR(a.done)}</span>`:''}</div>
+    <div class="row" style="gap:6px;margin-top:6px;font-size:13px"><span class="lvl" style="background:#475569">${esc(ctl)}</span>${a.owner?`<span>Responsible: <b>${esc(a.owner)}</b></span>`:''}${+a.cost?`<span>Cost: <b>${Math.round(+a.cost).toLocaleString('en-GB')}</b></span>`:''}${a.due?`<span style="color:${overdue(a)?LV[4]:'inherit'}">Due: <b>${dateTR(a.due)}</b>${overdue(a)?' · overdue':''}</span>`:''}${a.done?`<span>Completed: ${dateTR(a.done)}</span>`:''}</div>
     ${a.before?`<div style="margin-top:8px;font-size:13px">${after?deltaHTML(a.before,after):`Before: <span class="badge" style="background:${LV[a.before.lv]}">${esc(a.before.n)} ${a.before.txt}</span> <span class="muted">· not yet measured after</span>`}</div>`:''}
     <div class="acts row" style="margin-top:8px;gap:6px"><button class="small" data-aedit="${a.id}">Edit</button>${a.before?`<button class="small" data-arem="${a.id}">Re-measure</button>`:''}</div></div>`;
 }
@@ -2588,7 +2654,7 @@ function renderActions(){
   const rows=all.filter(a=>(!fs||a.st===fs)&&(!ft||(ft==='open'?(a.status==='plan'||a.status==='prog'):ft==='late'?overdue(a):a.status===ft)))
     .sort((x,y)=>(overdue(y)-overdue(x))||((x.status==='done')-(y.status==='done'))||(x.due||'9').localeCompare(y.due||'9'));
   $('#acList').innerHTML=rows.length?rows.map(actionCard).join(''):`<div class="card empty">${all.length?'No actions match the filter.':'No actions yet. Add one with the “+ Action” button in an analysis’s “What can be done?” list, or from here.'}</div>`;
-  bindActions($('#acList'));
+  bindActions($('#acList')); renderRoi();
 }
 $('#acSt').onchange=renderActions; $('#acStatus').onchange=renderActions;
 $('#acAdd').onclick=()=>openActionDlg(null,{});
@@ -2614,7 +2680,7 @@ function renderStations(){
   $('#stList').innerHTML=sts.map(s=>stationCard(s)).join('');
   sts.forEach(s=>S.tasks.filter(t=>t.st===s.id).forEach(t=>{const pr=recsOfTask(t.id).filter(r=>r.type==='posture'&&r.time!=null); const el=$('#chart_'+t.id); if(el&&pr.length>=2)renderChart(el,pr,S.chartM[t.id]||'reba');}));
   bindStations($('[data-view="stations"]'));
-  renderRiskTable();
+  renderRiskTable(); renderBody();
 }
 /* ---------- günlük maruziyet (istasyon) ---------- */
 const TASKC=['#0f6b5f','#2563eb','#b45309','#7c3aed','#0e7490','#be185d','#4d7c0f','#475569'];
@@ -2642,7 +2708,7 @@ function exposureHTML(s){
     <div class="legend">${E.timed.map((t,i)=>`<span><i style="background:${TASKC[i%TASKC.length]}"></i>${esc(t.name)} ${t.min} min</span>`).join('')}${E.shiftMin>E.sumMin?`<span><i style="background:#d6dbd5"></i>Unassigned ${E.shiftMin-E.sumMin} min</span>`:''}</div>
     ${E.sumMin>E.shiftMin?`<div class="gnote">Total task time (${E.sumMin} min) exceeds the shift; check the durations.</div>`:''}
     ${E.tks.some(t=>!(+t.min>0))?`<div class="muted" style="font-size:12.5px">Tasks without a duration: ${E.tks.filter(t=>!(+t.min>0)).map(t=>esc(t.name)).join(', ')}. If you enter durations, exposure is calculated in minutes.</div>`:''}</div>`;
-  const pnames={reba:['REBA',['Negligible','Low','Fair','High','Very high']],owas:['OWAS',['','AC1','AC2','AC3','AC4']]};
+  const pnames={reba:['REBA',['Negligible','Low','Medium','High','Very high']],owas:['OWAS',['','AC1','AC2','AC3','AC4']]};
   const posH=Object.entries(E.pos).map(([M,P])=>{const hi=P.tot[3]+P.tot[4];
     return `<div class="exrow"><b>Posture exposure · ${pnames[M][0]}</b> <span class="muted">· ${P.useMin?'weighted by task durations':'task durations missing; tasks weighted equally'}</span>
       ${stackBar([0,1,2,3,4].map(l=>({w:P.tot[l],c:LV[l],l:pnames[M][1][l]})).filter(x=>x.l),1)}
@@ -2652,6 +2718,112 @@ function exposureHTML(s){
   const subH=E.subs.length?`<div class="exrow"><b>Sub-activities</b> <span class="muted">· manual handling, repetitive work and other forms</span><div class="tblwrap"><table class="cmp" style="min-width:520px"><thead><tr><th>Task</th><th>Method</th><th>Result</th><th>Task time</th></tr></thead><tbody>${E.subs.map(x=>`<tr><td>${esc(x.t.name)}</td><td>${esc(typeName(x.r.type))}</td><td><span class="badge" style="background:${LV[x.p.m.lv]}">${x.p.m.txt}</span> ${esc(x.p.m.nm)}</td><td>${+x.t.min>0?`${x.t.min} min (${Math.round(x.t.min/E.shiftMin*100)}%)`:'—'}</td></tr>`).join('')}</tbody></table></div>
     ${E.subs.some(x=>['kim19','kimpp','kim'].includes(x.r.type))?'<div class="muted" style="font-size:12.5px">KIM scores are separate for each sub-activity; BAuA uses a separate combination algorithm (LMM-E) for the daily total, which this app does not perform. The highest-scoring sub-activity is the priority.</div>':''}</div>`:'';
   return `<h3>Daily exposure</h3><div class="expanel">${prof}${posH||'<div class="muted">Save posture analyses to the tasks to see posture exposure.</div>'}${subH}</div>`;
+}
+
+/* ---------- vücut bölgeleri ve iş rotasyonu ---------- */
+// Bir kaydın hangi vücut bölgesini hangi düzeyde zorladığı (1 düşük … 4 çok yüksek).
+// Duruş analizinde REBA bileşen skorları, QEC'te bölge puanları, diğer yöntemlerde yöntemin ilgilendiği bölgeler kullanılır.
+const BR=[['neck','Neck'],['back','Back / lower back'],['sh','Shoulder / upper arm'],['elb','Elbow / forearm'],['wr','Hand / wrist'],['leg','Leg / knee']];
+const BR_K=BR.map(b=>b[0]), BR_N=Object.fromEntries(BR);
+const NMQ_BR={neck:'neck',sh:'sh',ub:'back',lb:'back',elb:'elb',hw:'wr',hip:'leg',knee:'leg',ft:'leg'};
+const REG_OF={niosh:['back'],cli:['back'],kim19:['back'],kim:['back'],lifft:['back'],kimpp:['back','sh'],ocra:['sh','elb','wr'],duet:['elb','wr'],rsi:['wr'],si:['wr'],hal:['wr'],rosa:['neck','back','wr'],office:['neck','back'],height:['back','sh']};
+function regionLv(rec){
+  const o={}, put=(k,l)=>{if(l>0&&(o[k]==null||l>o[k]))o[k]=l;};
+  if(rec.type==='posture'){const r=postureCompute(rec), p=r.reba.p, a=r.a;
+    if(a.trunk!=null)put('back',Math.min(4,p.trunk)); if(a.neck!=null)put('neck',p.neck);
+    if(a.ua!=null)put('sh',Math.min(4,p.ua)); if(a.la!=null)put('elb',p.la); if(a.wr!=null)put('wr',p.wr); if(a.kn!=null)put('leg',p.legs);
+    return o;}
+  const p=primary(rec); if(!p)return o;
+  if(p.m.reg){Object.entries(p.m.reg).forEach(([k,l])=>put(k,l)); return o;}
+  let ks=REG_OF[rec.type]; if(rec.type==='lmm')ks=(rec.data&&rec.data.task)==='carry'?['back']:['back','sh'];
+  (ks||[]).forEach(k=>put(k,p.m.lv)); return o;
+}
+// Görevin güncel ölçümlerinden bölge profili: her bölgede en kötü düzey ve onu veren yöntemler
+function taskRegions(tkId){const lv={}, src={};
+  currentRecs(recsOfTask(tkId)).forEach(r=>{Object.entries(regionLv(r)).forEach(([k,l])=>{if(lv[k]==null||l>lv[k]){lv[k]=l; src[k]=new Set();} if(l===lv[k])src[k].add(typeName(r.type));});});
+  return {lv,src};}
+function nmqRegions(recs){const n=recs.filter(r=>r.type==='nmq'); if(!n.length)return null; const c={};
+  n.forEach(r=>{const hit=new Set(); Object.entries((r.data&&r.data.g)||{}).forEach(([k,x])=>{if(x&&(x.y12||x.d7||x.blk)&&NMQ_BR[k])hit.add(NMQ_BR[k]);}); hit.forEach(k=>c[k]=(c[k]||0)+1);});
+  return {n:n.length,c};}
+const siteTasks=()=>S.tasks.filter(t=>{const s=stOf(t.st); return s&&s.site===curSite();}).sort((a,b)=>tkLabel(a.id).localeCompare(tkLabel(b.id),'en'));
+const rcell=l=>l?`<div class="rcell" style="background:${LV[l]}">${LVT[l]}</div>`:'<div class="rcell none">—</div>';
+function bodySVG(lv){const c=k=>lv[k]?LV[lv[k]]:'#dfe3dd', t=k=>`<title>${BR_N[k]}: ${lv[k]?LVT[lv[k]]:'no data'}</title>`;
+  return `<svg width="120" height="230" viewBox="0 0 120 230" role="img" aria-label="Body regions">
+    <circle cx="60" cy="20" r="15" fill="#c9cec8"/>
+    <rect x="53" y="35" width="14" height="12" rx="3" fill="${c('neck')}">${t('neck')}</rect>
+    <rect x="40" y="47" width="40" height="66" rx="8" fill="${c('back')}">${t('back')}</rect>
+    <rect x="23" y="49" width="15" height="44" rx="7" fill="${c('sh')}">${t('sh')}</rect><rect x="82" y="49" width="15" height="44" rx="7" fill="${c('sh')}">${t('sh')}</rect>
+    <rect x="21" y="95" width="13" height="38" rx="6" fill="${c('elb')}">${t('elb')}</rect><rect x="86" y="95" width="13" height="38" rx="6" fill="${c('elb')}">${t('elb')}</rect>
+    <circle cx="27" cy="142" r="8" fill="${c('wr')}">${t('wr')}</circle><circle cx="93" cy="142" r="8" fill="${c('wr')}">${t('wr')}</circle>
+    <rect x="43" y="115" width="15" height="105" rx="7" fill="${c('leg')}">${t('leg')}</rect><rect x="62" y="115" width="15" height="105" rx="7" fill="${c('leg')}">${t('leg')}</rect></svg>`;}
+function renderBody(){
+  const el=$('#bodyMap'); if(!el)return;
+  const tks=siteTasks().map(t=>({t,...taskRegions(t.id)})).filter(x=>Object.keys(x.lv).length);
+  const recs=S.stations.filter(s=>s.site===curSite()).flatMap(s=>recsOfStation(s.id)), nq=nmqRegions(recs);
+  if(!tks.length&&!nq){el.innerHTML='<div class="empty">For a region profile, save a posture analysis or a form to the tasks.</div>'; $('#rotPlan').innerHTML=''; return;}
+  const all={}; tks.forEach(x=>BR_K.forEach(k=>{if(x.lv[k]&&(!all[k]||x.lv[k]>all[k]))all[k]=x.lv[k];}));
+  el.innerHTML=`<div class="bodyfig">${bodySVG(all)}<div class="tblwrap" style="flex:1;min-width:300px"><table class="cmp"><thead><tr><th>Task</th>${BR.map(b=>`<th>${b[1]}</th>`).join('')}</tr></thead><tbody>
+    ${tks.map(x=>`<tr><td><b>${esc(tkLabel(x.t.id))}</b></td>${BR_K.map(k=>`<td title="${x.src[k]?esc([...x.src[k]].join(', ')):''}">${rcell(x.lv[k])}</td>`).join('')}</tr>`).join('')}
+    ${nq?`<tr><td><b>Reporting complaints</b><div class="muted" style="font-size:12px">Nordic questionnaire, ${nq.n} people</div></td>${BR_K.map(k=>{const n=nq.c[k]||0, p=n/nq.n; return `<td><div class="rcell${n?'':' none'}" style="${n?`background:${p>=.5?LV[3]:LV[2]}`:''}">${n?Math.round(p*100)+'%':'—'}</div></td>`;}).join('')}</tr>`:''}
+    </tbody></table></div></div>
+    <div class="muted" style="font-size:12.5px;margin-top:6px">The figure shows the worst level of each region across all tasks at this site. In posture analysis the level comes from the REBA component score, in QEC from the region score; for other forms the method's result is written to the regions it covers. Hover over a cell to see the source.</div>`;
+  renderRot(tks);
+}
+// Rotasyon sırası: art arda iki görevde aynı bölge yüksek (3+) ise ceza; döngüsel (son görevden ilkine dönülür)
+function rotCost(a,b){let c=0; BR_K.forEach(k=>{const x=a.lv[k]||0,y=b.lv[k]||0; if(x>=3&&y>=3)c+=10*(x+y); c+=Math.min(x,y)*.1;}); return c;}
+function bestOrder(xs){
+  const n=xs.length, cost=o=>o.reduce((s,_,i)=>s+(n>2||i<n-1?rotCost(xs[o[i]],xs[o[(i+1)%n]]):0),0);
+  let best=[...Array(n).keys()], bc=cost(best);
+  if(n<=8){const perm=(a,l)=>{if(l===n){const c=cost(a); if(c<bc){bc=c; best=[...a];} return;} for(let i=l;i<n;i++){[a[l],a[i]]=[a[i],a[l]]; perm(a,l+1); [a[l],a[i]]=[a[i],a[l]];}}; perm([...Array(n).keys()],1);}
+  else {const used=new Set([0]), o=[0]; while(o.length<n){let bi=-1,bv=1e9; for(let i=0;i<n;i++)if(!used.has(i)){const v=rotCost(xs[o.at(-1)],xs[i]); if(v<bv){bv=v;bi=i;}} o.push(bi); used.add(bi);} best=o; bc=cost(o);}
+  return best.map(i=>xs[i]);
+}
+function renderRot(tks){
+  const el=$('#rotPlan'); if(!el)return; S.rot=S.rot||{sel:[]};
+  const sel=S.rot.sel.filter(id=>tks.some(x=>x.t.id===id));
+  const pick=`<div class="rotpick">${tks.map(x=>`<label><input type="checkbox" data-rot="${x.t.id}"${sel.includes(x.t.id)?' checked':''}> ${esc(tkLabel(x.t.id))}</label>`).join('')}</div>`;
+  const chips=x=>`<div class="rchips">${BR_K.filter(k=>x.lv[k]>=2).map(k=>`<span style="background:${LV[x.lv[k]]}">${BR_N[k]} · ${LVT[x.lv[k]]}</span>`).join('')||'<span style="background:'+LV[1]+'">No marked strain</span>'}</div>`;
+  let out='';
+  if(sel.length<2)out='<div class="muted">Select at least two tasks for the rotation.</div>';
+  else {
+    const xs=bestOrder(sel.map(id=>tks.find(x=>x.t.id===id))), n=xs.length, warn=[];
+    BR_K.forEach(k=>{if(xs.every(x=>(x.lv[k]||0)>=3))warn.push(`<b>${BR_N[k]}</b> is high in every selected task: rotation does not rest this region. Improve the tasks first, or add a task that does not load this region.`);});
+    xs.filter(x=>BR_K.some(k=>x.lv[k]===4)).forEach(x=>warn.push(`<b>${esc(tkLabel(x.t.id))}</b> is very high in one region (${BR_K.filter(k=>x.lv[k]===4).map(k=>BR_N[k]).join(', ')}): rotation only spreads the risk to more people; fix this task first.`));
+    const link=(a,b)=>{const both=BR_K.filter(k=>(a.lv[k]||0)>=3&&(b.lv[k]||0)>=3); return both.length?`<li class="link" style="color:${LV[4]}">⚠ ${both.map(k=>BR_N[k]).join(', ')} high in both tasks</li>`:`<li class="link" style="color:${LV[1]}">✓ Different regions are used</li>`;};
+    out=`<ol class="rotlist">${xs.map((x,i)=>`<li class="task"><b>${i+1}. ${esc(tkLabel(x.t.id))}</b>${x.t.min?` <span class="muted">· ${x.t.min} min/shift</span>`:''}${chips(x)}</li>${i<n-1?link(x,xs[i+1]):(n>2?link(x,xs[0]).replace('</li>',' (from the last task back to the first)</li>'):'')}`).join('')}</ol>
+      ${warn.length?`<div class="pwarn" style="margin-top:8px">${warn.map(w=>'<div>'+w+'</div>').join('')}</div>`:''}
+      <div class="muted" style="font-size:12.5px;margin-top:6px">The order is cyclic: after the last task, go back to the first. Set the change interval according to the intensity of the work; workers must be trained for every task in the rotation. Rotation is an administrative measure; it does not replace an engineering control.</div>`;
+  }
+  el.innerHTML=pick+out;
+  el.querySelectorAll('[data-rot]').forEach(c=>c.onchange=()=>{const id=c.dataset.rot; S.rot.sel=c.checked?[...S.rot.sel.filter(x=>x!==id),id]:S.rot.sel.filter(x=>x!==id); persist(); renderRot(tks);});
+}
+
+/* ---------- maliyet ve geri ödeme ---------- */
+const ROI_F=[
+  ['cases','Lost-time musculoskeletal cases per year','pcs','From past records; for this site or the selected workstations'],
+  ['days','Lost work days per case','days','Including sick leave and transfer to light duty'],
+  ['dayCost','Cost of one work day to the employer','para','Wages, benefits and employer contributions'],
+  ['direct','Other direct cost per case','para','Treatment, transport, administration'],
+  ['ind','Indirect cost multiplier','×','Replacement staff, overtime, lost productivity and quality, as a multiple of direct cost. Leave 0 if you don\'t know.'],
+  ['red','Expected reduction from the actions','%','Expected percentage reduction in cases'],
+  ['cost','Total cost of the actions','para','If left empty, the sum of costs entered on the actions is used']];
+function renderRoi(){
+  const el=$('#roiBox'); if(!el)return; const site=curSite(); S.roi=S.roi||{}; const R=S.roi[site]=S.roi[site]||{cur:document.documentElement.lang==='tr'?'₺':'€'};
+  const acts=S.actions.filter(a=>{const s=stOf(a.st); return s&&s.site===site&&a.status!=='cancel';}), sumA=acts.reduce((a,x)=>a+(+x.cost||0),0), nA=acts.filter(x=>+x.cost>0).length;
+  const num=k=>+String(R[k]??'').replace(',','.')||0, cur=esc(R.cur||'');
+  const cost=R.cost!==''&&R.cost!=null?num('cost'):sumA, caseC=num('days')*num('dayCost')+num('direct'), annual=num('cases')*caseC*(1+num('ind')), save=annual*num('red')/100;
+  const f=v=>Math.round(v).toLocaleString('en-GB')+' '+cur;
+  const pay=save>0&&cost>0?cost/save*12:null;
+  el.innerHTML=`<div class="roigrid">${ROI_F.map(([k,l,u,h])=>`<label>${l} <span class="muted" style="font-size:12px">${u==='para'?cur:u}</span><input type="number" min="0" step="any" inputmode="decimal" data-roi="${k}" value="${esc(R[k]??'')}"${k==='cost'&&sumA?` placeholder="${Math.round(sumA)}"`:''} title="${esc(h)}"></label>`).join('')}
+    <label>Currency<input data-roi="cur" value="${cur}" maxlength="4"></label></div>
+    ${!R.cost&&R.cost!==0&&nA?`<div class="muted" style="font-size:12.5px;margin-top:6px">Cost of actions: sum of amounts entered on ${nA} actions (${f(sumA)}).</div>`:''}
+    <div class="stats" style="margin-top:12px">
+      <div class="stat"><b>${annual?f(annual):'—'}</b><span>estimated annual cost</span></div>
+      <div class="stat"><b>${save?f(save):'—'}</b><span>expected annual saving</span></div>
+      <div class="stat"><b>${pay!=null?(pay<1?'under 1 month':Math.ceil(pay)+' months'):'—'}</b><span>payback period</span></div>
+      <div class="stat"><b style="color:${save*3-cost<0?LV[4]:'inherit'}">${save||cost?f(save*3-cost):'—'}</b><span>3-year net gain</span></div></div>
+    <div class="muted" style="font-size:12.5px;margin-top:6px">Calculation: case cost = lost days × daily cost + other direct cost; annual cost = number of cases × case cost × (1 + indirect multiplier); saving = annual cost × expected reduction. Running costs of the actions and productivity effects are not included.</div>`;
+  el.querySelectorAll('[data-roi]').forEach(i=>i.onchange=()=>{const k=i.dataset.roi; R[k]=k==='cur'?i.value.trim():(i.value===''?'':+i.value); persist(); renderRoi();});
 }
 
 function stationCard(s){
@@ -2718,7 +2890,7 @@ const HAZ={
   light:['Inadequate lighting','Eye strain, errors and accident risk']};
 const SEV_FK={pos:7,mmh:7,rep:7,off:7,noise:15,vib:15,heat:15,light:3}, SEV_L5={pos:3,mmh:3,rep:3,off:3,noise:4,vib:4,heat:4,light:2};
 const fkClass=R=>R<20?[1,'Negligible / acceptable','Action not a priority; existing controls are maintained.']:R<70?[2,'Possible (attention indicated)','Should be monitored; measures should be planned.']:R<200?[3,'Substantial','Planned measures should be taken.']:R<400?[4,'High','Measures should be taken soon.']:[4,'Intolerable','Act immediately; stop the work if necessary.'];
-const l5Class=R=>R<=1?[1,'Negligible','Action not a priority.']:R<=6?[1,'Low','Existing controls are maintained.']:R<=12?[2,'Fair','Planned measures should be taken.']:R<=16?[3,'High','Measures should be taken soon.']:[4,'Intolerable','Act immediately; stop the work if necessary.'];
+const l5Class=R=>R<=1?[1,'Negligible','Action not a priority.']:R<=6?[1,'Low','Existing controls are maintained.']:R<=12?[2,'Medium','Planned measures should be taken.']:R<=16?[3,'High','Measures should be taken soon.']:[4,'Intolerable','Act immediately; stop the work if necessary.'];
 const fkO=lv=>[0.2,0.5,1,3,6][lv]??1, l5O=lv=>[1,1,2,4,5][lv]??1;
 const fmtN=v=>String(v).replace('.','.');
 function riskRows(siteId,stIds){
@@ -3131,6 +3303,29 @@ const HELP=[
   <li>Enter the type of measure (elimination, technical, administrative, PPE, training), the person responsible and the due date. Open actions past their due date show in red.</li>
   <li>When the action is in place, press “Re-measure” on the action card: the form opens with the old inputs; correct the changed conditions and save.</li>
   <li>The card shows the before → after difference and the “improved / same / worse” result. The risk map always uses the latest measurement.</li></ol>`},
+ {id:'auto',t:'Finding points automatically',b:`<p>In posture analysis, after picking a frame, the “Find points automatically” button finds the person's joints in the image and places the eight points; the angles and REBA, RULA and OWAS are calculated straight away.</p>
+<ul>
+  <li><b>Privacy:</b> The image never leaves your device. In the web version only the recognition model (MediaPipe Pose, about 10 MB) is downloaded from the internet on first use; in the desktop version the model is built in.</li>
+  <li><b>Side and direction:</b> If “Side assessed” is selected, that side is used; otherwise the side better visible to the camera. The direction the person faces is also set automatically.</li>
+  <li><b>Checking is essential:</b> The model estimates from a two-dimensional image. The hand, wrist and ear are the points that slip most often; if the person faces the camera or part of the body is hidden, the angles will be wrong. Check every point and drag it if needed.</li>
+  <li>Points that are not found stay empty; place them by hand.</li>
+</ul>`},
+ {id:'rot',t:'Body regions and job rotation',b:`<p>The region table on the Workstations page shows how much each task loads six body regions (neck, back-lower back, shoulder-upper arm, elbow-forearm, hand-wrist, leg-knee). Levels come from the task's current records:</p>
+<ul>
+  <li><b>Posture analysis:</b> REBA component scores (trunk, neck, upper arm, forearm, wrist, legs). A region whose angle was not measured stays empty.</li>
+  <li><b>QEC:</b> the method's own levels for back, shoulder-arm, hand-wrist and neck.</li>
+  <li><b>Other forms:</b> the method's result is written to the regions the method assesses (e.g. NIOSH and KIM lifting → back-lower back; OCRA → shoulder, elbow, hand-wrist; ROSA → neck, back, hand-wrist).</li>
+  <li><b>Nordic questionnaire:</b> the share of people reporting complaints in the last 12 months or last 7 days, on a separate row.</li>
+</ul>
+<p><b>Job rotation plan:</b> Select the tasks to include in the rotation. The app looks for an order in which two consecutive tasks do not load the same region at a high or very high level (with up to 8 tasks, every order is tried) and marks problem transitions. It warns if a region is high in all tasks or a task is very high: in that case rotation does not reduce the risk, it only spreads it to more people. Rotation is an administrative measure; improve the task itself first.</p>`},
+ {id:'roi',t:'Cost and payback',b:`<p>The calculation on the Actions page compares the budget for actions with the annual cost of musculoskeletal disorders.</p>
+<ul>
+  <li><b>Case cost</b> = lost work days per case × cost of one work day + other direct cost (treatment, transport, administration).</li>
+  <li><b>Annual cost</b> = cases per year × case cost × (1 + indirect cost multiplier). Indirect costs (replacement staff, overtime, lost productivity and quality) are often larger than direct costs, but they vary a lot between workplaces; leave 0 if unknown.</li>
+  <li><b>Saving</b> = annual cost × expected reduction from the actions; <b>payback period</b> = cost of actions ÷ annual saving.</li>
+  <li>If the cost of actions is left empty, the sum of the estimated costs entered on the actions is used.</li>
+  <li>The figures are your estimates, so the result is not exact; state the assumptions when presenting to management. Improvements verified by re-measurement are a good basis for the expected reduction.</li>
+</ul>`},
  {id:'risk',t:'Risk assessment table (Fine-Kinney / 5×5)',b:`<p>The table on the Workstations page makes each risk area of each workstation a row. Choose Fine-Kinney or the 5×5 matrix with the button at the top.</p><ul>
   <li><b>Suggested values:</b> probability comes from the method’s risk level, frequency from the task duration (120 min or more per shift is “continuous”), severity from the type of hazard.</li>
   <li><b>Adjust:</b> with “Edit”, change the hazard, possible harm, probability, frequency and severity to suit the site. A changed row is marked “manually corrected”; undo with “Back to suggested values”.</li>

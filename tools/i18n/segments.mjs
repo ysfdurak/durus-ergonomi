@@ -9,7 +9,7 @@ const LETTER = /[A-Za-zÇĞİÖŞÜçğıöşüÂâÎîÛû]/;
 const TR_CHAR = /[ÇĞİÖŞÜçğıöşü]/;
 const ATTRS = new Set(['title', 'placeholder', 'aria-label', 'alt']);
 // Küçük harfli ve Türkçe karakter içermediği için kod sanılabilecek ama ekranda görünen birim sözcükleri.
-const INCLUDE = new Set(['adet', 'dakika', 'metre', 'saat', 'dakikada', 'saatte', 'erkek', 'kez', 'saniye', 'uzunluk', 'yatay', 'dikey']);
+const INCLUDE = new Set(['adet', 'dakika', 'metre', 'saat', 'dakikada', 'saatte', 'erkek', 'kez', 'saniye', 'uzunluk', 'yatay', 'dikey', ' ay']);
 
 // İşaretlemeyi çıkarıp kalan görünür metni verir (yalnızca karar vermek için kullanılır).
 export const visibleText = (s) => s.replace(/<[^>]*>/g, ' ').replace(/&[a-z#0-9]+;/gi, ' ');

@@ -14,8 +14,9 @@ app.setPath('userData', path.join(app.getPath('appData'), 'Durus'));
 const AYAR = () => path.join(app.getPath('userData'), 'ayar.json');
 const SITE = 'https://durus.ysfdurak.com/';
 
-// CDN adresi (başlangıcı) → uygulama içindeki dosya
+// CDN adresi (başlangıcı) → uygulama içindeki dosya; "/" ile bitenler klasördür, adresin kalanı eklenir
 const YEREL = [
+  ['https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/', 'lib/pose/'],
   ['https://cdnjs.cloudflare.com/ajax/libs/exceljs/', 'lib/exceljs.min.js'],
   ['https://cdn.jsdelivr.net/npm/pdfmake@0.2.7/build/pdfmake.min.js', 'lib/pdfmake.min.js'],
   ['https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js', 'lib/pdfmake.min.js'],
@@ -87,13 +88,16 @@ async function baslat() {
     if (p.endsWith('/')) p += 'index.html';
     const dosya = path.normalize(path.join(WEB, p));
     if (!dosya.startsWith(WEB) || !fs.existsSync(dosya)) return new Response('Bulunamadı', { status: 404 });
+    if (dosya.endsWith('.wasm')) return new Response(fs.readFileSync(dosya), { headers: { 'content-type': 'application/wasm' } });
     return net.fetch(pathToFileURL(dosya).toString());
   });
 
   // CDN isteklerini yerel kopyalara yönlendir (internet olmadan da PDF/Excel ve yazı tipi çalışır)
   session.defaultSession.webRequest.onBeforeRequest({ urls: ['https://*/*'] }, (d, cb) => {
     const m = YEREL.find(([on]) => d.url.startsWith(on));
-    cb(m ? { redirectURL: 'app://durus/' + m[1] } : {});
+    if (!m) return cb({});
+    const hedef = m[1].endsWith('/') ? m[1] + d.url.slice(m[0].length).split(/[?#]/)[0] : m[1];
+    cb({ redirectURL: 'app://durus/' + hedef });
   });
 
   let { dil } = ayarOku();

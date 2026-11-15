@@ -17,6 +17,12 @@ kopya(path.join(NM, 'exceljs/dist/exceljs.min.js'), path.join(WEB, 'lib/exceljs.
 kopya(path.join(NM, 'pdfmake/build/pdfmake.min.js'), path.join(WEB, 'lib/pdfmake.min.js'));
 kopya(path.join(NM, 'pdfmake/build/vfs_fonts.js'), path.join(WEB, 'lib/vfs_fonts.js'));
 
+// Otomatik nokta bulma (MediaPipe Pose): web sürümü bu dosyaları jsDelivr'den indirir; masaüstünde yerelden gelir.
+// En ağır model (heavy) kullanılmadığı için kopyalanmaz.
+for (const f of fs.readdirSync(path.join(NM, '@mediapipe/pose'))) {
+  if (/\.(js|wasm|data|binarypb|tflite)$/.test(f) && !f.includes('heavy')) kopya(path.join(NM, '@mediapipe/pose', f), path.join(WEB, 'lib/pose', f));
+}
+
 // IBM Plex yazı tipleri: @fontsource'un CSS'inden yalnız latin ve latin-ext blokları (Türkçe harfler latin-ext'te)
 const css = [];
 for (const [paket, kalinliklar] of [['ibm-plex-sans', [400, 500, 600, 700]], ['ibm-plex-mono', [500]]]) {

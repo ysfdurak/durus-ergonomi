@@ -39,6 +39,27 @@ Yeni bir yöntem eklemek = `FORMS`'a bir kayıt + `ORD`/`FG`/`AREA_OF`/`LIB` sat
 
 **EAWS neden yok?** EAWS'ın puan tabloları lisanslıdır (MTM/IAD); izinsiz kopyalanamaz. Kılavuzda bu açıklanıyor.
 
+### Benzer araçlardan alınan özellikler
+
+Kasım 2026'da ticari ve akademik ergonomi yazılımlarına bakılarak Duruş'a uygun olan özellikler eklendi:
+
+| Özellik | Esin kaynağı | Duruş'ta nerede | Kodda |
+|---|---|---|---|
+| Eklemleri görüntüden otomatik bulma | TuMeke, Ergoniza Intelligent, ErgoPlus 360, VelocityEHS (yapay zekâ ile poz tahmini) | Duruş analizi → “Noktaları otomatik bul” | `loadPose`, `detectPose`, `autoPoints` |
+| Vücut bölgesi profili | ErgoPlus Job Screen (her bölge için ayrı risk), QEC | İstasyonlar → Vücut bölgeleri | `regionLv`, `taskRegions`, `renderBody`, `bodySVG` |
+| İş rotasyonu planı | VelocityEHS Job Rotation Tool, ErgoPlus Job Rotation Evaluator | İstasyonlar → İş rotasyonu planı | `rotCost`, `bestOrder`, `renderRot` |
+| Maliyet ve geri ödeme | VelocityEHS ROI hesaplayıcı | Önlemler → Maliyet ve geri ödeme; önlemde “Tahmini maliyet” | `ROI_F`, `renderRoi` |
+
+Duruş'ta zaten olanlar: önce-sonra karşılaştırması ve doğrulanmış iyileşme (VelocityEHS Risk Reduction Index'e benzer), saha turu ve hızlı tarama (ErgoPlus Quick Screen'e benzer), vardiya içi riskli süre payı (“time at risk”), istasyon-görev yapısı ve Excel/PDF raporlar.
+
+Bilerek alınmayanlar: çok kullanıcılı bulut veritabanı ve kullanıcı girişi (sunucu, yani VPS gerektirir), 3B hareket yakalama ve giyilebilir sensörler (ek donanım ister), EAWS (lisanslı).
+
+**Otomatik bulma nasıl çalışıyor?** MediaPipe Pose (Google, Apache 2.0 lisanslı) görüntüde 33 vücut noktası tahmin eder. `detectPose` bunlardan Duruş'un 8 noktasını seçer: kulak, omuz, dirsek, bilek, işaret ve serçe parmak köklerinin ortası (el), kalça, diz, ayak bileği. Taraf, “Değerlendirilen taraf” seçiliyse o taraf, değilse görünürlük puanı yüksek olan taraftır; yön, burnun kulağa göre konumundan bulunur. Görünürlüğü 0,3'ün altındaki noktalar konmaz. Model web sürümünde jsDelivr'den ilk kullanımda iner (yaklaşık 10 MB); masaüstünde `desktop/web/lib/pose/` içinde gelir.
+
+**Bölge düzeyleri:** Duruş analizinde REBA bileşen skorları doğrudan düzeye çevrilir (gövde 1–5 → en çok 4, boyun 1–3, üst kol 1–6 → en çok 4, ön kol 1–2, bilek 1–3, bacak 1–4). Diğer formlarda yöntemin genel sonucu `REG_OF` tablosundaki bölgelere yazılır. Bu bir özet görünümdür; yöntemin kendi sonucu her zaman önceliklidir.
+
+**Rotasyon algoritması:** İki görev arasındaki ceza, ikisinde de yüksek (3+) olan her bölge için büyük, diğer bölgelerdeki ortak yük için küçüktür. Sıra döngüsel kabul edilir. 8 göreve kadar tüm sıralar denenir; daha fazlasında her adımda en düşük cezalı görev seçilir.
+
 ## 3. İki dil nasıl çalışıyor?
 
 Uygulama Türkçe yazılır; İngilizce sürüm otomatik üretilir. Kodu iki kez yazmazsın.
@@ -72,7 +93,7 @@ Cloudflare Workers statik dosya olarak depo kökünü yayınlar (`wrangler.jsonc
 
 Electron ile yazılmış ince bir kabuk; içinde web sürümünün aynısı çalışır.
 
-- `hazirla.mjs`: üretilmiş `index.html`, `en/index.html` ve kütüphaneleri (ExcelJS, pdfmake, IBM Plex yazı tipleri) `desktop/web/` klasörüne kopyalar.
+- `hazirla.mjs`: üretilmiş `index.html`, `en/index.html` ve kütüphaneleri (ExcelJS, pdfmake, MediaPipe Pose, IBM Plex yazı tipleri) `desktop/web/` klasörüne kopyalar.
 - `main.js`:
   - Sayfaları `app://durus/` adresinden açar. Tek adres kökü olduğu için Türkçe ve İngilizce aynı kayıtları paylaşır.
   - Web sürümünün CDN'e giden isteklerini (`YEREL` tablosu) uygulama içindeki kopyalara yönlendirir. Böylece kaynak dosyada masaüstüne özel bir değişiklik yok ve internet gerekmiyor.
