@@ -327,6 +327,36 @@ table.rmap td{padding:6px 8px;border-radius:8px;background:#f6f7f5;vertical-alig
 textarea{width:100%;min-height:140px;border:1px solid var(--line);border-radius:10px;padding:8px;font:12px "IBM Plex Mono",monospace}
 #toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#1b1f1d;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:30;max-width:90vw}
 #toast.on{opacity:1}
+
+/* ===== Kullanılabilirlik iyileştirmeleri (Kas 2026) ===== */
+:root{--hh:108px}
+header{position:sticky;top:0;z-index:40;background:var(--bg);padding-bottom:6px;transition:box-shadow .2s}
+header.scrolled{box-shadow:0 4px 14px rgba(0,0,0,.07)}
+[id],section.view{scroll-margin-top:calc(var(--hh) + 10px)}
+.stickyCol,.stickyRes{top:calc(var(--hh) + 10px)}
+:focus-visible{outline:3px solid #0f6b5f66;outline-offset:2px}
+select{border:1px solid var(--line);border-radius:10px;padding:7px 9px;background:#fff}
+.heroCta{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.heroCta button{background:#fff;color:var(--acc);border:0;font-weight:700;padding:10px 16px}
+.heroCta button.alt{background:transparent;color:#fff;border:1px solid #ffffff88;font-weight:600}
+.hint .cue{display:block;font-size:12.5px;color:#7a5b10;margin-top:2px}
+.hint .toRes{margin-left:8px}
+.datanote{display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted);background:#fff;border:1px dashed var(--line);border-radius:12px;padding:10px 12px}
+.datanote b{color:var(--ink)}
+#fMini{position:fixed;left:12px;right:12px;bottom:12px;z-index:45;border:0;border-radius:14px;color:#fff;padding:10px 14px;display:none;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,.2);font-weight:600;text-align:left}
+#fMini.on{display:flex}
+select.need{border-color:#dc2626;box-shadow:0 0 0 3px #dc262633}
+#fMini .n{font-size:22px;font-weight:700;margin-right:8px}
+.mOnly{display:none}
+@media (max-width:900px){.mOnly{display:inline-flex}}
+@media (max-width:600px){
+  header{padding-top:10px}
+  header p{display:none}
+  .logo{width:32px;height:32px;border-radius:10px}
+  h1{font-size:19px}
+  nav{margin-top:8px;-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(to right,#000 calc(100% - 28px),transparent)}
+}
+@media (pointer:coarse){button.small,.linkbtn{min-height:40px}.linkbtn{padding:0 4px}}
 </style>
 </head>
 <body>
@@ -340,10 +370,10 @@ textarea{width:100%;min-height:140px;border:1px solid var(--line);border-radius:
   <nav id="nav">
     <button data-go="home">Başlangıç</button>
     <button data-go="guide">Rehber</button>
-    <button data-go="field">Saha</button>
-    <button data-go="stations">İstasyonlar</button>
     <button data-go="posture">Duruş analizi</button>
     <button data-go="tasks">Formlar</button>
+    <button data-go="field">Saha</button>
+    <button data-go="stations">İstasyonlar</button>
     <button data-go="actions">Önlemler</button>
     <button data-go="help">Kılavuz</button>
   </nav>
@@ -355,6 +385,7 @@ textarea{width:100%;min-height:140px;border:1px solid var(--line);border-radius:
   <div class="card hero">
     <h2>Bir iş istasyonunu ergonomik olarak değerlendir</h2>
     <p>Sahada en yaygın kullanılan 10 yöntem tek yerde: REBA, RULA, OWAS, NIOSH, KIM kaldırma ve itme-çekme (BAuA), Liberty Mutual (Snook), OCRA, ROSA ve Nordik anketi. Daha özel durumlar için ileri düzey yöntemler de hazır. Her sonuçla birlikte neyin riski artırdığını ve ne yapılabileceğini görürsün.</p>
+  <div class="heroCta"><button data-demo>▶ 1 dakikada örnekle dene</button><button class="alt" data-go="guide">Hangi yöntemi seçeceğimi göster</button></div>
   </div>
   <div class="actions">
     <button class="action main" data-go="guide"><b>Nereden başlayacağımı bilmiyorum</b><span>Birkaç evet/hayır sorusuyla riskli alanları bul; her alan için tek bir önerilen yöntem ve nedenini gör.</span><em>Rehbere git →</em></button>
@@ -367,6 +398,7 @@ textarea{width:100%;min-height:140px;border:1px solid var(--line);border-radius:
     <div id="homeStats"></div>
     <div class="mini" id="homeRecent" style="margin-top:10px"></div>
   </div>
+  <div class="datanote"><span>🔒 <b>Kayıtların yalnızca bu tarayıcıda saklanır</b>; hiçbir sunucuya gönderilmez. Tarayıcı verisi silinirse kaybolur, ara sıra yedek al.</span><button class="small" data-backup>Yedeği indir</button></div>
 </section>
 
 <!-- ============ REHBER ============ -->
@@ -580,7 +612,7 @@ textarea{width:100%;min-height:140px;border:1px solid var(--line);border-radius:
     <p class="about"><b>Excel raporu</b> özet, sonuçlar ve her yöntem için ayrı sayfa içerir; bir görevin kendi raporunu görev başlığından, tek bir kaydın değerlendirme formunu kayıt kartından indirebilirsin. CSV uzun formattadır (her satır bir yöntem sonucu), Excel veya Power BI pivotuna doğrudan girer. JSON tam yedektir.</p>
     <div class="row">
       <button class="primary xl" id="xlAll">Excel raporu indir</button><span class="muted xl-off">Excel indirme bu görünümde kullanılamıyor; CSV kopyala’yı kullanabilirsin.</span>
-      <button id="csvBtn">CSV kopyala</button><button id="jsonBtn">JSON kopyala</button><button id="importBtn">JSON içe aktar</button><button id="wipeBtn" class="ghost danger">Tümünü sil</button>
+      <button id="csvBtn">CSV kopyala</button><button id="jsonDl" data-backup>Yedeği indir (.json)</button><button id="jsonBtn">JSON kopyala</button><button id="importBtn">Yedekten / JSON’dan içe aktar</button><input type="file" id="jsonFile" accept=".json,application/json" hidden><button id="wipeBtn" class="ghost danger">Tümünü sil</button>
     </div>
     <div id="ioBox" hidden style="margin-top:10px">
       <div class="muted" id="ioLabel" style="margin-bottom:6px"></div>
@@ -605,6 +637,7 @@ textarea{width:100%;min-height:140px;border:1px solid var(--line);border-radius:
 <div class="dlg" id="editDlg" hidden><div class="dlgin" id="editBody" role="dialog" aria-modal="true" style="max-width:580px"></div></div>
 <div class="dlg" id="measDlg" hidden><div class="dlgin" id="measBody" role="dialog" aria-modal="true" aria-label="Mesafe ölç" style="max-width:960px;width:100%"></div></div>
 <div class="dlg" id="cardDlg" hidden><div class="dlgin" id="cardBody" role="dialog" aria-modal="true" aria-label="Yöntem kartı"></div></div>
+<button id="fMini" aria-label="Sonuca git"></button>
 <div id="toast"></div>
 
 <script>
@@ -625,6 +658,7 @@ const PTS=[
   {k:'wr',n:'El bileği',c:'#eab308'},{k:'hd',n:'El (parmak kökü)',c:'#f97316'},
   {k:'hip',n:'Kalça',c:'#ef4444'},{k:'kn',n:'Diz',c:'#ec4899'},{k:'an',n:'Ayak bileği',c:'#14b8a6'}];
 const PC=Object.fromEntries(PTS.map(p=>[p.k,p]));
+const PCUE={ear:'Kulak deliği. Baş dönükse kulağın tahmini yeri; boyun açısı buradan ölçülür.',sh:'Omuz ekleminin merkezi: kolun gövdeye bağlandığı yuvarlak nokta.',el:'Dirsek ekleminin ortası (kol bükülünce oluşan köşe).',wr:'El bileği ekleminin ortası, elin başladığı yer.',hd:'Orta parmağın kökü (avucun bittiği yer); bilek açısı için.',hip:'Kalça eklemi: uyluğun dış-üst ucundaki çıkıntı, kemer hizasının biraz altı.',kn:'Dizin yan orta noktası.',an:'Ayak bileğinin dış topuzu.'};
 const SEGS=[['ear','sh'],['sh','el'],['el','wr'],['wr','hd'],['sh','hip'],['hip','kn'],['kn','an']];
 const ANG=[
   {k:'trunk',n:'Gövde',h:'dikeye göre; + öne, − geriye',at:'hip'},
@@ -1553,12 +1587,21 @@ const typeName=t=>t==='posture'?'Duruş':FORMS[t]?.short||t;
 /* =====================================================================
    5) GEZİNME
    ===================================================================== */
-const VIEWS=['home','guide','field','stations','posture','tasks','actions','help'];
+let fResVisible=true;
+function updMini(){const m=document.getElementById('fMini'), fr=document.getElementById('fResult'); if(!m||!fr)return;
+  const show=typeof view!=='undefined'&&view==='tasks'&&innerWidth<900&&!fResVisible&&fr.textContent.trim();
+  m.classList.toggle('on',!!show); if(!show)return;
+  const n=fr.querySelector('.num'), l=fr.querySelector('.lvl');
+  m.style.background=fr.style.background||'var(--acc)';
+  m.innerHTML='<span><span class="n">'+(n?n.textContent:'')+'</span>'+(l?l.textContent:'')+'</span><span>Sonuç ↑</span>';}
+const VIEWS=['home','guide','posture','tasks','field','stations','actions','help'];
 let view='home';
 function go(v,opt){
   if(v==='wizard'||v==='library')v='guide'; if(v==='records')v='stations'; if(!VIEWS.includes(v))v='home'; view=v;
   $$('[data-view]').forEach(s=>s.hidden=s.dataset.view!==v);
   $$('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.go===v));
+  const nb=$('#nav button.on'); if(nb){const n=$('#nav'); n.scrollTo({left:nb.offsetLeft-n.clientWidth/2+nb.offsetWidth/2,behavior:'smooth'});}
+  updMini();
   if(location.hash.slice(1)!==v){try{history.replaceState(null,'','#'+v);}catch(e){location.hash=v;}}
   if(v==='home')renderHome(); if(v==='guide')renderGuide(); if(v==='stations')renderStations(); if(v==='actions')renderActions(); if(v==='field')renderField(); if(v==='help')renderHelp(); if(v==='posture'||v==='tasks')renderAllCtx();
   if(v==='tasks'){ if(opt)setFtab(opt); else renderForm(); }
@@ -1840,7 +1883,8 @@ cv.addEventListener('pointerup',endDrag); cv.addEventListener('pointercancel',en
 function updateAll(){
   $$('#facingSeg button').forEach(b=>b.classList.toggle('on',+b.dataset.f===cur.facing));
   const nk=activeKey||nextMissing();
-  $('#nextHint').innerHTML=!imgEl?'Görüntüsüz analiz: açıları sağdaki tabloya yaz (açıölçer, gözlem veya başka bir araçtan).':nk?('Şimdi <b style="color:'+PC[nk].c+'">'+PC[nk].n+'</b> noktasına dokun.'):'Tüm noktalar yerleşti. Gerekirse sürükleyerek düzelt.';
+  $('#nextHint').innerHTML=!imgEl?'Görüntüsüz analiz: açıları sağdaki tabloya yaz (açıölçer, gözlem veya başka bir araçtan).':nk?('Şimdi <b style="color:'+PC[nk].c+'">'+PC[nk].n+'</b> noktasına dokun.<span class="cue">'+(PCUE[nk]||'')+'</span>'):'Tüm noktalar yerleşti. Gerekirse sürükleyerek düzelt.<button class="small toRes mOnly" id="toRes">Sonuçlara git ↓</button>';
+  const tr=$('#toRes'); if(tr)tr.onclick=()=>$('#strip').scrollIntoView({behavior:'smooth',block:'start'});
   $('#chips').hidden=!imgEl;
   $('#chips').innerHTML=PTS.map(p=>'<button class="chip'+(cur.points[p.k]?' done':'')+(activeKey===p.k?' sel':'')+'" data-k="'+p.k+'"><i style="background:'+p.c+'"></i>'+p.n+(cur.points[p.k]?' ✓':'')+'</button>').join('');
   $$('#chips .chip').forEach(b=>b.onclick=()=>{activeKey=activeKey===b.dataset.k?null:b.dataset.k; updateAll();});
@@ -1913,7 +1957,7 @@ function buildFtabs(){
   const core=`<div class="fgroup"><span>Duruş (video)</span><div class="fchips"><button data-go="posture">REBA · RULA · OWAS → Duruş analizi</button></div></div>`+FG.map(g=>{const ORD=['niosh','kim19','kimpp','lmm','ocra','rosa','nmq'], ks=Object.keys(FORMS).filter(k=>FORMS[k].g===g&&CORE.has(k)&&k!=='cli').sort((x,y)=>ORD.indexOf(x)-ORD.indexOf(y)); return ks.length?`<div class="fgroup"><span>${g}</span><div class="fchips">${ks.map(chip).join('')}</div></div>`:'';}).join('');
   const adv=S.adv?`<div class="fadv"><b>İleri düzey yöntemler</b>`+FG.map(g=>{const ks=advKs.filter(k=>FORMS[k].g===g).sort(oldLast); return ks.length?`<div class="fgroup"><span>${g}</span><div class="fchips">${ks.map(chip).join('')}</div></div>`:'';}).join('')+`</div>`:'';
   $('#ftabs').innerHTML=core+adv+`<div class="row"><button class="small ghost" id="advT">${S.adv?'İleri düzey yöntemleri gizle':'İleri düzey yöntemleri göster ('+advKs.length+')'}</button><span class="muted">Temel set: sahada en yaygın kullanılan yöntemler.</span></div>`;
-  $$('#ftabs [data-ftab]').forEach(b=>b.onclick=()=>setFtab(b.dataset.ftab));
+  $$('#ftabs [data-ftab]').forEach(b=>b.onclick=()=>{setFtab(b.dataset.ftab); if(innerWidth<900)setTimeout(()=>$('#fIntro').scrollIntoView({behavior:'smooth',block:'start'}),30);});
   $('#advT').onclick=()=>{S.adv=!S.adv; persist(); buildFtabs(); renderForm();};
   $$('#ftabs button[data-ftab]').forEach(b=>b.classList.toggle('on',b.dataset.ftab===S.ftab||(S.ftab==='cli'&&b.dataset.ftab==='niosh')));
 }
@@ -2027,8 +2071,17 @@ $('#csvBtn').onclick=()=>{
   });
   copyText([hd.join(';'),...rows].join('\n'),'CSV');
 };
-$('#jsonBtn').onclick=()=>{if(!S.records.length){toast('Kopyalanacak kayıt yok.');return;} copyText(JSON.stringify({app:'durus',v:4,records:S.records,sites:S.sites,stations:S.stations,tasks:S.tasks,actions:S.actions,riskOv:S.riskOv,field:S.field.map(c=>({...c,photos:c.photos.map(p=>({id:p.id,th:p.th,t:p.t,vname:p.vname}))}))}),'JSON');};
-$('#importBtn').onclick=()=>{$('#ioBox').hidden=false; $('#ioLoad').hidden=false; $('#ioLabel').textContent='Daha önce kopyaladığın JSON’u buraya yapıştır. Kayıtlar mevcutlara eklenir.'; $('#ioText').value=''; $('#ioText').focus();};
+function backupJSON(){return JSON.stringify({app:'durus',v:4,records:S.records,sites:S.sites,stations:S.stations,tasks:S.tasks,actions:S.actions,riskOv:S.riskOv,field:S.field.map(c=>({...c,photos:c.photos.map(p=>({id:p.id,th:p.th,t:p.t,vname:p.vname}))}))});}
+$('#jsonBtn').onclick=()=>{if(!S.records.length){toast('Kopyalanacak kayıt yok.');return;} copyText(backupJSON(),'JSON');};
+async function downloadBackup(){
+  if(!S.records.length&&!S.field.length&&!S.stations.length){toast('Yedeklenecek kayıt yok.');return;}
+  const d=new Date(), name='durus-yedek-'+d.toISOString().slice(0,10)+'.json';
+  try{await DL.save({filename:name,data:new Blob([backupJSON()],{type:'application/json'})}); toast('Yedek indirildi: '+name+'. Başka cihazda “İçe aktar” ile yükleyebilirsin.');}
+  catch(e){toast('İndirme başarısız; “JSON kopyala” ile yedek alabilirsin.');}
+}
+document.addEventListener('click',e=>{if(e.target.closest('[data-backup]')){e.preventDefault(); downloadBackup();}});
+$('#jsonFile').onchange=async e=>{const f=e.target.files[0]; if(!f)return; $('#ioText').value=await f.text(); e.target.value=''; $('#ioLoad').click();};
+$('#importBtn').onclick=()=>{$('#ioBox').hidden=false; $('#ioLoad').hidden=false; $('#ioLabel').innerHTML='İndirdiğin yedek dosyasını seç <button class="small" id="ioFile">Dosya seç…</button> ya da kopyaladığın JSON’u aşağıya yapıştır. Kayıtlar mevcutlara eklenir, aynı kayıt iki kez eklenmez.'; $('#ioFile').onclick=()=>$('#jsonFile').click(); $('#ioText').value=''; $('#ioText').focus();};
 $('#ioClose').onclick=()=>$('#ioBox').hidden=true;
 $('#ioLoad').onclick=()=>{
   try{const d=JSON.parse($('#ioText').value); const ids=new Set(S.records.map(i=>i.id)); let k=0;
@@ -2339,7 +2392,16 @@ function renderCtx(el){
     S.ctx.tk=v; persist();};
 }
 function renderAllCtx(){['#pCtx','#fCtx','#sCtx'].forEach(s=>{const e=$(s); if(e)renderCtx(e);});}
-function ctxTask(){const t=tkOf(S.ctx.tk); if(!t){toast('Kaydetmek için istasyon ve görevi seç (gerekirse “Yeni istasyon” ile oluştur).'); return null;} return t;}
+function ctxTask(){let t=tkOf(S.ctx.tk); if(t)return t;
+  // İlk kullanım: hiç istasyon yoksa kaydı kaybettirmemek için örnek istasyon ve görev aç.
+  if(!S.stations.some(x=>x.site===curSite())){
+    const st={id:uid(),site:curSite(),name:'İstasyon 1',dept:'',workers:'',shiftH:8,shifts:1,women:false,desc:'',created:new Date().toISOString()}; S.stations.push(st);
+    t={id:uid(),st:st.id,name:'Ana görev',min:'',desc:''}; S.tasks.push(t); S.ctx.st=st.id; S.ctx.tk=t.id; persist(); renderAllCtx();
+    setTimeout(()=>toast('Kayıt “İstasyon 1 › Ana görev” altına alındı. Adlarını İstasyonlar sayfasından değiştirebilirsin.'),1500); return t;}
+  toast('Kaydetmek için istasyon ve görevi seç (gerekirse “Yeni istasyon” ile oluştur).');
+  $$('.ctxpick select').forEach(e=>{if(!e.value&&!e.disabled){e.classList.add('need'); setTimeout(()=>e.classList.remove('need'),2600);}});
+  const vis=[...$$('.ctxpick')].find(e=>e.offsetParent); if(vis)vis.scrollIntoView({behavior:'smooth',block:'center'});
+  return null;}
 function setCtxFromRec(r){const t=tkOf(r.taskId); if(t){S.ctx.st=t.st; S.ctx.tk=t.id; S.ctx.site=stOf(t.st).site;} renderAllCtx();}
 
 /* ---------- önce-sonra ---------- */
@@ -2980,7 +3042,7 @@ const HELP=[
   <li>İlk PDF/Excel’de kütüphane internetten bir kez yüklenir; bağlantı yoksa indirme çalışmaz.</li></ul>`},
  {id:'data',t:'Veriler nerede, nasıl yedeklenir?',b:`<ul>
   <li>Tüm kayıtlar bu cihazdaki tarayıcıda saklanır; sunucuya gönderilmez. Tarayıcı verilerini silersen kayıtlar da silinir.</li>
-  <li><b>Yedek:</b> İstasyonlar sayfasındaki “JSON kopyala” tam yedektir; bir dosyaya yapıştırıp sakla. Başka cihazda “JSON içe aktar” ile birleştir (aynı kayıt iki kez eklenmez).</li>
+  <li><b>Yedek:</b> Başlangıç ya da İstasyonlar sayfasındaki “Yedeği indir” tüm kayıtları bir .json dosyasına indirir. Başka cihazda İstasyonlar → “İçe aktar” ile bu dosyayı seç (aynı kayıt iki kez eklenmez). “JSON kopyala” da aynı yedeği panoya alır.</li>
   <li>Saha fotoğraflarının tam boyları yedeğe girmez, yalnız küçük resimleri girer.</li>
   <li>Bellek dolarsa uygulama tam kareleri bırakıp küçük resimleri saklar ve uyarır. Eski kayıtları Excel’e aldıktan sonra temizleyebilirsin.</li>
   <li>Birden fazla kişinin aynı verilerle çalışması veya merkezî yedek gerekiyorsa uygulamanın bir sunucuda çalışması gerekir.</li></ul>`},
@@ -3011,9 +3073,24 @@ $('#xlSite').onclick=()=>exportSite();
 function exportSite(){const site=curSite(), sts=S.stations.filter(s=>s.site===site), recs=sts.flatMap(s=>recsOfStation(s.id)).sort((a,b)=>(a.task||'').localeCompare(b.task||'','tr')||a.created.localeCompare(b.created)); if(!recs.length){toast('Bu işyerinde kayıt yok.');return;} const sn=S.sites.find(x=>x.id===site).name;
   withExcel(async wb=>{addSummarySheet(wb,recs,sn+' · ergonomi değerlendirmesi'); addRiskSheet(wb,site,null); addActionsSheet(wb,site,null); addResultsSheet(wb,recs); [...new Set(recs.map(r=>r.type))].forEach(t=>addTypeSheet(wb,t,recs.filter(r=>r.type===t))); await saveWorkbook(wb,`Durus_${slug(sn)}_${today()}.xlsx`);});}
 load(); ensureStructure(); persist(); S.guide=S.guide||{ans:{},path:{}}; S.adv=!!S.adv; if(!S.adv&&!CORE.has(S.ftab))S.ftab='niosh'; buildFtabs(); $('#fps').value=S.fps; refreshTaskList();
+/* ===== Kullanılabilirlik iyileştirmeleri: yardımcılar ===== */
+(function(){
+  const hdr=document.querySelector('header');
+  const setH=()=>document.documentElement.style.setProperty('--hh',hdr.offsetHeight+'px');
+  setH(); try{new ResizeObserver(setH).observe(hdr);}catch(e){addEventListener('resize',setH);}
+  addEventListener('scroll',()=>hdr.classList.toggle('scrolled',scrollY>4),{passive:true});
+  document.addEventListener('click',e=>{if(e.target.closest('[data-demo]')){e.preventDefault(); go('posture'); setTimeout(()=>{const b=$('#sampleBtn'); if(b)b.click();},60);}});
+  const fr=$('#fResult'); if(fr){
+    try{new MutationObserver(()=>updMini()).observe(fr,{childList:true,subtree:true,characterData:true});}catch(e){}
+    try{new IntersectionObserver(es=>{fResVisible=es[0].isIntersecting; updMini();}).observe(fr);}catch(e){}
+  }
+  $('#fMini').onclick=()=>$('#fResult').scrollIntoView({behavior:'smooth',block:'center'});
+  addEventListener('resize',()=>updMini());
+})();
 window.__durus={postureCompute,FORMS,ADJ0,migrateAdj,S};
 go(location.hash.slice(1)||'home');
 })();
+
 </script>
 </body>
 </html>
