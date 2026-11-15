@@ -1,0 +1,3 @@
+{ "name": "durus-tools", "private": true, "type": "module",
+  "scripts": { "extract": "node i18n/extract.mjs", "build": "node i18n/build.mjs" },
+  "dependencies": { "acorn": "^8.12.1", "parse5": "^7.1.2" } }

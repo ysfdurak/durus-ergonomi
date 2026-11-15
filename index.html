@@ -6,6 +6,9 @@
 <title>Duruş — Ergonomi Analiz Merkezi</title>
 <meta name="description" content="Videodan ve gözlemden ergonomi risk analizi: REBA, RULA, NIOSH kaldırma denklemi ve diğer yöntemler tek yerde, Excel ve PDF raporla. Kurulum ve hesap yok.">
 <link rel="canonical" href="https://durus.ysfdurak.com/">
+<link rel="alternate" hreflang="tr" href="https://durus.ysfdurak.com/">
+<link rel="alternate" hreflang="en" href="https://durus.ysfdurak.com/en/">
+<link rel="alternate" hreflang="x-default" href="https://durus.ysfdurak.com/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Duruş — Ergonomi Analiz Merkezi">
 <meta property="og:description" content="Videodan ve gözlemden ergonomi risk analizi, yöntem rehberliği ve Excel/PDF rapor. Tarayıcıda çalışır.">
@@ -353,6 +356,8 @@ details.which{margin-top:8px;font-size:13.5px;border:1px solid var(--line);borde
 details.which summary{cursor:pointer;font-weight:600}
 details.which ul{margin:6px 0 2px;padding-left:18px}
 footer.disc{max-width:1280px;margin:0 auto;padding:0 18px 90px;color:var(--muted);font-size:12.5px}
+.langsw{font-weight:600;font-size:13px;text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:5px 12px;background:#fff;color:var(--ink)}
+.langsw:hover{border-color:#c9cec8}
 select.need{border-color:#dc2626;box-shadow:0 0 0 3px #dc262633}
 #fMini .n{font-size:22px;font-weight:700;margin-right:8px}
 .mOnly{display:none}
@@ -374,6 +379,7 @@ select.need{border-color:#dc2626;box-shadow:0 0 0 3px #dc262633}
       <div class="logo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><circle cx="13" cy="4" r="2"/><path d="M12 7l-3 7 3 2v5M9 14l-3 4M12 9l5 2"/></svg></div>
       <div><h1>Duruş</h1><p>Ergonomi analiz merkezi</p></div>
     </div>
+    <a class="langsw" href="en/" hreflang="en" lang="en" title="English version">English</a>
   </div>
   <nav id="nav">
     <button data-go="home">Başlangıç</button>
@@ -392,14 +398,14 @@ select.need{border-color:#dc2626;box-shadow:0 0 0 3px #dc262633}
 <section class="view" data-view="home">
   <div class="card hero">
     <h2>Bir iş istasyonunu ergonomik olarak değerlendir</h2>
-    <p>Sahada en yaygın kullanılan 10 yöntem tek yerde: REBA, RULA, OWAS, NIOSH, KIM kaldırma ve itme-çekme (BAuA), Liberty Mutual (Snook), OCRA, ROSA ve Nordik anketi. Daha özel durumlar için ileri düzey yöntemler de hazır. Her sonuçla birlikte neyin riski artırdığını ve ne yapılabileceğini görürsün.</p>
+    <p>Sahada en yaygın kullanılan 11 yöntem tek yerde: REBA, RULA, OWAS, QEC, NIOSH, KIM kaldırma ve itme-çekme (BAuA), Liberty Mutual (Snook), OCRA, ROSA ve Nordik anketi. Daha özel durumlar için ileri düzey yöntemler de hazır. Her sonuçla birlikte neyin riski artırdığını ve ne yapılabileceğini görürsün.</p>
   <div class="heroCta"><button data-demo>▶ 1 dakikada örnekle dene</button><button class="alt" data-go="guide">Hangi yöntemi seçeceğimi göster</button></div>
   </div>
   <div class="actions">
     <button class="action main" data-go="guide"><b>Nereden başlayacağımı bilmiyorum</b><span>Birkaç evet/hayır sorusuyla riskli alanları bul; her alan için tek bir önerilen yöntem ve nedenini gör.</span><em>Rehbere git →</em></button>
     <button class="action" data-go="posture"><b>Videom veya fotoğrafım var</b><span>Kareyi seç, eklemleri işaretle. REBA, RULA ve OWAS birlikte hesaplanır.</span><em>Duruş analizine git →</em></button>
     <button class="action" data-go="field"><b>Sahadayım, analizi sonra yapacağım</b><span>Fotoğraf çek, video karesi al, tehlikeleri işaretle. Masaya dönünce listeden analiz et.</span><em>Saha moduna git →</em></button>
-    <button class="action" data-go="tasks"><b>Ölçüm, gözlem veya anketim var</b><span>NIOSH, KIM kaldırma ve itme-çekme (BAuA), Liberty Mutual, OCRA, ROSA ve Nordik anketi formları.</span><em>Formlara git →</em></button>
+    <button class="action" data-go="tasks"><b>Ölçüm, gözlem veya anketim var</b><span>QEC, NIOSH, KIM kaldırma ve itme-çekme (BAuA), Liberty Mutual, OCRA, ROSA ve Nordik anketi formları.</span><em>Formlara git →</em></button>
   </div>
   <div class="card">
     <h2>Son kayıtlar</h2>
@@ -418,7 +424,7 @@ select.need{border-color:#dc2626;box-shadow:0 0 0 3px #dc262633}
   </div>
   <div class="card"><h2><span class="step">1</span> Anahtar sorular <button class="small ghost" id="gReset" style="margin-left:auto">Sıfırla</button></h2><div id="gAreas" class="gareas"></div></div>
   <div class="card"><h2><span class="step">2</span> Değerlendirme planın</h2><div id="gPlan"></div></div>
-  <div class="card"><h2>Yöntemler <button class="small ghost" id="gAdv" style="margin-left:auto"></button></h2><p class="about">Listede sahada en yaygın kullanılan 10 temel yöntem var; daha özel durumlar için ileri düzey yöntemler açılabilir. Düzeyler: <b>Tarama</b> az veriyle hızlı sonuç, <b>Ayrıntılı</b> ölçüm gerektirir, <b>Ölçüm</b> cihazla yapılır, <b>Eski sürüm</b> yalnız eski raporlarla karşılaştırma için. Yöntem adına dokunarak kartını aç.</p><div id="gTable"></div></div>
+  <div class="card"><h2>Yöntemler <button class="small ghost" id="gAdv" style="margin-left:auto"></button></h2><p class="about">Listede sahada en yaygın kullanılan 11 temel yöntem var; daha özel durumlar için ileri düzey yöntemler açılabilir. Düzeyler: <b>Tarama</b> az veriyle hızlı sonuç, <b>Ayrıntılı</b> ölçüm gerektirir, <b>Ölçüm</b> cihazla yapılır, <b>Eski sürüm</b> yalnız eski raporlarla karşılaştırma için. Yöntem adına dokunarak kartını aç.</p><div id="gTable"></div></div>
 </section>
 
 <!-- ============ DURUŞ ANALİZİ ============ -->
@@ -1354,6 +1360,62 @@ function kim19Time(n){ if(n<=5)return 1; if(n>=2500)return 10; for(let i=1;i<KIM
 const kim19Load=(kg,arr)=>arr[KIM19_LB.findIndex(x=>kg<=x)];
 
 Object.assign(FORMS,{
+  qec:{g:'Tüm vücut taraması',n:'QEC hızlı maruziyet kontrolü',short:'QEC',
+    intro:'Quick Exposure Check (QEC; Li ve Buckle 1999, David ve ark. 2008). Gözlemci sırt, omuz-kol, el-bilek ve boyun için duruş ve hareketi; çalışan da yük, süre, kuvvet, görsel dikkat, araç kullanma, titreşim, iş temposu ve stresi yanıtlar. İki tarafın yanıtları ikişerli tablolarla birleştirilir ve her bölge için düşük–çok yüksek maruziyet düzeyi çıkar. Çalışan soruları için yanıtı çalışana sor; kendi tahminini yazma.',
+    fields:[
+      {sec:'Gözlemci · sırt'},
+      {id:'mode',t:'sel',l:'İşin türü',def:'mmh',o:[['mmh','Yük kaldırma, itme-çekme veya taşıma var'],['static','Yük taşıma yok; oturarak veya ayakta durağan iş']],h:'Sırt hareketi sorusu ve sırt için kullanılan tablolar buna göre değişir.'},
+      {id:'A',t:'sel',l:'A · Sırt duruşu (en zorlayıcı anda)',def:'1',o:[['1','A1 · Neredeyse nötr (20°’den az eğilme, dönme veya yana eğilme)'],['2','A2 · Orta düzeyde eğik, dönük veya yana eğik (20–60°)'],['3','A3 · Aşırı eğik, dönük veya yana eğik (60°’den fazla)']]},
+      {id:'Bs',t:'sel',l:'B · Sırt çoğu zaman sabit bir duruşta mı?',def:'1',o:[['1','B1 · Hayır'],['2','B2 · Evet']],show:d=>d.mode==='static'},
+      {id:'Bm',t:'sel',l:'B · Sırt hareketinin sıklığı',def:'1',o:[['1','B3 · Seyrek (dakikada yaklaşık 3 kez veya daha az)'],['2','B4 · Sık (dakikada yaklaşık 8 kez)'],['3','B5 · Çok sık (dakikada yaklaşık 12 kez veya daha fazla)']],show:d=>d.mode!=='static'},
+      {sec:'Gözlemci · omuz ve kol'},
+      {id:'C',t:'sel',l:'C · Eller hangi yükseklikte çalışıyor? (en kötü durum)',def:'1',o:[['1','C1 · Bel hizasında veya altında'],['2','C2 · Göğüs hizasında'],['3','C3 · Omuz hizasında veya üstünde']]},
+      {id:'D',t:'sel',l:'D · Omuz ve kol hareketi',def:'1',o:[['1','D1 · Seyrek (aralıklı)'],['2','D2 · Sık (düzenli, arada duraklamalarla)'],['3','D3 · Çok sık (neredeyse kesintisiz)']]},
+      {sec:'Gözlemci · el ve bilek'},
+      {id:'E',t:'sel',l:'E · Bilek duruşu (en kötü durum)',def:'1',o:[['1','E1 · Neredeyse düz'],['2','E2 · Belirgin bükük veya yana sapmış']]},
+      {id:'F',t:'sel',l:'F · Benzer el-bilek hareketinin tekrar sayısı',def:'1',o:[['1','F1 · Dakikada 10 veya daha az'],['2','F2 · Dakikada 11–20'],['3','F3 · Dakikada 20’den fazla']]},
+      {sec:'Gözlemci · boyun'},
+      {id:'G',t:'sel',l:'G · Baş veya boyun gövdeye göre 20°’den fazla eğik ya da dönük mü?',def:'1',o:[['1','G1 · Hayır'],['2','G2 · Evet, ara sıra'],['3','G3 · Evet, sürekli']]},
+      {sec:'Çalışana sor'},
+      {id:'H',t:'sel',l:'H · Elle taşınan en ağır yük',def:'1',o:[['1','H1 · Hafif (5 kg veya daha az)'],['2','H2 · Orta (6–10 kg)'],['3','H3 · Ağır (11–20 kg)'],['4','H4 · Çok ağır (20 kg’dan fazla)']]},
+      {id:'J',t:'sel',l:'J · Bu işe günde ortalama ne kadar zaman harcanıyor?',def:'1',o:[['1','J1 · 2 saatten az'],['2','J2 · 2–4 saat'],['3','J3 · 4 saatten fazla']]},
+      {id:'K',t:'sel',l:'K · Tek elle uygulanan en yüksek kuvvet',def:'1',o:[['1','K1 · Düşük (ör. 1 kg’dan az)'],['2','K2 · Orta (ör. 1–4 kg)'],['3','K3 · Yüksek (ör. 4 kg’dan fazla)']]},
+      {id:'L',t:'sel',l:'L · İşin görsel dikkat gereksinimi',def:'1',o:[['1','L1 · Düşük (ayrıntıları görmek pek gerekmiyor)'],['2','L2 · Yüksek (ince ayrıntıları görmek gerekiyor)']]},
+      {id:'M',t:'sel',l:'M · İşte günde ne kadar araç kullanıyor?',def:'1',o:[['1','M1 · 1 saatten az veya hiç'],['2','M2 · 1–4 saat'],['3','M3 · 4 saatten fazla']]},
+      {id:'N',t:'sel',l:'N · Günde ne kadar titreşimli alet kullanıyor?',def:'1',o:[['1','N1 · 1 saatten az veya hiç'],['2','N2 · 1–4 saat'],['3','N3 · 4 saatten fazla']]},
+      {id:'P',t:'sel',l:'P · İşin temposuna yetişmekte zorlanıyor mu?',def:'1',o:[['1','P1 · Hiç'],['2','P2 · Bazen'],['3','P3 · Sık sık']]},
+      {id:'Q',t:'sel',l:'Q · Bu işi genel olarak ne kadar stresli buluyor?',def:'1',o:[['1','Q1 · Hiç'],['2','Q2 · Biraz'],['3','Q3 · Orta düzeyde'],['4','Q4 · Çok']]}],
+    calc(d){
+      const n=k=>parseInt(d[k],10)||1, X=(i,j)=>2*(i+j-1); // QEC ikili tabloları: hücre = 2 × (satır sırası + sütun sırası − 1)
+      const A=n('A'),C=n('C'),D=n('D'),E=n('E'),F=n('F'),G=n('G'),H=n('H'),J=n('J'),K=n('K'),L=n('L'),st=d.mode==='static',B=st?n('Bs'):n('Bm');
+      const IA={back:[['Sırt duruşu × yük',X(H,A)],['Sırt duruşu × süre',X(J,A)],['Süre × yük',X(H,J)]].concat(st?[['Sabit duruş × süre',X(B,J)]]:[['Sırt hareket sıklığı × yük',X(H,B)],['Sırt hareket sıklığı × süre',X(J,B)]]),
+        sh:[['Kol hareketi × süre',X(J,D)],['Süre × yük',X(H,J)],['Kol hareketi × yük',X(H,D)],['El yüksekliği × yük',X(H,C)],['El yüksekliği × süre',X(J,C)]],
+        wr:[['Tekrar × kuvvet',X(K,F)],['Süre × kuvvet',X(K,J)],['Tekrar × süre',X(J,F)],['Bilek duruşu × kuvvet',X(K,E)],['Bilek duruşu × süre',X(J,E)]],
+        nk:[['Boyun duruşu × süre',X(J,G)],['Görsel dikkat × süre',X(J,L)]]};
+      const sum=a=>a.reduce((t,x)=>t+x[1],0), R={back:sum(IA.back),sh:sum(IA.sh),wr:sum(IA.wr),nk:sum(IA.nk)};
+      const LIM={back:st?[15,22,29]:[20,30,40],sh:[20,30,40],wr:[20,30,40],nk:[6,10,14]}, MX={back:st?42:56,sh:56,wr:46,nk:18};
+      const lvOf=(k,v)=>v<=LIM[k][0]?1:v<=LIM[k][1]?2:v<=LIM[k][2]?3:4, NM=['','Düşük','Orta','Yüksek','Çok yüksek'];
+      const AN={back:'Sırt',sh:'Omuz-kol',wr:'El-bilek',nk:'Boyun'}, ks=['back','sh','wr','nk'];
+      const L3=v=>v===1?1:v===2?4:9, oth={dr:L3(n('M')),vb:L3(n('N')),wp:L3(n('P')),stv:[1,4,9,16][n('Q')-1]};
+      const olv=v=>v===1?1:v===4?2:v===9?3:4;
+      let worst='back'; ks.forEach(k=>{const a=lvOf(k,R[k]),b=lvOf(worst,R[worst]); if(a>b||(a===b&&R[k]/MX[k]>R[worst]/MX[worst]))worst=k;});
+      const lv=lvOf(worst,R[worst]), all=ks.flatMap(k=>IA[k].map(x=>[AN[k]+': '+x[0],x[1]])), hot=all.filter(x=>x[1]>=8).sort((a,b)=>b[1]-a[1]);
+      const tips=[];
+      if(lvOf('back',R.back)>=2) tips.push(['Sırt',st?'Sabit duruşu kır: oturma-ayakta çalışma değişimi, destekli oturma, iş noktasını vücuda yaklaştır.':'Yükü ve sıklığı azalt: kaldırma yardımcısı, yükü bölme, yerden alımları bel hizasına çıkarma.']);
+      if(lvOf('sh',R.sh)>=2) tips.push(['Omuz-kol','Elleri bel–göğüs hizasında çalıştır; omuz üstü işleri azalt, ağır parçaları vücuda yakın tut.']);
+      if(lvOf('wr',R.wr)>=2) tips.push(['El-bilek','Tekrarı ve kuvveti azalt: aparat, uygun saplı alet, iş paylaşımı; bileği düz tutacak yerleşim.']);
+      if(lvOf('nk',R.nk)>=2) tips.push(['Boyun','İşi ve ekranı göz hizasına getir; ince iş için aydınlatma ve büyütme sağla.']);
+      if(oth.wp>=4||oth.stv>=9) tips.push(['İş temposu ve stres','Temponun ve stresin kaynağını çalışanla konuş: hedefler, molalar, iş dağılımı.']);
+      if(oth.vb>=4) tips.push(['Titreşim','Titreşimli alet süresini ölç; düşük titreşimli alet, rotasyon. İleri düzey “Titreşim” hesaplayıcısıyla A(8) hesapla.']);
+      if(oth.dr>=4) tips.push(['Araç kullanma','Koltuk ayarı, mola düzeni ve süreyi gözden geçir.']);
+      return {v:Math.round(100*R[worst]/MX[worst]),txt:String(R[worst]),lv,tips,
+        nm:AN[worst]+' · '+NM[lv],
+        ac:lv>=3?'Yüksek maruziyet: en çok puan veren etkileşimlerden başlayarak hızla azalt.':lv===2?'Orta maruziyet: maruziyet azaltılmalı.':'Düşük maruziyet; 8 ve üzeri puan alan tek tek etkileşimlere yine de bak.',
+        bd:ks.map(k=>`<b>${AN[k]}</b> ${R[k]} → ${NM[lvOf(k,R[k])]} <span style="opacity:.8">(${IA[k].map(x=>x[0]+' '+x[1]).join(' · ')})</span>`).join('<br>')+
+          `<br>Araç kullanma ${oth.dr} (${NM[olv(oth.dr)]}) · Titreşim ${oth.vb} (${NM[olv(oth.vb)]}) · İş temposu ${oth.wp} (${NM[olv(oth.wp)]}) · Stres ${oth.stv} (${NM[olv(oth.stv)]})`+
+          (hot.length?`<br><b>Dikkat:</b> 8 ve üzeri puan alan etkileşimler (10–12 acil): ${hot.slice(0,5).map(x=>x[0]+' '+x[1]).join(', ')}`:'')+
+          `<br><span style="opacity:.85">Düzey sınırları QEC kılavuzundan: sırt (sabit) 8–15 / 16–22 / 23–29 / 30+, sırt (hareketli), omuz-kol ve el-bilek 10–20 / 21–30 / 31–40 / 41+, boyun 4–6 / 8–10 / 12–14 / 16–18. Bölgeler birbirine eklenmez; her biri ayrı yorumlanır.</span>`};
+    }},
   rosa:{g:'İstasyon tasarımı',n:'ROSA (ofis)',short:'ROSA',
     intro:'Hızlı Ofis Zorlanma Değerlendirmesi (ROSA; Sonne, Villalta, Andrews, 2012). Sandalye, ekran, telefon, fare ve klavyeyi puanlar; her bölüm için kullanım süresi eklenir. Sonuç 1–10; 5 ve üstü ek değerlendirme veya değişiklik gerektirir. Ofis kontrol listesinden farklı olarak puanlı, yayımlanmış bir yöntemdir.',
     fields:[
@@ -1535,7 +1597,7 @@ Object.assign(FORMS,{
     }}
 });
 
-const FG=['Elle taşıma','Tekrarlı iş','İstasyon tasarımı','Ortam koşulları','Çalışan geri bildirimi'];
+const FG=['Tüm vücut taraması','Elle taşıma','Tekrarlı iş','İstasyon tasarımı','Ortam koşulları','Çalışan geri bildirimi'];
 
 /* =====================================================================
    3) YÖNTEM KÜTÜPHANESİ + SİHİRBAZ
@@ -1564,6 +1626,7 @@ const LIB=[
   {k:'duet',cat:'Tekrarlı iş',tag:'Gözlem',n:'DUET',full:'El-Kol Yorulma Aracı (Distal Upper Extremity Tool)',what:'Kuvvet zorluğu (OMNI-RES) ve günlük tekrardan el-bilek-dirsek için birikimli hasar ve rahatsızlık olasılığı.',when:'Tekrarlı el işleri; farklı zorlukta birden çok hareket.',need:'Her hareket türü için 0–10 zorluk puanı ve günlük sayı.',scale:[['<%25',1],['%25–50',2],['>%50',4]],lim:'Aracın web sürümü sonraki versiyonlarda katsayıları güncellemiş olabilir; yayımlanmış makale değerleri kullanıldı.',go:['tasks','duet']},
   {k:'rsi',cat:'Tekrarlı iş',tag:'Ölçüm / gözlem',n:'Revize Strain Index',full:'Revised Strain Index (2017)',what:'Kuvvet (%MVC), sıklık, kuvvet süresi, bilek açısı ve günlük süreden sürekli bir risk indeksi.',when:'Tekrarlı el işleri; orijinal Strain Index’ten daha hassas, sayısal ölçüm varsa.',need:'%MVC (veya Borg × 10), dakikadaki kuvvet, kuvvet başına saniye, bilek açısı, günlük saat.',scale:[['≤10',1],['>10',4]],lim:'Tek görev için; çok görevli bileşik (COSI/CUSI) kurallar eklenmedi.',go:['tasks','rsi']},
   {k:'ocra',cat:'Tekrarlı iş',tag:'Gözlem',n:'OCRA',full:'OCRA kontrol listesi (klasik sürüm)',what:'Toparlanma, sıklık, kuvvet, duruş ve ek faktör puanlarını süre çarpanıyla birleştirir.',when:'Montaj ve paketleme hatlarında tekrarlı üst ekstremite işleri; ISO 11228-3 yaklaşımı.',need:'Mola düzeni, hareket sıklığı, kuvvet süreleri, omuz-dirsek-bilek-kavrama gözlemi, net tekrarlı süre.',scale:[['≤7,5',1],['≤11',2],['≤14',3],['>14',4]],lim:'Klasik sürüm uygulandı; 2011 revize sürümün tabloları doğrulanamadı. Kaynaklarda tam çözülmüş örnek yok.',go:['tasks','ocra']},
+  {k:'qec',cat:'Tüm vücut taraması',tag:'Gözlem + çalışan',n:'QEC',full:'Quick Exposure Check (Hızlı Maruziyet Kontrolü)',what:'Gözlemci ve çalışan yanıtlarından sırt, omuz-kol, el-bilek ve boyun için ayrı maruziyet düzeyi; araç kullanma, titreşim, iş temposu ve stres de sorulur.',when:'Bir işin hangi bölgeyi zorladığını hızlıca görmek; önlem öncesi ve sonrası karşılaştırma; çalışanın görüşünü değerlendirmeye katmak.',need:'İşi birkaç çevrim gözlemlemek ve çalışana 8 kısa soru sormak.',scale:[['Düşük',1],['Orta',2],['Yüksek',3],['Çok yüksek',4]],lim:'Bölge puanları birbirine eklenmez; tek bir genel puan yoktur. Sırt (sabit) çok yüksek alt sınırı kılavuzun bazı kopyalarında farklı basılmıştır; burada 30 alınmıştır.',go:['tasks','qec']},
   {k:'rosa',cat:'İstasyon tasarımı',tag:'Gözlem',n:'ROSA',full:'Hızlı Ofis Zorlanma Değerlendirmesi',what:'Sandalye, ekran, telefon, fare ve klavyeden 1–10 arası ofis risk puanı.',when:'Bilgisayar başında çalışma; puanlı ve karşılaştırılabilir ofis değerlendirmesi.',need:'İstasyona bakarak her öğe için seçim ve günlük kullanım süreleri.',scale:[['1–2',1],['3–4',2],['5–7',3],['8–10',4]],lim:'Yalnızca 5 eylem düzeyi yayımlanmıştır; derinlik ayarı ek puanı doğrulanamadı.',go:['tasks','rosa']},
 ];
 const LIBK=Object.fromEntries(LIB.map(x=>[x.k,x]));
@@ -1648,7 +1711,7 @@ function itemCard(rec,actions=true){
   const when=rec.type==='posture'&&rec.time!=null?'t = '+fmt(rec.time):new Date(rec.created).toLocaleDateString('tr-TR');
   return `<div class="item">${img}<div class="meta"><div class="row" style="justify-content:space-between"><b style="font-size:14px">${esc(typeName(rec.type))}</b><span class="mono muted" style="font-size:12px">${when}</span></div>
     <div class="badges">${badges||'<span class="muted">Sonuç yok</span>'}</div>
-    <div style="font-size:13px">${esc(rec.note)||'<span class="muted">Not yok</span>'}${rec.side?` <span class="muted">· ${rec.side==='sag'?'sağ':'sol'} taraf</span>`:''}</div>
+    <div style="font-size:13px">${esc(rec.note)||'<span class="muted">Not yok</span>'}${rec.side?` <span class="muted">· ${rec.side==='sag'?'sağ taraf':'sol taraf'}</span>`:''}</div>
     ${actions?`<div class="acts"><button data-open="${rec.id}">Aç</button>${rec.type==='posture'&&rec.time!=null?`<button data-seek="${rec.id}">Videoda git</button>`:''}<button class="xl" data-xl="${rec.id}">Excel</button><button class="danger" data-del="${rec.id}">Sil</button></div>`:`<div class="acts"><button data-open="${rec.id}">Aç</button></div>`}
   </div></div>`;
 }
@@ -1690,6 +1753,7 @@ const META={
   duet:{lvl:'Tarama',time:'~5 dk',tools:'Çalışana sorulan 0–10 zorluk puanı, günlük adet',not:'Mola düzeninin ve duruşun ayrıntılı etkisi gerektiğinde (OCRA).',sim:['ocra','rsi'],vs:'En az veriyle çalışır; farklı zorluktaki hareketleri tek sonuçta toplar.',steps:['Görevdeki farklı kuvvet uygulamalarını listele','Her biri için çalışana “ne kadar zor?” diye sor (0–10)','Günlük tekrar sayılarını gir','En büyük hasarı yapan hareketin zorluğunu düşür']},
   hal:{lvl:'Tarama',time:'~10 dk',tools:'Kronometre, 0–10 kuvvet değerlendirmesi',not:'Günde 4 saatten kısa veya birbirinden çok farklı görevlerden oluşan işlerde.',sim:['rsi','ocra'],vs:'ABD’de yaygın eşik değer yaklaşımı; RSI veya OCRA’ya ikinci görüş olarak kullan.',steps:['Dakikadaki kuvvet sayısını ve görev döngüsünü ölç ya da HAL ölçeğiyle puanla','En yüksek kuvveti 0–10 değerlendir','NPF/TLV oranı 1’in üstündeyse sıklığı veya kuvveti azalt']},
   si:{lvl:'Eski sürüm',time:'~10 dk',tools:'Gözlem, kronometre',not:'Yeni değerlendirmelerde; Revize Strain Index’i kullan.',sim:['rsi'],vs:'Revize sürüm sayısal girdilerle daha hassastır; bu sürüm eski raporlarla karşılaştırma için.',steps:['Yeni değerlendirmelerde Revize Strain Index önerilir','Altı çarpanı gözlemle seç']},
+  qec:{lvl:'Tarama',time:'~10 dk',tools:'Gözlem, çalışanla kısa görüşme',not:'Tek bir duruşun ayrıntılı puanı gerektiğinde (REBA, RULA) veya kaldırma sınırı hesaplanacaksa (NIOSH).',sim:['reba','rula','nmq'],vs:'REBA ve RULA tek bir anın duruşunu puanlar; QEC sıklık, süre ve çalışanın algısını da katarak bölge bazında maruziyet verir.',steps:['İşi birkaç çevrim gözlemle; en zorlayıcı anı not et','Gözlemci sorularını (A–G) işaretle','Çalışan sorularını (H–Q) çalışana sor, yanıtını olduğu gibi işaretle','En yüksek bölgeden ve 8 ve üzeri puan alan etkileşimlerden başlayarak önlem aç']},
   rosa:{lvl:'Ayrıntılı',time:'5–10 dk',tools:'Gözlem, kullanım süresi bilgisi',not:'Bilgisayar dışı masa/tezgâh işlerinde (RULA, çalışma yüksekliği).',sim:['office','height'],vs:'Ofis kontrol listesi yapılacaklar listesi verir; ROSA karşılaştırılabilir bir puan verir.',steps:['Çalışanı normal çalışırken gözlemle','Sandalye, ekran, telefon, fare ve klavye seçeneklerini işaretle','Her biri için günlük kullanım süresini seç','5 ve üzeri sonuçta en yüksek bölümden başlayarak düzenle']},
   office:{lvl:'Tarama',time:'~5 dk',tools:'Gözlem',not:'Puanlı, karşılaştırılabilir sonuç gerektiğinde (ROSA).',sim:['rosa','height'],vs:'Her “Hayır” maddesi doğrudan bir önlemdir; puan için ROSA’yı kullan.',steps:['İstasyona bakarak her maddeyi Evet / Hayır işaretle','“Hayır” maddeleri yapılacaklar listesidir','Puanlı sonuç gerekiyorsa ROSA uygula']},
   height:{lvl:'Hesaplayıcı',time:'~3 dk',tools:'Şerit metre',not:'Risk puanı gerektiğinde (RULA, ROSA).',sim:['rula','rosa'],vs:'Risk ölçmez, tasarım önerir; düzenleme sonrası duruşu RULA ile doğrula.',steps:['Çalışanın dirsek yüksekliğini ölç (veya boyu gir)','İşin türünü seç','Mevcut yüzey yüksekliğini ölç; farka göre yükselt veya alçalt']},
@@ -1703,7 +1767,7 @@ LIB.forEach(L=>Object.assign(L,META[L.k]||{}));
 const LVL_C={'Tarama':'#2563eb','Ayrıntılı':'#0f6b5f','Hesaplayıcı':'#7c3aed','Ölçüm':'#0e7490','Anket':'#b45309','Eski sürüm':'#64748b'};
 const lvlBadge=l=>`<span class="lvl" style="background:${LVL_C[l]||'#64748b'}">${l}</span>`;
 
-const CORE=new Set(['reba','rula','owas','niosh','cli','kim19','kimpp','lmm','ocra','rosa','nmq']);
+const CORE=new Set(['reba','rula','owas','qec','niosh','cli','kim19','kimpp','lmm','ocra','rosa','nmq']);
 const visM=k=>CORE.has(k)||S.adv;
 const AREAS=[
  {k:'mmh',n:'Elle taşıma',q:'3 kg veya daha ağır bir yük elle kaldırılıyor, taşınıyor, tutuluyor, itiliyor ya da çekiliyor mu?',tree:{q:'İşin türü ne?',o:[
@@ -1989,7 +2053,7 @@ function buildFtabs(){
   const chip=k=>{const F=FORMS[k], old=LIBK[k]&&LIBK[k].lvl==='Eski sürüm'; return `<button data-ftab="${k}" class="${old?'old':''}">${F.n.replace(/ \((2001)\)$/,'')}${old?'<small>eski</small>':''}</button>`;};
   const advKs=Object.keys(FORMS).filter(k=>!CORE.has(k));
   const oldLast=(a,b)=>(LIBK[a]&&LIBK[a].lvl==='Eski sürüm')-(LIBK[b]&&LIBK[b].lvl==='Eski sürüm');
-  const core=`<div class="fgroup"><span>Duruş (video)</span><div class="fchips"><button data-go="posture">REBA · RULA · OWAS → Duruş analizi</button></div></div>`+FG.map(g=>{const ORD=['niosh','kim19','kimpp','lmm','ocra','rosa','nmq'], ks=Object.keys(FORMS).filter(k=>FORMS[k].g===g&&CORE.has(k)&&k!=='cli').sort((x,y)=>ORD.indexOf(x)-ORD.indexOf(y)); return ks.length?`<div class="fgroup"><span>${g}</span><div class="fchips">${ks.map(chip).join('')}</div></div>`:'';}).join('');
+  const core=`<div class="fgroup"><span>Duruş (video)</span><div class="fchips"><button data-go="posture">REBA · RULA · OWAS → Duruş analizi</button></div></div>`+FG.map(g=>{const ORD=['qec','niosh','kim19','kimpp','lmm','ocra','rosa','nmq'], ks=Object.keys(FORMS).filter(k=>FORMS[k].g===g&&CORE.has(k)&&k!=='cli').sort((x,y)=>ORD.indexOf(x)-ORD.indexOf(y)); return ks.length?`<div class="fgroup"><span>${g}</span><div class="fchips">${ks.map(chip).join('')}</div></div>`:'';}).join('');
   const adv=S.adv?`<div class="fadv"><b>İleri düzey yöntemler</b>`+FG.map(g=>{const ks=advKs.filter(k=>FORMS[k].g===g).sort(oldLast); return ks.length?`<div class="fgroup"><span>${g}</span><div class="fchips">${ks.map(chip).join('')}</div></div>`:'';}).join('')+`</div>`:'';
   $('#ftabs').innerHTML=core+adv+`<div class="row"><button class="small ghost" id="advT">${S.adv?'İleri düzey yöntemleri gizle':'İleri düzey yöntemleri göster ('+advKs.length+')'}</button><span class="muted">Temel set: sahada en yaygın kullanılan yöntemler.</span></div>`;
   $$('#ftabs [data-ftab]').forEach(b=>b.onclick=()=>{setFtab(b.dataset.ftab); if(innerWidth<900)setTimeout(()=>$('#fIntro').scrollIntoView({behavior:'smooth',block:'start'}),30);});
@@ -2321,7 +2385,7 @@ $('#pXl').onclick=()=>{const r=draftPostureRecord(); if(r)exportRecord(r);};
    S.sites [{id,name,addr,assessor}] · S.stations [{id,site,name,dept,workers,shiftH,shifts,women,desc}]
    S.tasks [{id,st,name,min,desc}] · kayıt.taskId → görev · S.actions [{id,st,tk,rec,before,title,detail,ctrl,owner,due,status,done,note,created}]
    ===================================================================== */
-const AREA_OF={reba:'pos',rula:'pos',owas:'pos',posture:'pos',niosh:'mmh',cli:'mmh',kim19:'mmh',kim:'mmh',kimpp:'mmh',lmm:'mmh',lifft:'mmh',ocra:'rep',rsi:'rep',si:'rep',hal:'rep',duet:'rep',rosa:'off',office:'off',height:'off',noise:'noise',vib:'vib',heat:'heat',light:'light',nmq:'nmq'};
+const AREA_OF={reba:'pos',rula:'pos',owas:'pos',posture:'pos',qec:'pos',niosh:'mmh',cli:'mmh',kim19:'mmh',kim:'mmh',kimpp:'mmh',lmm:'mmh',lifft:'mmh',ocra:'rep',rsi:'rep',si:'rep',hal:'rep',duet:'rep',rosa:'off',office:'off',height:'off',noise:'noise',vib:'vib',heat:'heat',light:'light',nmq:'nmq'};
 const AREA_N={pos:'Duruş',mmh:'Elle taşıma',rep:'Tekrarlı iş',off:'Ofis',noise:'Gürültü',vib:'Titreşim',heat:'Isı',light:'Aydınlatma',nmq:'Şikâyet'};
 const LVT=['—','Düşük','Orta','Yüksek','Çok yüksek'];
 const CTRL=[['elim','Ortadan kaldırma / ikame'],['eng','Teknik (mühendislik) önlem'],['adm','İdari / organizasyonel önlem'],['ppe','Kişisel koruyucu donanım'],['trn','Eğitim / bilgilendirme']];
@@ -3059,7 +3123,8 @@ const HELP=[
   <li>Alanları doldur; sonuç ve öneriler siz yazarken anında güncellenir. Her alanın altında nasıl ölçüleceği yazar.</li>
   <li>Görevi seç, “Kaydet”. Kaydettikten sonra önerilerden “+ Önlem” açabilirsin; aynı kaydı düzeltmek için değiştir ve “Değişiklikleri kaydet”.</li>
   <li>“Yeni / temizle” formu sıfırlar. “Excel formu” o kaydın A4 değerlendirme formunu indirir.</li></ol>
-  <p>Az kullanılan veya eski yöntemler (KIM 2001, Strain Index, HAL, gürültü, titreşim, sıcaklık, aydınlatma…) “İleri düzey yöntemleri göster” açıkken görünür.</p>`},
+  <p>Az kullanılan veya eski yöntemler (KIM 2001, Strain Index, HAL, gürültü, titreşim, sıcaklık, aydınlatma…) “İleri düzey yöntemleri göster” açıkken görünür.</p>
+  <p><b>EAWS neden yok?</b> Avrupa Montaj Çalışma Sayfası (EAWS) puan tablolarıyla birlikte lisanslı bir yöntemdir ve resmî formu açık kaynaklarda yayımlanmaz. Doğrulanamayan bir kopyayla yanlış sonuç vermemek için eklenmedi; montaj hatlarında OCRA, RULA ve KIM birlikte kullanılabilir.</p>`},
  {id:'actions',t:'Önlem takibi ve yeniden ölçüm',b:`<ol>
   <li>Kaydedilmiş bir analizin önerisindeki “+ Önlem” ile önlem aç; başlık ve açıklama öneriden gelir, mevcut sonuç “önce” olarak saklanır.</li>
   <li>Önlem türünü (ortadan kaldırma, teknik, idari, KKD, eğitim), sorumluyu ve termini gir. Termini geçen açık önlem kırmızı görünür.</li>

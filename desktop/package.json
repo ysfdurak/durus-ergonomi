@@ -1,0 +1,72 @@
+{
+  "name": "durus-masaustu",
+  "productName": "Duruş",
+  "version": "1.0.0",
+  "description": "Duruş ergonomi analiz merkezi — Windows masaüstü sürümü",
+  "author": "Yusuf Durak",
+  "license": "MIT",
+  "private": true,
+  "repository": "github:ysfdurak/durus-ergonomi",
+  "main": "main.js",
+  "scripts": {
+    "hazirla": "node hazirla.mjs",
+    "start": "node hazirla.mjs && electron .",
+    "dist": "node hazirla.mjs && electron-builder --win --publish never"
+  },
+  "devDependencies": {
+    "@fontsource/ibm-plex-mono": "^5.1.0",
+    "@fontsource/ibm-plex-sans": "^5.1.0",
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
+    "exceljs": "4.4.0",
+    "pdfmake": "0.2.7"
+  },
+  "build": {
+    "appId": "com.ysfdurak.durus",
+    "productName": "Duruş",
+    "artifactName": "Durus-${version}-${arch}-${os}.${ext}",
+    "files": [
+      "main.js",
+      "web/**/*",
+      "build/icon.png",
+      "package.json"
+    ],
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "portable": {
+      "artifactName": "Durus-${version}-tasinabilir.exe"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "Duruş",
+      "artifactName": "Durus-${version}-kurulum.exe",
+      "installerLanguages": [
+        "tr_TR",
+        "en_US"
+      ],
+      "multiLanguageInstaller": true
+    }
+  }
+}
