@@ -65,6 +65,7 @@ js = js
   .replace(/txt:'%'\+pct,/g, "txt:pct+'%',")
   .replace("const pct=P=>'%'+Math.round(P*100);", "const pct=P=>Math.round(P*100)+'%';")
   .replace("txt:'%'+Math.round(worst*100),", "txt:Math.round(worst*100)+'%',")
+  .replace("const pctS=x=>'%'+x;", "const pctS=x=>x+'%';")
   .replace(/'%'\+(Math\.round\([^()]*(?:\([^()]*\))?[^()]*\))/g, "$1+'%'")
   .replace(/%\$\{((?:[^{}]|\{[^{}]*\})*)\}/g, '${$1}%');             // "%42" → "42%"
 head = head

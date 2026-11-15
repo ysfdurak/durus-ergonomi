@@ -61,6 +61,12 @@ Bilerek alınmayanlar: çok kullanıcılı bulut veritabanı ve kullanıcı giri
 
 **Senaryo dene nasıl çalışıyor?** Her ekran bir bağdaştırıcı verir (`AD.form`, `AD.posture`): durumu al (`get`), durumu yükle (`set`), durumdan sözde kayıt üret (`rec`), iki durum arasındaki farkları yaz (`diff`). Senaryo başlarken mevcut durum `SC[anahtar].base` olarak kopyalanır; ekrandaki değerler “bu senaryo”dur, “Sakla” ile listeye eklenir. Sonuçlar normal kayıtlar gibi `results()` ile hesaplanır, yani senaryo için ayrı hesap kodu yoktur. Senaryodan önlem oluşturulunca önleme `before` (mevcut), `exp` (beklenen) ve formlarda `sdata` (senaryo değerleri) yazılır; “Yeniden ölç” formu `sdata` ile açar. Senaryolar kaydedilmez, sayfa yenilenince silinir. Senaryo modunda Kaydet düğmesi kapalıdır; böylece senaryo değerleri yanlışlıkla gerçek kayıt olmaz.
 
+**Videoyu otomatik tara nasıl çalışıyor?** `scanVideo` videoyu seçilen aralıkla (`seekTo` ile) ilerletir, her kareyi en fazla 1280 piksel genişliğinde bir tuvale çizer ve `detectPose`'a verir. Omuz ve kalça dahil en az 5 nokta bulunan kareler, 160 piksellik küçük resimle ve `scan` kimliğiyle duruş kaydı olarak eklenir; tam kare saklanmaz (yer tasarrufu). Noktalar 1280 piksellik kare ölçüsünde tutulduğu için kayıt, aynı video açıkken açılınca `openRecord` kareyi videodan yeniden alır ve noktalar doğru yere oturur. “Bu taramayı geri al” aynı `scan` kimliğine sahip kayıtları siler.
+
+**Raporlardaki yeni bölümler:** PDF'te bölüm numaraları artık sayaçla (`N()`) verilir; vücut bölgeleri ve rotasyon (`rotPlan`), maliyet ve geri ödeme (`roiCalc`) ekran ile aynı fonksiyonları kullanır. Excel'de `addBodySheet` ve `addRoiSheet` sayfaları eklenir; önlem planında “Senaryoda beklenen” ve “Tahmini maliyet” sütunları vardır.
+
+**Masaüstü güncelleme denetimi:** `main.js` içindeki `guncellemeDenetle`, GitHub API'den son sürümü alır ve `app.getVersion()` ile karşılaştırır. Yeni sürüm varsa indirme sayfasını önerir; “Bu sürümü atla” seçimi `ayar.json`'a yazılır. Kendini otomatik güncellemez, çünkü imzasız uygulamalarda otomatik güncelleme Windows uyarılarıyla sorun çıkarır.
+
 **Rotasyon algoritması:** İki görev arasındaki ceza, ikisinde de yüksek (3+) olan her bölge için büyük, diğer bölgelerdeki ortak yük için küçüktür. Sıra döngüsel kabul edilir. 8 göreve kadar tüm sıralar denenir; daha fazlasında her adımda en düşük cezalı görev seçilir.
 
 ## 3. İki dil nasıl çalışıyor?
