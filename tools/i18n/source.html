@@ -368,6 +368,13 @@ footer.disc{max-width:1280px;margin:0 auto;padding:0 18px 90px;color:var(--muted
 .rotpick label{display:flex;gap:8px;align-items:center;font-size:13.5px}
 .roigrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px 14px}
 .roigrid label{display:flex;flex-direction:column;font-size:13px;gap:4px}
+.scenbtn{width:100%;text-align:left;margin-top:10px;border:1px dashed #b9c2bb;background:#fbfcfb;border-radius:12px;padding:10px 12px;font-weight:600}
+.scenbtn span{display:block;font-weight:400;font-size:12.5px;color:var(--muted)}
+.scen{margin-top:10px;border:1px solid #c8d6d1;background:#f4f9f7;border-radius:12px;padding:10px 12px}
+.scrow{background:#fff;border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin-top:6px}
+.scrow.scnow{background:#fffbea;border-color:#ecd98a}
+.scch{font-size:12.5px;margin-top:4px;color:#3b4540}
+.scname{flex:1;min-width:90px;max-width:220px;font-weight:600}
 .langsw{font-weight:600;font-size:13px;text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:5px 12px;background:#fff;color:var(--ink)}
 .langsw:hover{border-color:#c9cec8}
 select.need{border-color:#dc2626;box-shadow:0 0 0 3px #dc262633}
@@ -566,6 +573,7 @@ select.need{border-color:#dc2626;box-shadow:0 0 0 3px #dc262633}
           <div class="result" id="res_owas"></div>
         </div>
         <div class="tips" id="pTips"></div>
+        <div id="pScen"></div>
 
         <div class="savebox">
           <div class="full ctxpick" id="pCtx"></div>
@@ -591,6 +599,7 @@ select.need{border-color:#dc2626;box-shadow:0 0 0 3px #dc262633}
       <div class="stickyRes">
         <div class="result" id="fResult" style="margin-top:0"></div>
         <div class="tips" id="fTips"></div>
+        <div id="fScen"></div>
         <div class="savebox">
           <div class="full ctxpick" id="fCtx"></div>
           <label class="full">Not<input id="fNote" placeholder="isteğe bağlı"></label>
@@ -1961,6 +1970,7 @@ function startAnalysis(img,time,src){
   openCur();
 }
 function openCur(){
+  delete SC.p;
   activeKey=null; drag=null; $('#workCard').hidden=false;
   $('#workTime').textContent=cur.time!=null?('t = '+fmt(cur.time)):(cur.src||'fotoğraf');
   renderAllCtx(); $('#pNote').value=cur.note||''; $('#pSide').value=cur.side||'';
@@ -2072,6 +2082,7 @@ function updateScores(){
   const c=r.owas.codes;
   [['owBack',c.aB,OW_BACK],['owArms',c.aA,OW_ARMS],['owLegs',c.aL,OW_LEGS]].forEach(([k,v,n])=>{$('[data-adj="'+k+'"] option[value="auto"]').textContent='Otomatik ('+v+' · '+n[v-1]+')';});
   $('#pTips').innerHTML=tipsHTML(r.miss.length>=4?[]:r.tips,r.miss.length>=4?'Öneriler için önce noktaları işaretle veya açıları gir.':'Belirgin bir risk kaynağı görünmüyor.',cur.id);
+  renderScen('posture');
 }
 function draw(){
   if(!cur)return; const W=cv.width,H=cv.height, b=bctx, u=W/320;
@@ -2164,8 +2175,9 @@ function updateForm(){
   const k=S.ftab, m=FORMS[k].calc(fdraft[k]);
   $('#fResult').style.background=LV[m.lv]; $('#fResult').innerHTML=resultHTML(m);
   $('#fTips').innerHTML=tipsHTML(m.tips||[],m.v==null?'Sonuç oluşunca öneriler burada görünür.':'Belirgin bir iyileştirme noktası görünmüyor.',fedit[k]);
+  renderScen('form');
 }
-$('#fNew').onclick=()=>{const k=S.ftab; fdraft[k]=defaults(k); fedit[k]=null; $('#fNote').value=''; renderForm();};
+$('#fNew').onclick=()=>{const k=S.ftab; delete SC['f:'+k]; fdraft[k]=defaults(k); fedit[k]=null; $('#fNote').value=''; renderForm();};
 $('#fSave').onclick=()=>{
   const k=S.ftab, tk=ctxTask(); if(!tk)return; const task=tkLabel(tk.id);
   const m=FORMS[k].calc(fdraft[k]); if(m.v==null){toast('Kaydetmeden önce formu doldur.');return;}
@@ -2186,7 +2198,7 @@ function openRecord(id){
     if(!cur.img&&cur.time!=null&&vid.videoWidth){vid.pause(); const f=()=>{vid.removeEventListener('seeked',f); cur.img=frameFrom(vid,vid.videoWidth,vid.videoHeight); openCur();}; vid.addEventListener('seeked',f); vid.currentTime=cur.time; return;}
     openCur();
   } else {
-    fdraft[r.type]={...defaults(r.type),...JSON.parse(JSON.stringify(r.data||{}))}; fedit[r.type]=r.id;
+    delete SC['f:'+r.type]; fdraft[r.type]={...defaults(r.type),...JSON.parse(JSON.stringify(r.data||{}))}; fedit[r.type]=r.id;
     setCtxFromRec(r); $('#fNote').value=r.note||''; go('tasks',r.type);
   }
 }
@@ -2592,11 +2604,77 @@ function afterOf(a){
   return snap(rs.sort((x,y)=>x.created.localeCompare(y.created)).at(-1));
 }
 
+/* ---------- senaryo dene: mevcut durumu sabitle, değerleri değiştir, karşılaştır, önleme dönüştür ---------- */
+// Her ekran bir "bağdaştırıcı" verir: durumu al / yükle, durumdan sözde kayıt üret, değişenleri yaz.
+const SC={};
+const stripT=s=>String(s||'').replace(/<[^>]*>/g,'').trim();
+const short_=(s,n=42)=>{s=stripT(s); return s.length>n?s.slice(0,n-1)+'…':s;};
+const clone=o=>JSON.parse(JSON.stringify(o));
+function formDiff(k,a,b){const F=FORMS[k], out=[], yn={'1':'evet','0':'hayır','':'—','-':'—'};
+  F.fields.forEach(f=>{if(!f.id)return; const x=a[f.id], y=b[f.id]; if(JSON.stringify(x)===JSON.stringify(y)||(typeof x!=='object'&&typeof y!=='object'&&String(x??'')===String(y??'')))return; const lab=short_(f.l,34);
+    if(f.t==='sel'){const o=v=>short_((f.o.find(q=>String(q[0])===String(v))||[,v??'—'])[1],30); out.push(`${lab}: ${o(x)} → ${o(y)}`);}
+    else if(f.t==='num')out.push(`${lab}: ${x===''||x==null?'—':x} → ${y===''||y==null?'—':y}${f.u?' '+f.u:''}`);
+    else if(f.t==='chk')out.push(`${lab}: ${x?'evet':'hayır'} → ${y?'evet':'hayır'}`);
+    else if(f.t==='yn')out.push(`${lab}: ${yn[x??'']} → ${yn[y??'']}`);
+    else if(f.t==='rows'&&Array.isArray(x)&&Array.isArray(y)){
+      if(x.length!==y.length)out.push(`${lab}: ${x.length} → ${y.length} satır`);
+      y.forEach((r,i)=>{const q=x[i]; if(!q)return; f.cols.forEach(c=>{if(String(q[c.id]??'')===String(r[c.id]??''))return; const o=v=>c.o?short_((c.o.find(z=>String(z[0])===String(v))||[,v])[1],24):v;
+        out.push(`${lab} ${i+1} · ${short_(c.l,24)}: ${o(q[c.id])} → ${o(r[c.id])}${c.u&&!c.o?' '+c.u:''}`);});});}
+    else out.push(`${lab}: değişti`);});
+  return out;}
+function postureDiff(a,b){const out=[], A=postureCompute({...cur,...a}).a, B=postureCompute({...cur,...b}).a, ja=a.adj||{}, jb=b.adj||{};
+  ANG.forEach(d=>{const x=A[d.k], y=B[d.k]; if((x==null)!==(y==null)||(x!=null&&Math.round(x)!==Math.round(y)))out.push(`${d.n}: ${x==null?'—':Math.round(x)+'°'} → ${y==null?'—':Math.round(y)+'°'}`);});
+  if((+ja.loadKg||0)!==(+jb.loadKg||0))out.push(`Yük: ${+ja.loadKg||0} → ${+jb.loadKg||0} kg`);
+  if(+ja.coupling!==+jb.coupling)out.push(`Kavrama: ${CPL[+ja.coupling||0]} → ${CPL[+jb.coupling||0]}`);
+  if(ja.legMode!==jb.legMode)out.push(`Bacaklar: ${LEGL[ja.legMode]||'—'} → ${LEGL[jb.legMode]||'—'}`);
+  Object.keys(ADJ_LBL).forEach(k=>{if(!!ja[k]!==!!jb[k])out.push(`${ADJ_LBL[k]}: ${ja[k]?'evet':'hayır'} → ${jb[k]?'evet':'hayır'}`);});
+  [['owBack','OWAS sırt kodu'],['owArms','OWAS kol kodu'],['owLegs','OWAS bacak kodu']].forEach(([k,l])=>{if(ja[k]!==jb[k])out.push(`${l}: ${ja[k]==='auto'?'otomatik':ja[k]} → ${jb[k]==='auto'?'otomatik':jb[k]}`);});
+  return out;}
+const AD={
+  form:()=>{const k=S.ftab; return {key:'f:'+k, el:'#fScen', save:'#fSave', type:k,
+    get:()=>clone(fdraft[k]), set:s=>{fdraft[k]=clone(s); renderForm();},
+    rec:s=>({type:k,data:s}), diff:(a,b)=>formDiff(k,a,b), recId:()=>fedit[k]||null};},
+  posture:()=>({key:'p', el:'#pScen', save:'#saveBtn', type:'posture',
+    get:()=>clone({ov:cur.ov,adj:cur.adj,points:cur.points,facing:cur.facing}),
+    set:s=>{Object.assign(cur,clone(s)); buildAngTable(); $$('[data-adj]').forEach(el=>{const v=cur.adj[el.dataset.adj]; if(el.type==='checkbox')el.checked=!!v; else el.value=v;}); updateAll();},
+    rec:s=>({...cur,...s,type:'posture'}), diff:postureDiff, recId:()=>cur&&cur.id||null})};
+function scenStart(kind){const ad=AD[kind](); if(kind==='posture'&&!cur)return;
+  SC[ad.key]={base:ad.get(),list:[]}; renderScen(kind);
+  toast('Senaryo modu: mevcut durum sabitlendi. Değerleri değiştir, sonucu karşılaştır.');}
+function scenEnd(kind){const ad=AD[kind](), sc=SC[ad.key]; if(!sc)return; delete SC[ad.key]; ad.set(sc.base); renderScen(kind);}
+function resBadges(rs){return rs.map(([n,m])=>`<span class="badge" style="background:${LV[m.lv]}">${esc(n)} ${m.txt}</span>`).join(' ');}
+function deltaTxt(rb,rs){ // yöntem bazında: düzey düştü mü
+  const parts=rs.map(([n,m],i)=>{const b=rb[i]&&rb[i][1]; if(!b||b.v==null||m.v==null)return null; const d=m.lv-b.lv; return d<0?`<b style="color:${LV[1]}">${esc(n)} ↓ ${LVT[b.lv]} → ${LVT[m.lv]}</b>`:d>0?`<b style="color:${LV[4]}">${esc(n)} ↑ ${LVT[b.lv]} → ${LVT[m.lv]}</b>`:(m.v<b.v?`<span style="color:${LV[1]}">${esc(n)}: puan düştü, düzey aynı</span>`:m.v>b.v?`<span style="color:${LV[3]}">${esc(n)}: puan arttı, düzey aynı</span>`:`<span class="muted">${esc(n)}: değişmedi</span>`);}).filter(Boolean);
+  return parts.join(' · ');}
+function renderScen(kind){
+  const ad=AD[kind](), el=$(ad.el); if(!el)return; const sc=SC[ad.key], sb=$(ad.save);
+  sb.disabled=!!sc; sb.title=sc?'Senaryo modunda kayıt yapılmaz; önce senaryodan çık.':'';
+  if(!sc){el.innerHTML=`<button class="scenbtn" data-scgo>⇄ Senaryo dene <span>değerleri değiştirip sonucu mevcut durumla karşılaştır</span></button>`; el.querySelector('[data-scgo]').onclick=()=>scenStart(kind); return;}
+  const now=ad.get(), rb=results(ad.rec(sc.base)), rn=results(ad.rec(now)), dn=ad.diff(sc.base,now);
+  const row=(name,st,rs,i)=>{const ch=ad.diff(sc.base,st); return `<div class="scrow${i==='now'?' scnow':''}"><div class="row" style="justify-content:space-between;align-items:center;gap:6px">${i==='now'?'<b>Bu senaryo <span class="muted" style="font-weight:400;font-size:12px">· ekrandaki değerler</span></b>':`<input class="scname" data-scn="${i}" value="${esc(name)}">`}
+    <div class="row" style="gap:4px">${i==='now'?`<button class="small" data-sckeep${dn.length?'':' disabled'}>Sakla</button>`:`<button class="small" data-scload="${i}">Yükle</button>`}<button class="small primary" data-scact="${i}"${ch.length?'':' disabled'}>+ Önlem</button>${i==='now'?'':`<button class="small ghost danger" data-scdel="${i}">Sil</button>`}</div></div>
+    <div style="margin-top:6px">${resBadges(rs)} <span style="font-size:12.5px">${deltaTxt(rb,rs)}</span></div>
+    <div class="scch">${ch.length?ch.slice(0,6).map(esc).join('<br>')+(ch.length>6?`<br><span class="muted">+${ch.length-6} değişiklik</span>`:''):'<span class="muted">Henüz değişiklik yok: yukarıdaki değerleri değiştir.</span>'}</div></div>`;};
+  el.innerHTML=`<div class="scen"><div class="row" style="justify-content:space-between;align-items:center"><b>Senaryo karşılaştırma <button class="linkbtn hl" data-help="scen">Nasıl?</button></b><button class="small ghost" data-scx>Senaryodan çık</button></div>
+    <div class="muted" style="font-size:12.5px;margin:4px 0 8px">Mevcut durum sabit. Değerleri değiştir; “Sakla” ile senaryoyu listeye al, başka bir senaryo dene. Senaryo modunda kayıt yapılmaz.</div>
+    <div class="scrow"><div class="row" style="justify-content:space-between;align-items:center"><b>Mevcut durum</b><button class="small" data-scload="base">Yükle</button></div><div style="margin-top:6px">${resBadges(rb)}</div></div>
+    ${row('',now,rn,'now')}${sc.list.map((x,i)=>row(x.name,x.state,results(ad.rec(x.state)),i)).join('')}</div>`;
+  el.querySelector('[data-scx]').onclick=()=>scenEnd(kind);
+  el.querySelectorAll('[data-sckeep]').forEach(b=>b.onclick=()=>{sc.list.push({name:'Senaryo '+'ABCDEFGHIJ'[sc.list.length%10],state:ad.get(),auto:1}); ad.set(sc.base); renderScen(kind); toast('Senaryo saklandı; form mevcut duruma döndü, yeni bir senaryo deneyebilirsin.');});
+  el.querySelectorAll('[data-scload]').forEach(b=>b.onclick=()=>{const i=b.dataset.scload; ad.set(i==='base'?sc.base:sc.list[+i].state); renderScen(kind);});
+  el.querySelectorAll('[data-scdel]').forEach(b=>b.onclick=()=>{sc.list.splice(+b.dataset.scdel,1); renderScen(kind);});
+  el.querySelectorAll('[data-scn]').forEach(i=>i.onchange=()=>{const x=sc.list[+i.dataset.scn]; if(i.value.trim()){x.name=i.value.trim(); x.auto=0;}});
+  el.querySelectorAll('[data-scact]').forEach(b=>b.onclick=()=>{const i=b.dataset.scact, x=i==='now'?{name:'',state:now}:sc.list[+i], ch=ad.diff(sc.base,x.state);
+    const recT=ad.recId()?S.records.find(r=>r.id===ad.recId()):null, tk=recT?tkOf(recT.taskId):ctxTask(); if(!tk)return;
+    openActionDlg(null,{rec:ad.recId(),before:snap(ad.rec(sc.base)),exp:snap(ad.rec(x.state)),sdata:ad.type==='posture'?null:clone(x.state),
+      title:short_(x.name&&!x.auto?x.name:ch[0],70),detail:'Senaryo: '+ch.join('; '),tk:tk.id});});
+}
+
 /* ---------- önlemler ---------- */
 function openActionDlg(id,preset={}){
   const a=id?S.actions.find(x=>x.id===id):null, b=a||preset;
   const tks=S.tasks.filter(t=>{const s=stOf(t.st); return s&&s.site===curSite();}).map(t=>[t.id,tkLabel(t.id)]).sort((x,y)=>x[1].localeCompare(y[1],'tr'));
-  formDlg({title:a?'Önlemi düzenle':'Yeni önlem',note:b.before?`Kaynak sonuç: ${esc(b.before.n)} ${esc(b.before.txt)} (${LVT[b.before.lv]})`:'',fields:[
+  formDlg({title:a?'Önlemi düzenle':'Yeni önlem',note:b.before?`Kaynak sonuç: ${esc(b.before.n)} ${esc(b.before.txt)} (${LVT[b.before.lv]})${b.exp?` · senaryoda beklenen: ${esc(b.exp.n)} ${esc(b.exp.txt)} (${LVT[b.exp.lv]})`:''}`:'',fields:[
     {id:'title',l:'Önlem',v:b.title,full:true,ph:'ör. Palet yükseltici al'},
     {id:'detail',l:'Açıklama',t:'area',v:b.detail},
     {id:'tk',l:'İstasyon › görev',t:'sel',v:b.tk||S.ctx.tk||'',o:[['','Seç…'],...tks],full:true},
@@ -2609,7 +2687,7 @@ function openActionDlg(id,preset={}){
    onSave:v=>{if(!v.title.trim()){toast('Önlemi yaz.');return false;} if(!v.tk){toast('İstasyon ve görevi seç.');return false;}
      const st=tkOf(v.tk).st;
      if(a){if(v.status==='done'&&a.status!=='done')a.done=todayISO(); Object.assign(a,v,{st,title:v.title.trim()});}
-     else S.actions.push({id:uid(),created:new Date().toISOString(),rec:b.rec||null,before:b.before||null,...v,st,title:v.title.trim(),done:v.status==='done'?todayISO():''});
+     else S.actions.push({id:uid(),created:new Date().toISOString(),rec:b.rec||null,before:b.before||null,exp:b.exp||null,sdata:b.sdata||null,...v,st,title:v.title.trim(),done:v.status==='done'?todayISO():''});
      persist(); refreshViews(); toast('Önlem kaydedildi.');},
    onDelete:a?()=>{S.actions=S.actions.filter(x=>x.id!==a.id); persist(); refreshViews();}:null});
 }
@@ -2624,7 +2702,7 @@ function remeasure(aId){
   const src=S.records.find(r=>r.id===a.rec), ty=(a.before&&a.before.type)||(src&&src.type);
   if(!ty){go('guide');return;}
   if(ty==='posture'){go('posture'); toast('Aynı görevi önlem sonrası yeniden kaydet; seçili görev hazır.');}
-  else {fdraft[ty]={...defaults(ty),...JSON.parse(JSON.stringify(src?src.data:{}))}; fedit[ty]=null; go('tasks',ty); toast('Önceki değerlerle açıldı; değişen değerleri güncelle ve kaydet.');}
+  else {delete SC['f:'+ty]; fdraft[ty]={...defaults(ty),...JSON.parse(JSON.stringify(a.sdata||(src?src.data:{})))}; fedit[ty]=null; go('tasks',ty); toast(a.sdata?'Senaryodaki değerlerle açıldı; sahadaki gerçek değerleri kontrol et ve kaydet.':'Önceki değerlerle açıldı; değişen değerleri güncelle ve kaydet.');}
 }
 const overdue=a=>a.due&&a.status!=='done'&&a.status!=='cancel'&&a.due<todayISO();
 function actionCard(a){
@@ -2634,7 +2712,7 @@ function actionCard(a){
       <select data-ast="${a.id}" class="stsel">${ASTAT.map(([v,l])=>`<option value="${v}"${a.status===v?' selected':''}>${l}</option>`).join('')}</select></div>
     ${a.detail?`<div style="font-size:13.5px;margin-top:4px">${esc(a.detail)}</div>`:''}
     <div class="row" style="gap:6px;margin-top:6px;font-size:13px"><span class="lvl" style="background:#475569">${esc(ctl)}</span>${a.owner?`<span>Sorumlu: <b>${esc(a.owner)}</b></span>`:''}${+a.cost?`<span>Maliyet: <b>${Math.round(+a.cost).toLocaleString('tr-TR')}</b></span>`:''}${a.due?`<span style="color:${overdue(a)?LV[4]:'inherit'}">Termin: <b>${dateTR(a.due)}</b>${overdue(a)?' · gecikmiş':''}</span>`:''}${a.done?`<span>Tamamlandı: ${dateTR(a.done)}</span>`:''}</div>
-    ${a.before?`<div style="margin-top:8px;font-size:13px">${after?deltaHTML(a.before,after):`Önce: <span class="badge" style="background:${LV[a.before.lv]}">${esc(a.before.n)} ${a.before.txt}</span> <span class="muted">· sonrası henüz ölçülmedi</span>`}</div>`:''}
+    ${a.before?`<div style="margin-top:8px;font-size:13px">${after?deltaHTML(a.before,after):`Önce: <span class="badge" style="background:${LV[a.before.lv]}">${esc(a.before.n)} ${a.before.txt}</span> <span class="muted">· sonrası henüz ölçülmedi</span>`}${a.exp?`<div class="muted" style="font-size:12.5px;margin-top:3px">Senaryoda beklenen: <span class="badge" style="background:${LV[a.exp.lv]}">${esc(a.exp.n)} ${a.exp.txt}</span>${after?(after.lv<=a.exp.lv?' · <b style="color:'+LV[1]+'">beklenene ulaşıldı</b>':' · <b style="color:'+LV[3]+'">beklenenin gerisinde</b>'):''}</div>`:''}</div>`:''}
     <div class="acts row" style="margin-top:8px;gap:6px"><button class="small" data-aedit="${a.id}">Düzenle</button>${a.before?`<button class="small" data-arem="${a.id}">Yeniden ölç</button>`:''}</div></div>`;
 }
 function bindActions(root){
@@ -3301,6 +3379,16 @@ const HELP=[
   <li>Önlem türünü (ortadan kaldırma, teknik, idari, KKD, eğitim), sorumluyu ve termini gir. Termini geçen açık önlem kırmızı görünür.</li>
   <li>Önlem uygulanınca önlem kartında “Yeniden ölç”e bas: form eski girdilerle açılır, değişen koşulları düzeltip kaydet.</li>
   <li>Kart önce → sonra farkını ve “iyileşti / aynı / kötüleşti” sonucunu gösterir. Risk haritası her zaman en son ölçümü kullanır.</li></ol>`},
+ {id:'scen',t:'Senaryo dene: “şunu değiştirsem ne olur?”',b:`<p>Formlarda ve duruş analizinde sonucun altındaki “Senaryo dene” düğmesi mevcut değerleri sabitler. Sonra değerleri değiştirerek bir önlemin sonucu nasıl etkileyeceğini kaydetmeden görebilirsin.</p>
+<ol>
+  <li>Önce mevcut durumu gir (ya da kayıtlı bir analizi aç), sonra “Senaryo dene”ye bas.</li>
+  <li>Değerleri önlem uygulanmış gibi değiştir: ör. yükü 25’ten 15 kg’a indir, kaldırma yüksekliğini artır, sıklığı azalt; duruş analizinde açıyı yaz ya da gözlem kutularını değiştir.</li>
+  <li>Tablo, mevcut durumla senaryoyu yan yana gösterir: puan, risk düzeyi ve hangi girdilerin değiştiği.</li>
+  <li>“Sakla” senaryoyu listeye alır ve formu mevcut duruma döndürür; böylece birkaç seçeneği (ör. palet yükseltici ile iki kişilik kaldırma) karşılaştırabilirsin.</li>
+  <li>“+ Önlem” senaryoyu önleme dönüştürür. Önlem kartında senaryoda beklenen sonuç görünür; önlem uygulandıktan sonra “Yeniden ölç” ile gerçek sonuç alınır ve beklenenle karşılaştırılır. Formlarda yeniden ölçüm senaryodaki değerlerle açılır.</li>
+  <li>“Senaryodan çık” formu mevcut değerlere döndürür. Senaryo modunda kayıt yapılmaz.</li>
+</ol>
+<p>Senaryolar yalnızca bu oturumda tutulur; saklamak istediğin senaryoyu önleme dönüştür. Senaryo bir tahmindir: önlem gerçekte değerleri senaryodaki kadar değiştirmeyebilir, bu yüzden yeniden ölçüm şarttır.</p>`},
  {id:'auto',t:'Noktaları otomatik bulma',b:`<p>Duruş analizinde kare seçtikten sonra “Noktaları otomatik bul” düğmesi kişinin eklemlerini görüntüden bulur ve sekiz noktayı yerleştirir; açılar ve REBA, RULA, OWAS hemen hesaplanır.</p>
 <ul>
   <li><b>Gizlilik:</b> Görüntü cihazdan çıkmaz. Web sürümünde yalnızca ilk kullanımda tanıma modeli (MediaPipe Pose, yaklaşık 10 MB) internetten indirilir; masaüstü sürümünde model uygulamanın içindedir.</li>

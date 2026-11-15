@@ -48,6 +48,7 @@ Kasım 2026'da ticari ve akademik ergonomi yazılımlarına bakılarak Duruş'a 
 | Eklemleri görüntüden otomatik bulma | TuMeke, Ergoniza Intelligent, ErgoPlus 360, VelocityEHS (yapay zekâ ile poz tahmini) | Duruş analizi → “Noktaları otomatik bul” | `loadPose`, `detectPose`, `autoPoints` |
 | Vücut bölgesi profili | ErgoPlus Job Screen (her bölge için ayrı risk), QEC | İstasyonlar → Vücut bölgeleri | `regionLv`, `taskRegions`, `renderBody`, `bodySVG` |
 | İş rotasyonu planı | VelocityEHS Job Rotation Tool, ErgoPlus Job Rotation Evaluator | İstasyonlar → İş rotasyonu planı | `rotCost`, `bestOrder`, `renderRot` |
+| Senaryo dene (“şunu değiştirsem ne olur?”) | MCP ile sohbetten hesap yerine programın içinde; Ergoniza/VelocityEHS’teki önlem önerisi ve kontrol akışı | Formlar ve Duruş analizi → “Senaryo dene” | `SC`, `AD` (bağdaştırıcılar), `renderScen`, `formDiff`, `postureDiff` |
 | Maliyet ve geri ödeme | VelocityEHS ROI hesaplayıcı | Önlemler → Maliyet ve geri ödeme; önlemde “Tahmini maliyet” | `ROI_F`, `renderRoi` |
 
 Duruş'ta zaten olanlar: önce-sonra karşılaştırması ve doğrulanmış iyileşme (VelocityEHS Risk Reduction Index'e benzer), saha turu ve hızlı tarama (ErgoPlus Quick Screen'e benzer), vardiya içi riskli süre payı (“time at risk”), istasyon-görev yapısı ve Excel/PDF raporlar.
@@ -57,6 +58,8 @@ Bilerek alınmayanlar: çok kullanıcılı bulut veritabanı ve kullanıcı giri
 **Otomatik bulma nasıl çalışıyor?** MediaPipe Pose (Google, Apache 2.0 lisanslı) görüntüde 33 vücut noktası tahmin eder. `detectPose` bunlardan Duruş'un 8 noktasını seçer: kulak, omuz, dirsek, bilek, işaret ve serçe parmak köklerinin ortası (el), kalça, diz, ayak bileği. Taraf, “Değerlendirilen taraf” seçiliyse o taraf, değilse görünürlük puanı yüksek olan taraftır; yön, burnun kulağa göre konumundan bulunur. Görünürlüğü 0,3'ün altındaki noktalar konmaz. Model web sürümünde jsDelivr'den ilk kullanımda iner (yaklaşık 10 MB); masaüstünde `desktop/web/lib/pose/` içinde gelir.
 
 **Bölge düzeyleri:** Duruş analizinde REBA bileşen skorları doğrudan düzeye çevrilir (gövde 1–5 → en çok 4, boyun 1–3, üst kol 1–6 → en çok 4, ön kol 1–2, bilek 1–3, bacak 1–4). Diğer formlarda yöntemin genel sonucu `REG_OF` tablosundaki bölgelere yazılır. Bu bir özet görünümdür; yöntemin kendi sonucu her zaman önceliklidir.
+
+**Senaryo dene nasıl çalışıyor?** Her ekran bir bağdaştırıcı verir (`AD.form`, `AD.posture`): durumu al (`get`), durumu yükle (`set`), durumdan sözde kayıt üret (`rec`), iki durum arasındaki farkları yaz (`diff`). Senaryo başlarken mevcut durum `SC[anahtar].base` olarak kopyalanır; ekrandaki değerler “bu senaryo”dur, “Sakla” ile listeye eklenir. Sonuçlar normal kayıtlar gibi `results()` ile hesaplanır, yani senaryo için ayrı hesap kodu yoktur. Senaryodan önlem oluşturulunca önleme `before` (mevcut), `exp` (beklenen) ve formlarda `sdata` (senaryo değerleri) yazılır; “Yeniden ölç” formu `sdata` ile açar. Senaryolar kaydedilmez, sayfa yenilenince silinir. Senaryo modunda Kaydet düğmesi kapalıdır; böylece senaryo değerleri yanlışlıkla gerçek kayıt olmaz.
 
 **Rotasyon algoritması:** İki görev arasındaki ceza, ikisinde de yüksek (3+) olan her bölge için büyük, diğer bölgelerdeki ortak yük için küçüktür. Sıra döngüsel kabul edilir. 8 göreve kadar tüm sıralar denenir; daha fazlasında her adımda en düşük cezalı görev seçilir.
 
