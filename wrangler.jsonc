@@ -1,0 +1,9 @@
+// Duruş · Cloudflare Workers yayın ayarları (durus.ysfdurak.com).
+// Derleme yok: depo kökündeki statik dosyalar olduğu gibi yayınlanır (.assetsignore dışındakiler).
+// "name", Cloudflare'deki proje adıyla aynı olmalı; farklıysa otomatik derleme çalışmaz.
+{
+  "$schema": "https://unpkg.com/wrangler/config-schema.json",
+  "name": "durus-ergonomi",
+  "compatibility_date": "2026-11-01",
+  "assets": { "directory": "./" }
+}
