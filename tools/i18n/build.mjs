@@ -21,8 +21,11 @@ if (!src.includes('<!--DIL-->') || !src.includes('<!--HREFLANG-->')) throw new E
 
 const HREFLANG = `<link rel="alternate" hreflang="tr" href="${SITE}">\n<link rel="alternate" hreflang="en" href="${SITE}en/">\n<link rel="alternate" hreflang="x-default" href="${SITE}">`;
 
+// ?lang=en / ?lang=tr ile gelen ziyaretçiyi doğru dile yönlendir (portföy sitesi bu parametreyle bağlantı verir)
+const yon = (hedefDil, hedefYol) => `<script>(function(){var q=new URLSearchParams(location.search);if(q.get('lang')==='${hedefDil}'){q.delete('lang');var s=q.toString();location.replace('${hedefYol}'+(s?'?'+s:'')+location.hash);}})();</script>`;
+
 // ---------- Türkçe ----------
-let tr = src.replace('<!--HREFLANG-->', HREFLANG)
+let tr = src.replace('<!--HREFLANG-->', HREFLANG).replace('<!--DILYON-->', yon('en', 'en/'))
   .replace('<!--DIL-->', '<a class="langsw" href="en/" hreflang="en" lang="en" title="English version">English</a>');
 
 // ---------- İngilizce ----------
@@ -69,6 +72,7 @@ head = head
   .replace(`property="og:url" content="${SITE}"`, `property="og:url" content="${SITE}en/"`)
   .replace('href="favicon.svg"', 'href="../favicon.svg"')
   .replace('<!--HREFLANG-->', HREFLANG)
+  .replace('<!--DILYON-->', yon('tr', '../'))
   .replace('<!--DIL-->', '<a class="langsw" href="../" hreflang="tr" lang="tr" title="Türkçe sürüm">Türkçe</a>');
 const en = head + js + tail;
 
