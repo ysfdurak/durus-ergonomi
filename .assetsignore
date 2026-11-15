@@ -4,3 +4,6 @@ wrangler.jsonc
 .assetsignore
 README.md
 docs
+tools
+desktop
+node_modules

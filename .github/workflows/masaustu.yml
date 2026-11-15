@@ -1,0 +1,51 @@
+# Duruş Windows masaüstü sürümünü üretir.
+# - "v1.0.0" gibi bir etiket (tag) gönderildiğinde: kurulum ve taşınabilir .exe dosyalarını GitHub Releases'e yükler.
+# - Actions sekmesinden elle çalıştırıldığında: dosyaları yalnızca çalışmanın "Artifacts" bölümüne koyar.
+name: Masaüstü (Windows)
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: desktop
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: desktop/package-lock.json
+      - run: npm ci
+      - name: Sürüm numarasını etiketten al
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        run: npm version --no-git-tag-version --allow-same-version "${GITHUB_REF_NAME#v}"
+      - run: npm run dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Durus-Windows
+          path: |
+            desktop/dist/*.exe
+          if-no-files-found: error
+      - name: Release'e yükle
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: desktop/dist/*.exe
+          name: Duruş ${{ github.ref_name }}
+          body: |
+            **Duruş — Windows masaüstü sürümü / Windows desktop app**
+
+            - `Durus-…-kurulum.exe`: kurulumlu sürüm (önerilen) / installer (recommended)
+            - `Durus-…-tasinabilir.exe`: kurulum gerektirmez / portable, no install
+
+            Türkçe ve İngilizce; ilk açılışta dil seçilir, menüden değiştirilebilir. İnternet gerekmez; kayıtlar yalnızca bu bilgisayarda (%APPDATA%\Durus) tutulur.
+            Turkish and English; choose at first launch, change from the menu. Works offline; records stay on this computer.
+
+            Uygulama imzasız olduğu için Windows SmartScreen uyarı verebilir: "Ek bilgi → Yine de çalıştır". / The app is unsigned, so SmartScreen may warn: "More info → Run anyway".
