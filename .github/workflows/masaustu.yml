@@ -1,9 +1,13 @@
-# Duruş Windows masaüstü sürümünü üretir.
-# - "v1.0.0" gibi bir etiket (tag) gönderildiğinde: kurulum ve taşınabilir .exe dosyalarını GitHub Releases'e yükler.
-# - Actions sekmesinden elle çalıştırıldığında: dosyaları yalnızca çalışmanın "Artifacts" bölümüne koyar.
+# Duruş Windows masaüstü sürümünü üretir ve GitHub Releases'e koyar.
+# - main'e uygulama ya da masaüstü dosyalarında değişiklik gelince: sürüm desktop/package.json'daki "version"dan alınır,
+#   "v<sürüm>" etiketli Release oluşturulur ya da (aynı sürümse) dosyaları güncellenir.
+# - "v1.2.0" gibi bir etiket gönderilirse: sürüm etiketten alınır.
+# - Actions sekmesinden elle de çalıştırılabilir.
 name: Masaüstü (Windows)
 on:
   push:
+    branches: [main]
+    paths: ['index.html', 'en/**', 'desktop/**', '.github/workflows/masaustu.yml']
     tags: ['v*']
   workflow_dispatch:
 permissions:
@@ -26,6 +30,10 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v')
         shell: bash
         run: npm version --no-git-tag-version --allow-same-version "${GITHUB_REF_NAME#v}"
+      - name: Sürüm
+        id: surum
+        shell: bash
+        run: echo "v=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
       - run: npm run dist
       - uses: actions/upload-artifact@v4
         with:
@@ -34,11 +42,13 @@ jobs:
             desktop/dist/*.exe
           if-no-files-found: error
       - name: Release'e yükle
-        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: v${{ steps.surum.outputs.v }}
+          target_commitish: ${{ github.sha }}
+          make_latest: true
           files: desktop/dist/*.exe
-          name: Duruş ${{ github.ref_name }}
+          name: Duruş v${{ steps.surum.outputs.v }}
           body: |
             **Duruş — Windows masaüstü sürümü / Windows desktop app**
 
