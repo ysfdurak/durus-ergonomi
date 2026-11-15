@@ -345,6 +345,14 @@ select{border:1px solid var(--line);border-radius:10px;padding:7px 9px;backgroun
 .datanote b{color:var(--ink)}
 #fMini{position:fixed;left:12px;right:12px;bottom:12px;z-index:45;border:0;border-radius:14px;color:#fff;padding:10px 14px;display:none;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,.2);font-weight:600;text-align:left}
 #fMini.on{display:flex}
+.pwarn{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.pwarn div{font-size:13px;background:#fff8e6;border:1px solid #f3e1b0;border-radius:10px;padding:7px 10px}
+.edge{display:inline-block;margin-left:6px;font-size:11px;font-weight:700;color:#92400e;background:#fef3c7;border-radius:6px;padding:1px 6px;vertical-align:middle}
+.unseen{font-size:13px;background:var(--acc2);border-radius:10px;padding:8px 10px;margin:0 0 8px}
+details.which{margin-top:8px;font-size:13.5px;border:1px solid var(--line);border-radius:10px;padding:6px 10px}
+details.which summary{cursor:pointer;font-weight:600}
+details.which ul{margin:6px 0 2px;padding-left:18px}
+footer.disc{max-width:1280px;margin:0 auto;padding:0 18px 90px;color:var(--muted);font-size:12.5px}
 select.need{border-color:#dc2626;box-shadow:0 0 0 3px #dc262633}
 #fMini .n{font-size:22px;font-weight:700;margin-right:8px}
 .mOnly{display:none}
@@ -449,7 +457,9 @@ select.need{border-color:#dc2626;box-shadow:0 0 0 3px #dc262633}
         <li>Kamerayı kişiye <b>yandan ve dik</b> konumla; gövde ve kol açıları en doğru böyle ölçülür.</li>
         <li>Bir çevrimi baştan sona kaydet (en az 2–3 çevrim). En zorlayıcı anları ayrı ayrı analiz et: en derin eğilme, en yüksek uzanma, yükün kalktığı an.</li>
         <li>Sık tekrarlanan veya uzun süren duruşları da kaydet; “ortalama” bir kare de iş hakkında fikir verir.</li>
-        <li>Aynı görevin karelerini aynı <b>görev adıyla</b> kaydet; Kayıtlar sayfasında zaman grafiği ve en kötü değer birlikte görünür.</li>
+        <li>Aynı görevin karelerini aynı <b>görev adıyla</b> kaydet; İstasyonlar sayfasında zaman grafiği ve en kötü değer birlikte görünür.</li>
+        <li>Sağ ve sol taraf farklı yük alıyorsa (ör. tek elle taşıma) iki tarafı ayrı karelerle değerlendir; kaydederken “Değerlendirilen taraf”ı seç.</li>
+        <li>Çapraz açıyla çekilmiş görüntüde açılar olduğundan küçük ya da büyük ölçülür. Kamera yaklaşık bel yüksekliğinde ve kişinin hareket düzlemine dik olmalı.</li>
       </ul>
     </details>
   </div>
@@ -471,11 +481,22 @@ select.need{border-color:#dc2626;box-shadow:0 0 0 3px #dc262633}
       </div>
       <div>
         <div class="strip" id="strip"></div>
+        <div class="pwarn" id="pWarn"></div>
+        <details class="which"><summary>Üç sonuç farklı çıktı; hangisini kullanmalıyım?</summary>
+          <ul>
+            <li><b>REBA:</b> Tüm vücudun çalıştığı, duruşun sık değiştiği işler (depo, taşıma, bakım, temizlik). Bacak ve gövde ağırlıklıdır.</li>
+            <li><b>RULA:</b> Kol, boyun ve gövdenin öne çıktığı, ayakların az hareket ettiği işler (montaj, masa başı, kasa). Bacağa az ağırlık verir.</li>
+            <li><b>OWAS:</b> Tek bir karenin ayrıntılı puanı değil; vardiya boyunca birçok duruşu hızlıca sınıflamak için.</li>
+            <li>Rapora işin türüne uyan yöntemi koy, diğerlerini destek bilgi olarak tut. İki yöntem de yüksekse öncelik verilecek iş odur.</li>
+            <li>Tek kare tek bir anı gösterir: en zorlayıcı anı ve en sık ya da en uzun süren duruşu ayrı kaydet; iki taraf farklı çalışıyorsa her birini “Değerlendirilen taraf” ile ayrı kaydet.</li>
+          </ul>
+        </details>
         <h3>Açılar</h3>
         <table class="angles" id="angTable"></table>
-        <div class="sub" style="margin-top:6px">Kutu boşsa açı noktalardan hesaplanır. Elle yazarsan o değer kullanılır (turuncu).</div>
+        <div class="sub" style="margin-top:6px">Kutu boşsa açı noktalardan hesaplanır. Elle yazarsan o değer kullanılır (turuncu). <b>Sınırda</b> etiketi, açının puanı değiştiren bir eşiğe birkaç derece yakın olduğunu gösterir: kamera tam yandan değilse ya da kare en zorlayıcı an değilse puan bir basamak değişebilir; mümkünse açıölçerle doğrula.</div>
 
         <h3>Gözlemler <span style="text-transform:none;letter-spacing:0;font-weight:400">· üç yöntemde birden kullanılır</span></h3>
+        <p class="unseen"><b>Yandan çekilen karede görünmeyenleri sen işaretle:</b> taşınan yükün ağırlığı, gövde veya boynun dönmesi ve yana eğilmesi, kolun yana açılması, omzun kalkması, bileğin yana sapması. İşaretlenmezse bu durumlar yok sayılır ve skor olduğundan düşük çıkar.</p>
         <div class="adj">
           <fieldset><legend>Yük ve kavrama</legend>
             <label class="inl">Taşınan yük / uygulanan kuvvet (kg)<input type="number" min="0" step="0.5" data-adj="loadKg"></label>
@@ -633,6 +654,7 @@ select.need{border-color:#dc2626;box-shadow:0 0 0 3px #dc262633}
   <div id="acList" class="view"></div>
 </section>
 </main>
+<footer class="disc">Duruş bir karar destek aracıdır: sonuçlar risk değerlendirmesine girdi sağlar, iş güvenliği uzmanının ve işyeri hekiminin değerlendirmesinin yerine geçmez. <button class="linkbtn" data-help="law">Mevzuat ve sorumluluk</button> · <button class="linkbtn" data-help="limits">Sonuçların sınırları</button></footer>
 <datalist id="taskList"></datalist>
 <div class="dlg" id="editDlg" hidden><div class="dlgin" id="editBody" role="dialog" aria-modal="true" style="max-width:580px"></div></div>
 <div class="dlg" id="measDlg" hidden><div class="dlgin" id="measBody" role="dialog" aria-modal="true" aria-label="Mesafe ölç" style="max-width:960px;width:100%"></div></div>
@@ -667,6 +689,10 @@ const ANG=[
   {k:'la',n:'Ön kol (dirsek)',h:'dirsek bükülmesi',at:'el'},
   {k:'wr',n:'Bilek',h:'düz çizgiden sapma',at:'wr'},
   {k:'kn',n:'Diz',h:'diz bükülmesi',at:'kn'}];
+// Puanı değiştiren eşikler (REBA ve RULA tablolarındaki açı sınırları).
+const EDGES={trunk:[5,20,60],neck:[5,10,20],ua:[20,45,90],la:[60,100],wr:[5,15],kn:[30,60]};
+// Açı bir eşiğe yakınsa o eşiği döndürür (küçük eşiklerde tolerans eşiğin yarısı).
+const nearEdge=(k,v)=>v==null?null:((EDGES[k]||[]).find(b=>Math.abs(Math.abs(v)-b)<Math.min(5,b/2))??null);
 const ADJ0={loadKg:0,shock:false,coupling:0,legMode:'stand2',trunkTwist:false,trunkSide:false,neckTwist:false,neckSide:false,
   uaAbd:false,uaRaised:false,uaSupported:false,wristDev:false,actStatic:false,actRepeat:false,actRapid:false,
   laMidline:false,wristTwistEnd:false,owBack:'auto',owArms:'auto',owLegs:'auto'};
@@ -1902,7 +1928,16 @@ function resultHTML(m,miss){
 function tipsHTML(t,empty,src){return t.length?'<b>Ne yapılabilir?</b><ul>'+t.map(([h,x],i)=>'<li><b>'+esc(h)+':</b> '+esc(x)+(src?` <button class="small tipbtn" data-tipact="${i}" data-src="${src}">+ Önlem</button>`:'')+'</li>').join('')+'</ul>'+(src?'':'<div class="muted" style="font-size:12.5px">Kaydettikten sonra her öneriden önlem oluşturabilirsin.</div>'):'<b>Ne yapılabilir?</b><div class="muted" style="margin-top:4px">'+empty+'</div>';}
 function updateScores(){
   if(!cur)return; const r=postureCompute(cur);
-  ANG.forEach(d=>{const inp=$('[data-ang="'+d.k+'"]'), au=r.au[d.k]; inp.placeholder=au!=null?Math.round(au)+'°':'—'; inp.classList.toggle('ov',cur.ov[d.k]!=null);});
+  ANG.forEach(d=>{const inp=$('[data-ang="'+d.k+'"]'), au=r.au[d.k]; inp.placeholder=au!=null?Math.round(au)+'°':'—'; inp.classList.toggle('ov',cur.ov[d.k]!=null);
+    const near=cur.ov[d.k]==null?nearEdge(d.k,r.a[d.k]):null;
+    const cell=inp.closest('tr').firstElementChild; let tag=cell.querySelector('.edge');
+    if(near!=null){if(!tag){tag=document.createElement('span'); tag.className='edge'; cell.querySelector('b').after(tag);} tag.textContent='sınırda ('+near+'°)'; tag.title='Puanı değiştiren eşik '+near+'°. Ölçüm hatası puanı bir basamak değiştirebilir.';}
+    else if(tag)tag.remove();});
+  const W=[], j=cur.adj||{};
+  if(imgEl&&!(+j.loadKg>0)&&r.miss.length<4)W.push('<b>Yük girilmedi</b>, 0 kg sayıldı. Elde yük ya da uygulanan kuvvet varsa “Taşınan yük” alanına yaz: 5 kg ve üstü REBA’yı, 2 kg ve üstü RULA’yı artırabilir.');
+  const edges=ANG.filter(d=>cur.ov[d.k]==null&&nearEdge(d.k,r.a[d.k])!=null).map(d=>d.n);
+  if(edges.length)W.push('<b>Sınırdaki açılar:</b> '+edges.join(', ')+'. Bu açılarda birkaç derecelik ölçüm hatası puanı değiştirebilir; açıölçerle doğrula ya da yakın karelere de bak.');
+  const pw=$('#pWarn'); if(pw)pw.innerHTML=W.map(x=>'<div>'+x+'</div>').join('');
   $('#strip').innerHTML=['reba','rula','owas'].map(k=>{const m=r[k]; return '<button class="tile'+(S.ptab===k?' on':'')+'" data-m="'+k+'" style="background:'+LV[m.lv]+'"><small>'+k.toUpperCase()+'</small><b>'+m.txt+'</b><span>'+m.nm+'</span></button>';}).join('');
   $$('.tile').forEach(t=>t.onclick=()=>setPtab(t.dataset.m));
   ['reba','rula','owas'].forEach(k=>{const el=$('#res_'+k); el.style.background=LV[r[k].lv]; el.innerHTML=resultHTML(r[k],r.miss);});
@@ -3035,6 +3070,22 @@ const HELP=[
   <li><b>Düzelt:</b> “Düzenle” ile tehlike, olası zarar, olasılık, frekans ve şiddeti işyerine göre değiştir. Değiştirilen satır “elle düzeltildi” olarak işaretlenir; “Önerilen değerlere dön” ile geri alınır.</li>
   <li>Ölçek değerleri yaygın uygulamadan alınmıştır; kendi kurum tablonla karşılaştır.</li></ul>`},
  {id:'exposure',t:'Günlük maruziyet',b:`<p>Görevlerin vardiyadaki sürelerini (dk) girdiğinde istasyon kartı vardiya profilini gösterir: her görevin vardiyadaki payı, duruşta yüksek riskli duruşların süre ağırlıklı payı (REBA ve OWAS) ve diğer yöntemlerin alt aktivite tablosu. Süre girilmemiş görevlerde eşit ağırlık kullanılır ve bu ekranda belirtilir.</p>`},
+ {id:'limits',t:'Sonuçları doğru okumak: sınırlar ve dikkat edilecekler',b:`<ul>
+  <li><b>Tek kare, tek an:</b> REBA ve RULA bir anlık duruşu puanlar. Bir görevi temsil etmesi için en zorlayıcı anı ve en sık ya da en uzun süren duruşu ayrı kaydet; istasyon kartı en kötü değeri gösterir.</li>
+  <li><b>Görüntüden ölçülen açı:</b> Kamera yandan ve dik değilse açılar sapar. Puanı değiştiren eşiğe yakın açılar “sınırda” etiketiyle işaretlenir; bunları açıölçerle doğrula.</li>
+  <li><b>Görüntüde görünmeyenler:</b> Yük ağırlığı, dönme, yana eğilme, kolun yana açılması ve bilek sapması yandan görünmez. Gözlemler bölümünden işaretlemezsen skor düşük çıkar.</li>
+  <li><b>Yöntemlerin kapsamı:</b> NIOSH, RULA, REBA gibi yöntemler sağlıklı yetişkin çalışanlar için geliştirilmiştir. Genç, gebe veya emziren, engelli ya da şikâyeti olan çalışanlar için sınırlar daha düşük tutulmalı; işyeri hekimiyle değerlendir.</li>
+  <li><b>Yöntemler birbirinin yerine geçmez:</b> REBA tüm vücut, RULA üst ekstremite, NIOSH kaldırma, OCRA tekrarlı iş içindir. İşte birden fazla risk varsa her biri için uygun yöntemi kullan; Rehber hangisinin gerektiğini gösterir.</li>
+  <li><b>Önce-sonra karşılaştırması:</b> Önlemden sonra aynı görevi aynı yöntemle ve benzer kareyle yeniden ölç; farklı yöntemlerin puanları karşılaştırılmaz.</li>
+</ul>`},
+ {id:'law',t:'Mevzuat ve sorumluluk',b:`<p>Türkiye’de ergonomik riskler, işverenin yapmakla yükümlü olduğu risk değerlendirmesinin bir parçasıdır. İlgili başlıca düzenlemeler:</p>
+<ul>
+  <li><b>6331 sayılı İş Sağlığı ve Güvenliği Kanunu</b> (20.06.2012): işveren risk değerlendirmesi yapmak veya yaptırmakla yükümlüdür.</li>
+  <li><b>İş Sağlığı ve Güvenliği Risk Değerlendirmesi Yönetmeliği</b> (Resmî Gazete 29.12.2012, sayı 28512): değerlendirme işverenin oluşturduğu bir ekiple yapılır; ekipte iş güvenliği uzmanı, işyeri hekimi, çalışan temsilcisi ve işi bilen çalışanlar yer alır.</li>
+  <li><b>Elle Taşıma İşleri Yönetmeliği</b> (Resmî Gazete 24.07.2013, sayı 28717): elle taşımada özellikle sırt ve bel incinmelerine karşı önlemler.</li>
+  <li><b>Ekranlı Araçlarla Çalışmalarda Sağlık ve Güvenlik Önlemleri Hakkında Yönetmelik</b> (Resmî Gazete 16.04.2013, sayı 28620): bilgisayar başında çalışma; ROSA bu kapsamda kullanılabilir.</li>
+</ul>
+<p><b>Duruş’un yeri:</b> Duruş’taki sonuçlar risk değerlendirmesine girdi ve karar desteği sağlar; tek başına resmî risk değerlendirmesi ya da tıbbi değerlendirme değildir. Sonuçları değerlendirme ekibiyle, özellikle iş güvenliği uzmanı ve işyeri hekimiyle birlikte yorumla. Mevzuatın güncel hâli için resmî kaynaklara (mevzuat.gov.tr, Resmî Gazete) bak.</p>`},
  {id:'reports',t:'Raporlar: PDF ve Excel',b:`<ul>
   <li><b>PDF rapor</b> (İstasyonlar sayfası veya istasyon kartındaki PDF): kapak, yönetici özeti, risk haritası, risk tablosu, istasyon ayrıntıları, önlem planı, yöntemler ve imza alanları.</li>
   <li><b>Excel</b>: özet, risk tablosu, önlem planı, sonuçlar ve yöntem sayfaları; istasyon dosyasında her kaydın A4 formu (fotoğraflı).</li>
