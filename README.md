@@ -18,10 +18,11 @@
 - **Rehber:** Birkaç evet/hayır sorusuyla riskli alanları bulur; her alan için tek bir önerilen yöntemi ve nedenini gösterir.
 - **Saha modu:** Sahada fotoğraf çek ya da videodan kare al, tehlikeleri işaretle; analizi masaya dönünce yap.
 - **İstasyonlar ve önlemler:** İşyeri, istasyon ve görev yapısı; Fine-Kinney ya da 5×5 matrisle risk değerlendirme tablosu; önlem takibi ve önlem sonrası yeniden ölçüm.
+- **Videoyu otomatik tara:** Videonun tamamından belirli aralıklarla kare alıp noktaları otomatik bulur, her kareyi göreve kaydeder; vardiyadaki yüksek riskli süre payı ve zaman grafiği bu karelerden çıkar.
 - **Senaryo dene:** Mevcut durumu sabitleyip değerleri değiştir (ör. yük 25 → 15 kg); sonuçlar yan yana karşılaştırılır, beğenilen senaryo tek tıkla önleme dönüşür ve yeniden ölçümde beklenenle karşılaştırılır.
 - **Vücut bölgeleri ve iş rotasyonu:** Her görevin boyun, sırt-bel, omuz, dirsek, el-bilek ve bacak bölgelerini ne düzeyde zorladığı vücut figürü ve tabloyla; seçilen görevler için aynı bölgeyi art arda zorlamayan rotasyon sırası ve uyarılar.
 - **Maliyet ve geri ödeme:** Kas-iskelet rahatsızlıklarının yıllık maliyeti, önlemlerle beklenen tasarruf, geri ödeme süresi ve 3 yıllık net kazanç.
-- **Raporlar ve yedek:** Excel (tüm kayıtlar, görev raporu, tek kayıt değerlendirme formu), PDF rapor, CSV; tüm kayıtları tek .json dosyasına indirip başka cihazda geri yükleme.
+- **Raporlar ve yedek:** Excel (tüm kayıtlar, görev raporu, tek kayıt değerlendirme formu; vücut bölgeleri, rotasyon planı, maliyet ve geri ödeme sayfaları), PDF rapor (aynı bölümlerle; önlem planında senaryoda beklenen sonuç), CSV; yedek alınmadıysa başlangıçta hatırlatma; tüm kayıtları tek .json dosyasına indirip başka cihazda geri yükleme.
 
 | Başlangıç | Formlar (NIOSH) | Rehber |
 |---|---|---|
@@ -39,6 +40,7 @@
 ## Yayın
 - Canlı adres **durus.ysfdurak.com**: Cloudflare Workers, `main` dalına her gönderimde otomatik yayın (ayarlar `wrangler.jsonc`, yayın dışı dosyalar `.assetsignore`).
 - Kendi bilgisayarında: depo kökünde `python -m http.server 8000`, sonra http://localhost:8000/ (İngilizce: /en/).
+- **Masaüstü güncellemeleri:** Uygulama açılışta yeni sürüm olup olmadığını sessizce denetler, varsa indirme sayfasını önerir (Yardım → Güncellemeleri denetle). Kendini değiştirmez; yeni kurulum dosyası kayıtları korur.
 - **Masaüstü:** `v1.0.0` gibi bir etiket gönderilince GitHub Actions (`.github/workflows/masaustu.yml`) Windows kurulum dosyalarını üretip Releases'e koyar. Elle denemek için: `cd desktop && npm install && npm start`.
 
 ## Nasıl yapıldı?

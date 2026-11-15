@@ -370,6 +370,13 @@ footer.disc{max-width:1280px;margin:0 auto;padding:0 18px 90px;color:var(--muted
 .rotpick label{display:flex;gap:8px;align-items:center;font-size:13.5px}
 .roigrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px 14px}
 .roigrid label{display:flex;flex-direction:column;font-size:13px;gap:4px}
+.scentop{margin:-2px 0 10px}
+.scentop.on,#pScenTop.on{background:#fffbea;border-color:#ecd98a}
+.datanote.warn{border-color:#ecd98a;background:#fffbea}
+.nextgrid{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.scanbox{margin-top:12px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fbfcfb}
+.scanbox label{display:flex;flex-direction:column;gap:3px;font-size:12.5px}
+.scanres{margin-top:8px}
 .scenbtn{width:100%;text-align:left;margin-top:10px;border:1px dashed #b9c2bb;background:#fbfcfb;border-radius:12px;padding:10px 12px;font-weight:600}
 .scenbtn span{display:block;font-weight:400;font-size:12.5px;color:var(--muted)}
 .scen{margin-top:10px;border:1px solid #c8d6d1;background:#f4f9f7;border-radius:12px;padding:10px 12px}
@@ -433,7 +440,8 @@ select.need{border-color:#dc2626;box-shadow:0 0 0 3px #dc262633}
     <div id="homeStats"></div>
     <div class="mini" id="homeRecent" style="margin-top:10px"></div>
   </div>
-  <div class="datanote"><span>🔒 <b>Kayıtların yalnızca bu tarayıcıda saklanır</b>; hiçbir sunucuya gönderilmez. Tarayıcı verisi silinirse kaybolur, ara sıra yedek al.</span><button class="small" data-backup>Yedeği indir</button></div>
+  <div id="homeNext"></div>
+  <div class="datanote" id="dataNote"></div>
 </section>
 
 <!-- ============ REHBER ============ -->
@@ -478,6 +486,17 @@ select.need{border-color:#dc2626;box-shadow:0 0 0 3px #dc262633}
       </div>
       <div class="muted" style="margin-top:6px">Klavye: ←/→ bir kare, Shift+←/→ bir saniye, boşluk oynat/durdur, A analiz et.</div>
       <button class="primary wide" id="grabBtn">Bu kareyi analiz et</button>
+      <div class="scanbox">
+        <div class="row" style="justify-content:space-between;align-items:center"><b>Videoyu otomatik tara</b><button class="linkbtn hl" data-help="scan">Nasıl?</button></div>
+        <div class="muted" style="font-size:12.5px;margin:2px 0 8px">Videonun tamamından belirli aralıklarla kare alır, noktaları otomatik bulur ve her kareyi seçili göreve kaydeder. Vardiyadaki riskli süre payı ve zaman grafiği bu karelerden çıkar.</div>
+        <div class="row" style="gap:10px;flex-wrap:wrap;align-items:flex-end">
+          <label>Aralık<select id="scanStep"><option value="1">1 saniye</option><option value="2" selected>2 saniye</option><option value="5">5 saniye</option><option value="10">10 saniye</option></select></label>
+          <label>Taraf<select id="scanSide"><option value="">Otomatik</option><option value="sag">Sağ</option><option value="sol">Sol</option></select></label>
+          <label>Taşınan yük (kg)<input id="scanKg" type="number" min="0" step="any" inputmode="decimal" placeholder="0" style="width:90px"></label>
+          <button class="primary" id="scanBtn">Videoyu tara</button>
+        </div>
+        <div id="scanProg"></div>
+      </div>
     </div>
     <details class="tipbox"><summary>Hangi kareyi seçmeliyim? İyi bir kayıt nasıl olur?</summary>
       <ul>
@@ -501,6 +520,7 @@ select.need{border-color:#dc2626;box-shadow:0 0 0 3px #dc262633}
           <button id="undoBtn">Son noktayı sil</button>
           <button id="clearBtn">Noktaları temizle</button>
           <button id="mzBtn">📏 Mesafe ölç</button>
+          <button id="pScenTop">⇄ Senaryo dene</button>
         </div>
         <div id="nextHint" class="hint"></div>
         <canvas id="cv"></canvas>
@@ -595,6 +615,7 @@ select.need{border-color:#dc2626;box-shadow:0 0 0 3px #dc262633}
     <div class="fwrap" style="margin-top:14px">
       <div>
         <p class="about" id="fIntro"></p>
+        <button class="small scentop" id="fScenTop">⇄ Senaryo dene</button>
         <div class="fmeta" id="fMeta"></div>
         <div id="fFields"></div>
       </div>
@@ -1707,7 +1728,7 @@ function results(rec){
 }
 const tasks=()=>[...new Set(S.records.map(r=>r.task).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'tr'));
 function refreshTaskList(){$('#taskList').innerHTML=tasks().map(t=>`<option value="${esc(t)}">`).join('');}
-const typeName=t=>t==='posture'?'Duruş':FORMS[t]?.short||t;
+const typeName=t=>t==='posture'?'Duruş analizi':FORMS[t]?.short||t;
 
 /* =====================================================================
    5) GEZİNME
@@ -1718,6 +1739,8 @@ function updMini(){const m=document.getElementById('fMini'), fr=document.getElem
   m.classList.toggle('on',!!show); if(!show)return;
   const n=fr.querySelector('.num'), l=fr.querySelector('.lvl');
   m.style.background=fr.style.background||'var(--acc)';
+  let sc=null; try{sc=SC['f:'+S.ftab];}catch(e){} m.dataset.sc=sc?'1':'';
+  if(sc){const b=results({type:S.ftab,data:sc.base})[0][1]; m.innerHTML='<span><span class="n">'+(n?n.textContent:'')+'</span>'+(l?l.textContent:'')+' <span style="opacity:.85;font-size:12.5px">· mevcut '+b.txt+'</span></span><span>Senaryo ↓</span>'; return;}
   m.innerHTML='<span><span class="n">'+(n?n.textContent:'')+'</span>'+(l?l.textContent:'')+'</span><span>Sonuç ↑</span>';}
 const VIEWS=['home','guide','posture','tasks','field','stations','actions','help'];
 let view='home';
@@ -1767,6 +1790,19 @@ function renderHome(){
   $('#homeStats').innerHTML=recs.length?statsHTML(recs):'';
   $('#homeRecent').innerHTML=recs.length?recs.slice(0,4).map(r=>itemCard(r,false)).join(''):'<div class="empty" style="grid-column:1/-1">Henüz kayıt yok. Yukarıdaki seçeneklerden biriyle başla.</div>';
   bindItemActions($('#homeRecent'));
+  const desk=location.protocol==='app:', bk=S.lastBk?Math.floor((Date.now()-new Date(S.lastBk))/864e5):null, need=recs.length>=3&&(bk==null||bk>=14);
+  const dn=$('#dataNote'); dn.classList.toggle('warn',need);
+  dn.innerHTML=`<span>🔒 <b>${desk?'Kayıtların yalnızca bu bilgisayarda saklanır':'Kayıtların yalnızca bu tarayıcıda saklanır'}</b>; hiçbir sunucuya gönderilmez. ${desk?'Bilgisayar değişirse ya da uygulama verisi silinirse kaybolur':'Tarayıcı verisi silinirse kaybolur'}, ara sıra yedek al.${recs.length?` <b>${bk==null?'Henüz yedek alınmadı.':bk===0?'Son yedek bugün alındı.':'Son yedek '+bk+' gün önce alındı.'}</b>`:''}</span><button class="small${need?' primary':''}" data-backup>Yedeği indir</button>`;
+  const NX=[['bodyMap','Hangi vücut bölgesi zorlanıyor?','Görevlerin bölge profilini gör, aynı bölgeyi art arda zorlamayan iş rotasyonu planla.','İstasyonlar → Vücut bölgeleri'],
+    ['scen','Bu önlem işe yarar mı?','Formda ya da duruş analizinde “Senaryo dene” ile değerleri değiştir, sonucu mevcut durumla karşılaştır.','Formlara git'],
+    ['scan','Videonun tamamını taramak','Duruş analizinde “Videoyu tara” belirli aralıklarla kare alıp noktaları otomatik bulur; vardiyadaki riskli süre payını çıkarır.','Duruş analizine git'],
+    ['roi','Yönetime ne sunarım?','Önlem planını, maliyet ve geri ödeme hesabını ve PDF raporu hazırla.','Önlemlere git']];
+  $('#homeNext').innerHTML=recs.length?`<div class="card"><h2>Değerlendirmeden sonra</h2><div class="actions nextgrid">${NX.map(([k,t,d,go])=>`<button class="action" data-next="${k}"><b>${t}</b><span>${d}</span><em>${go} →</em></button>`).join('')}</div></div>`:'';
+  $$('#homeNext [data-next]').forEach(b=>b.onclick=()=>{const k=b.dataset.next;
+    if(k==='bodyMap'){go('stations'); setTimeout(()=>$('#bodyMap').scrollIntoView({behavior:'smooth',block:'start'}),60);}
+    else if(k==='scen'){go('tasks'); setTimeout(()=>{const x=$('#fScenTop'); if(x)x.scrollIntoView({behavior:'smooth',block:'center'});},60);}
+    else if(k==='scan'){go('posture'); setTimeout(()=>{const x=$('#scanBtn'); if(x)x.scrollIntoView({behavior:'smooth',block:'center'});},60);}
+    else {go('actions'); setTimeout(()=>$('#roiBox').scrollIntoView({behavior:'smooth',block:'start'}),60);}});
 }
 
 /* =====================================================================
@@ -1949,6 +1985,47 @@ document.addEventListener('keydown',e=>{
 function frameFrom(src,w,h){const s=Math.min(1,1280/w), c=document.createElement('canvas'); c.width=Math.round(w*s); c.height=Math.round(h*s); c.getContext('2d').drawImage(src,0,0,c.width,c.height); return c.toDataURL('image/jpeg',.82);}
 function grab(){ if(!vid.videoWidth){toast('Önce bir video yükle.');return;} vid.pause(); startAnalysis(frameFrom(vid,vid.videoWidth,vid.videoHeight),vid.currentTime,videoName); }
 $('#grabBtn').onclick=grab;
+
+/* ---------- videoyu otomatik tara ---------- */
+let scanStop=false;
+const seekTo=t=>new Promise(res=>{const f=()=>{vid.removeEventListener('seeked',f); res();}; vid.addEventListener('seeked',f); vid.currentTime=t;});
+async function scanVideo(){
+  if(!vid.videoWidth||!vid.duration){toast('Önce bir video yükle.');return;}
+  const tk=ctxTask(); if(!tk)return;
+  const step=+$('#scanStep').value||2, side=$('#scanSide').value, kg=Math.max(0,+$('#scanKg').value||0), dur=vid.duration, times=[];
+  for(let t=Math.min(.5,dur/2);t<dur;t+=step)times.push(+t.toFixed(2));
+  const sc=Math.min(1,1280/vid.videoWidth), c=document.createElement('canvas'); c.width=Math.round(vid.videoWidth*sc); c.height=Math.round(vid.videoHeight*sc); const g=c.getContext('2d');
+  const th=document.createElement('canvas'); th.width=160; th.height=Math.round(c.height*160/c.width); const tg=th.getContext('2d');
+  const scanId=uid(), base=Date.now(), made=[]; let miss=0; scanStop=false; vid.pause();
+  const btn=$('#scanBtn'), pr=$('#scanProg'); btn.disabled=true;
+  const show=i=>{pr.innerHTML=`<div class="sbar" style="margin-top:8px"><i style="width:${Math.round(i/times.length*100)}%;background:var(--acc)"></i></div><div class="row" style="justify-content:space-between;margin-top:4px;font-size:13px"><span>${i} / ${times.length} kare · ${made.length} kayıt${miss?` · ${miss} karede kişi bulunamadı`:''}</span><button class="small ghost" id="scanCancel">Durdur</button></div>`; $('#scanCancel').onclick=()=>{scanStop=true;};};
+  show(0);
+  try{
+    for(let i=0;i<times.length&&!scanStop;i++){
+      await seekTo(times[i]); g.drawImage(vid,0,0,c.width,c.height);
+      const d=await detectPose(c,side);
+      const n=d?Object.keys(d.pts).length:0;
+      if(!d||n<5||!d.pts.sh||!d.pts.hip){miss++; show(i+1); continue;}
+      tg.drawImage(c,0,0,th.width,th.height);
+      made.push({id:uid(),type:'posture',task:tkLabel(tk.id),taskId:tk.id,note:'',side:side||(d.right?'sag':'sol'),created:new Date(base+i).toISOString(),time:times[i],src:videoName,img:null,thumb:th.toDataURL('image/jpeg',.6),
+        points:d.pts,facing:d.facing,ov:{},adj:migrateAdj({loadKg:kg}),auto:true,scan:scanId});
+      show(i+1);
+    }
+  }catch(e){toast('Tarama yapılamadı: otomatik nokta bulma için model gerekir (web sürümünde ilk kullanımda internetten iner).');}
+  btn.disabled=false;
+  if(!made.length){pr.innerHTML='<div class="muted" style="margin-top:6px">Kayıt oluşmadı: karelerde kişi bulunamadı. Kişinin yandan ve tamamen göründüğü bir video dene.</div>'; return;}
+  S.records.push(...made); persist(); refreshTaskList&&refreshTaskList();
+  const lv=[0,0,0,0,0]; made.forEach(r=>lv[postureCompute(r).reba.lv]++); const hi=(lv[3]+lv[4])/made.length;
+  pr.innerHTML=`<div class="scanres"><b>${made.length} kare kaydedildi</b> <span class="muted">· ${esc(tkLabel(tk.id))}${scanStop?' · tarama durduruldu':''}</span>
+    ${stackBar([0,1,2,3,4].map(l=>({w:lv[l],c:LV[l],l:'REBA '+LVT[l]})),made.length)}
+    <div style="font-size:13px">REBA yüksek veya çok yüksek: <b>%${Math.round(hi*100)}</b> karede. En kötü kare: <b>REBA ${Math.max(...made.map(r=>postureCompute(r).reba.v))}</b>.</div>
+    <div class="muted" style="font-size:12.5px;margin-top:4px">Noktalar otomatik bulundu; şüpheli kareleri İstasyonlar sayfasında açıp düzelt. Yük ve diğer gözlemler (dönme, tekrar) tüm karelere aynı girildi.</div>
+    <div class="row" style="gap:6px;margin-top:6px"><button class="small primary" id="scanGo">Sonuçları istasyonda gör</button><button class="small ghost danger" id="scanUndo">Bu taramayı geri al</button></div></div>`;
+  $('#scanGo').onclick=()=>{const t=tkOf(tk.id); S.openSt=S.openSt||{}; S.openSt[t.st]=true; go('stations'); setTimeout(()=>{const e=$('#st_'+t.st); if(e)e.scrollIntoView({behavior:'smooth'});},60);};
+  $('#scanUndo').onclick=e=>{const b=e.currentTarget; if(!b.dataset.sure){b.dataset.sure=1; b.textContent=made.length+' kayıt silinsin mi? Tekrar bas'; return;} S.records=S.records.filter(r=>r.scan!==scanId); persist(); pr.innerHTML='<div class="muted" style="margin-top:6px">Tarama geri alındı.</div>';};
+  toast(made.length+' kare kaydedildi'+(miss?` · ${miss} karede kişi bulunamadı`:'')+'.');
+}
+$('#scanBtn').onclick=scanVideo;
 $('#noImgBtn').onclick=()=>startAnalysis(null,null,'görüntüsüz');
 $('#sampleBtn').onclick=()=>{
   const c=document.createElement('canvas'); c.width=960; c.height=640; const x=c.getContext('2d');
@@ -2002,14 +2079,14 @@ function loadPose(){
   return poseP;
 }
 // Bir görüntüde 33 vücut noktası bulur; Duruş'un 8 noktasına çevirir (yandan görünen taraf).
-async function detectPose(img){
+async function detectPose(img,side=cur&&cur.side){
   const pose=await loadPose();
   const res=await new Promise((ok,no)=>{pose.onResults(ok); pose.send({image:img}).catch(no);});
   const L=res.poseLandmarks; if(!L)return null;
   const W=img.naturalWidth||img.width, H=img.naturalHeight||img.height, v=i=>L[i].visibility??1;
   const RS={ear:8,sh:12,el:14,wr:16,pk:18,ix:20,hip:24,kn:26,an:28}, LS_={ear:7,sh:11,el:13,wr:15,pk:17,ix:19,hip:23,kn:25,an:27};
   const sum=m=>Object.values(m).reduce((a,i)=>a+v(i),0);
-  const right=cur&&cur.side==='sag'?true:cur&&cur.side==='sol'?false:sum(RS)>=sum(LS_), I=right?RS:LS_;
+  const right=side==='sag'?true:side==='sol'?false:sum(RS)>=sum(LS_), I=right?RS:LS_;
   const P=i=>({x:clamp(L[i].x*W,0,W),y:clamp(L[i].y*H,0,H)}), ok=i=>v(i)>=.3, pts={};
   ['ear','sh','el','wr','hip','kn','an'].forEach(k=>{if(ok(I[k]))pts[k]=P(I[k]);});
   if(ok(I.ix)||ok(I.pk)){const a=P(I.ix),c=P(I.pk); pts.hd={x:(a.x+c.x)/2,y:(a.y+c.y)/2};}
@@ -2253,7 +2330,7 @@ $('#jsonBtn').onclick=()=>{if(!S.records.length){toast('Kopyalanacak kayıt yok.
 async function downloadBackup(){
   if(!S.records.length&&!S.field.length&&!S.stations.length){toast('Yedeklenecek kayıt yok.');return;}
   const d=new Date(), name='durus-yedek-'+d.toISOString().slice(0,10)+'.json';
-  try{await DL.save({filename:name,data:new Blob([backupJSON()],{type:'application/json'})}); toast('Yedek indirildi: '+name+'. Başka cihazda “İçe aktar” ile yükleyebilirsin.');}
+  try{await DL.save({filename:name,data:new Blob([backupJSON()],{type:'application/json'})}); S.lastBk=new Date().toISOString(); persist(); if(view==='home')renderHome(); toast('Yedek indirildi: '+name+'. Başka cihazda “İçe aktar” ile yükleyebilirsin.');}
   catch(e){toast('İndirme başarısız; “JSON kopyala” ile yedek alabilirsin.');}
 }
 document.addEventListener('click',e=>{if(e.target.closest('[data-backup]')){e.preventDefault(); downloadBackup();}});
@@ -2436,7 +2513,7 @@ function exportAll(){
   if(!S.records.length){toast('Dışa aktarılacak kayıt yok.');return;}
   withExcel(async wb=>{
     const recs=[...S.records].sort((a,b)=>(a.task||'').localeCompare(b.task||'','tr')||a.created.localeCompare(b.created));
-    addSummarySheet(wb,recs,'Ergonomi değerlendirme raporu'); addRiskSheet(wb,curSite(),null); addActionsSheet(wb,curSite(),null); addResultsSheet(wb,recs);
+    addSummarySheet(wb,recs,'Ergonomi değerlendirme raporu'); addRiskSheet(wb,curSite(),null); addActionsSheet(wb,curSite(),null); addBodySheet(wb,curSite(),null); addRoiSheet(wb,curSite()); addResultsSheet(wb,recs);
     const types=[...new Set(recs.map(r=>r.type))]; types.forEach(t=>addTypeSheet(wb,t,recs.filter(r=>r.type===t)));
     await saveWorkbook(wb,`Durus_ergonomi_raporu_${today()}.xlsx`);
   });
@@ -2642,14 +2719,21 @@ const AD={
     rec:s=>({...cur,...s,type:'posture'}), diff:postureDiff, recId:()=>cur&&cur.id||null})};
 function scenStart(kind){const ad=AD[kind](); if(kind==='posture'&&!cur)return;
   SC[ad.key]={base:ad.get(),list:[]}; renderScen(kind);
-  toast('Senaryo modu: mevcut durum sabitlendi. Değerleri değiştir, sonucu karşılaştır.');}
+  toast(innerWidth<900?'Senaryo modu: değerleri değiştir; alttaki çubuk senaryo sonucunu gösterir, dokununca karşılaştırmaya gider.':'Senaryo modu: mevcut durum sabitlendi. Değerleri değiştir, sonucu karşılaştır.'); if(typeof updMini==='function')updMini();}
 function scenEnd(kind){const ad=AD[kind](), sc=SC[ad.key]; if(!sc)return; delete SC[ad.key]; ad.set(sc.base); renderScen(kind);}
 function resBadges(rs){return rs.map(([n,m])=>`<span class="badge" style="background:${LV[m.lv]}">${esc(n)} ${m.txt}</span>`).join(' ');}
 function deltaTxt(rb,rs){ // yöntem bazında: düzey düştü mü
   const parts=rs.map(([n,m],i)=>{const b=rb[i]&&rb[i][1]; if(!b||b.v==null||m.v==null)return null; const d=m.lv-b.lv; return d<0?`<b style="color:${LV[1]}">${esc(n)} ↓ ${LVT[b.lv]} → ${LVT[m.lv]}</b>`:d>0?`<b style="color:${LV[4]}">${esc(n)} ↑ ${LVT[b.lv]} → ${LVT[m.lv]}</b>`:(m.v<b.v?`<span style="color:${LV[1]}">${esc(n)}: puan düştü, düzey aynı</span>`:m.v>b.v?`<span style="color:${LV[3]}">${esc(n)}: puan arttı, düzey aynı</span>`:`<span class="muted">${esc(n)}: değişmedi</span>`);}).filter(Boolean);
   return parts.join(' · ');}
+function scenJump(kind){const ad=AD[kind](); if(kind==='posture'&&!cur)return;
+  // Telefonda formun altı uzak: senaryoyu başlatınca alanların başında kal, karşılaştırmaya alttaki çubukla git
+  if(!SC[ad.key]){scenStart(kind); if(innerWidth<900){const f=$(kind==='form'?'#fFields':'#angTable'); if(f)setTimeout(()=>f.scrollIntoView({behavior:'smooth',block:'start'}),40); return;}}
+  setTimeout(()=>$(ad.el).scrollIntoView({behavior:'smooth',block:'start'}),40);}
+$('#fScenTop').onclick=()=>scenJump('form'); $('#pScenTop').onclick=()=>scenJump('posture');
 function renderScen(kind){
   const ad=AD[kind](), el=$(ad.el); if(!el)return; const sc=SC[ad.key], sb=$(ad.save);
+  if(kind==='form')setTimeout(updMini,0);
+  const tb=$(kind==='form'?'#fScenTop':'#pScenTop'); if(tb){tb.textContent=sc?'⇄ Senaryo açık · karşılaştırmaya git':'⇄ Senaryo dene'; tb.classList.toggle('on',!!sc);}
   sb.disabled=!!sc; sb.title=sc?'Senaryo modunda kayıt yapılmaz; önce senaryodan çık.':'';
   if(!sc){el.innerHTML=`<button class="scenbtn" data-scgo>⇄ Senaryo dene <span>değerleri değiştirip sonucu mevcut durumla karşılaştır</span></button>`; el.querySelector('[data-scgo]').onclick=()=>scenStart(kind); return;}
   const now=ad.get(), rb=results(ad.rec(sc.base)), rn=results(ad.rec(now)), dn=ad.diff(sc.base,now);
@@ -2856,6 +2940,14 @@ function bestOrder(xs){
   else {const used=new Set([0]), o=[0]; while(o.length<n){let bi=-1,bv=1e9; for(let i=0;i<n;i++)if(!used.has(i)){const v=rotCost(xs[o.at(-1)],xs[i]); if(v<bv){bv=v;bi=i;}} o.push(bi); used.add(bi);} best=o; bc=cost(o);}
   return best.map(i=>xs[i]);
 }
+// Rotasyon planı: seçili görevlerden sıra, geçişler ve uyarılar (ekran ve raporlar ortak kullanır)
+function rotPlan(tks,sel){
+  const xs=bestOrder(sel.map(id=>tks.find(x=>x.t.id===id)).filter(Boolean)), n=xs.length, warn=[];
+  BR_K.forEach(k=>{if(xs.every(x=>(x.lv[k]||0)>=3))warn.push(`<b>${BR_N[k]}</b> seçilen tüm görevlerde yüksek: rotasyon bu bölgeyi dinlendirmez. Önce görevleri iyileştir ya da bu bölgeyi zorlamayan bir görev ekle.`);});
+  xs.filter(x=>BR_K.some(k=>x.lv[k]===4)).forEach(x=>warn.push(`<b>${esc(tkLabel(x.t.id))}</b> bir bölgede çok yüksek (${BR_K.filter(k=>x.lv[k]===4).map(k=>BR_N[k]).join(', ')}): rotasyon riski yalnızca daha çok kişiye dağıtır; bu görevi önce düzelt.`));
+  const links=xs.map((x,i)=>{const y=i<n-1?xs[i+1]:(n>2?xs[0]:null); return y?BR_K.filter(k=>(x.lv[k]||0)>=3&&(y.lv[k]||0)>=3):null;});
+  return {xs,warn,links};
+}
 function renderRot(tks){
   const el=$('#rotPlan'); if(!el)return; S.rot=S.rot||{sel:[]};
   const sel=S.rot.sel.filter(id=>tks.some(x=>x.t.id===id));
@@ -2864,11 +2956,9 @@ function renderRot(tks){
   let out='';
   if(sel.length<2)out='<div class="muted">Rotasyona girecek en az iki görev seç.</div>';
   else {
-    const xs=bestOrder(sel.map(id=>tks.find(x=>x.t.id===id))), n=xs.length, warn=[];
-    BR_K.forEach(k=>{if(xs.every(x=>(x.lv[k]||0)>=3))warn.push(`<b>${BR_N[k]}</b> seçilen tüm görevlerde yüksek: rotasyon bu bölgeyi dinlendirmez. Önce görevleri iyileştir ya da bu bölgeyi zorlamayan bir görev ekle.`);});
-    xs.filter(x=>BR_K.some(k=>x.lv[k]===4)).forEach(x=>warn.push(`<b>${esc(tkLabel(x.t.id))}</b> bir bölgede çok yüksek (${BR_K.filter(k=>x.lv[k]===4).map(k=>BR_N[k]).join(', ')}): rotasyon riski yalnızca daha çok kişiye dağıtır; bu görevi önce düzelt.`));
-    const link=(a,b)=>{const both=BR_K.filter(k=>(a.lv[k]||0)>=3&&(b.lv[k]||0)>=3); return both.length?`<li class="link" style="color:${LV[4]}">⚠ ${both.map(k=>BR_N[k]).join(', ')} iki görevde de yüksek</li>`:`<li class="link" style="color:${LV[1]}">✓ Farklı bölgeler çalışır</li>`;};
-    out=`<ol class="rotlist">${xs.map((x,i)=>`<li class="task"><b>${i+1}. ${esc(tkLabel(x.t.id))}</b>${x.t.min?` <span class="muted">· ${x.t.min} dk/vardiya</span>`:''}${chips(x)}</li>${i<n-1?link(x,xs[i+1]):(n>2?link(x,xs[0]).replace('</li>',' (son görevden ilkine dönüş)</li>'):'')}`).join('')}</ol>
+    const {xs,warn,links}=rotPlan(tks,sel), n=xs.length;
+    const link=(both,last)=>both==null?'':(both.length?`<li class="link" style="color:${LV[4]}">⚠ ${both.map(k=>BR_N[k]).join(', ')} iki görevde de yüksek${last?' (son görevden ilkine dönüş)':''}</li>`:`<li class="link" style="color:${LV[1]}">✓ Farklı bölgeler çalışır${last?' (son görevden ilkine dönüş)':''}</li>`);
+    out=`<ol class="rotlist">${xs.map((x,i)=>`<li class="task"><b>${i+1}. ${esc(tkLabel(x.t.id))}</b>${x.t.min?` <span class="muted">· ${x.t.min} dk/vardiya</span>`:''}${chips(x)}</li>${link(links[i],i===n-1)}`).join('')}</ol>
       ${warn.length?`<div class="pwarn" style="margin-top:8px">${warn.map(w=>'<div>'+w+'</div>').join('')}</div>`:''}
       <div class="muted" style="font-size:12.5px;margin-top:6px">Sıra döngüseldir: son görevden sonra ilkine dönülür. Değişim aralığını işin yoğunluğuna göre belirle; çalışanlar rotasyondaki tüm görevler için eğitilmiş olmalı. Rotasyon bir idari önlemdir; teknik önlemin yerine geçmez.</div>`;
   }
@@ -2885,20 +2975,23 @@ const ROI_F=[
   ['ind','Dolaylı maliyet çarpanı','×','Yerine adam, fazla mesai, verim ve kalite kaybı; doğrudan maliyetin katı olarak. Bilmiyorsan 0 bırak.'],
   ['red','Önlemlerle beklenen azalma','%','Vakalarda beklenen yüzde azalma'],
   ['cost','Önlemlerin toplam maliyeti','para','Boş bırakılırsa önlemlere girilen maliyetlerin toplamı kullanılır']];
-function renderRoi(){
-  const el=$('#roiBox'); if(!el)return; const site=curSite(); S.roi=S.roi||{}; const R=S.roi[site]=S.roi[site]||{cur:document.documentElement.lang==='tr'?'₺':'€'};
+function roiCalc(site){S.roi=S.roi||{}; const R=S.roi[site]=S.roi[site]||{cur:document.documentElement.lang==='tr'?'₺':'€'};
   const acts=S.actions.filter(a=>{const s=stOf(a.st); return s&&s.site===site&&a.status!=='cancel';}), sumA=acts.reduce((a,x)=>a+(+x.cost||0),0), nA=acts.filter(x=>+x.cost>0).length;
-  const num=k=>+String(R[k]??'').replace(',','.')||0, cur=esc(R.cur||'');
+  const num=k=>+String(R[k]??'').replace(',','.')||0;
   const cost=R.cost!==''&&R.cost!=null?num('cost'):sumA, caseC=num('days')*num('dayCost')+num('direct'), annual=num('cases')*caseC*(1+num('ind')), save=annual*num('red')/100;
-  const f=v=>Math.round(v).toLocaleString('tr-TR')+' '+cur;
-  const pay=save>0&&cost>0?cost/save*12:null;
+  return {R,acts,sumA,nA,cost,caseC,annual,save,pay:save>0&&cost>0?cost/save*12:null,net3:save*3-cost,has:annual>0||cost>0};}
+const roiFmt=(v,R)=>Math.round(v).toLocaleString('tr-TR')+' '+(R.cur||'');
+const pctS=x=>'%'+x;
+const payTxt=p=>p==null?'—':p<1?'1 aydan az':Math.ceil(p)+' ay';
+function renderRoi(){
+  const el=$('#roiBox'); if(!el)return; const site=curSite(), {R,acts,sumA,nA,cost,annual,save,pay}=roiCalc(site), cur=esc(R.cur||''), f=v=>roiFmt(v,R);
   el.innerHTML=`<div class="roigrid">${ROI_F.map(([k,l,u,h])=>`<label>${l} <span class="muted" style="font-size:12px">${u==='para'?cur:u}</span><input type="number" min="0" step="any" inputmode="decimal" data-roi="${k}" value="${esc(R[k]??'')}"${k==='cost'&&sumA?` placeholder="${Math.round(sumA)}"`:''} title="${esc(h)}"></label>`).join('')}
     <label>Para birimi<input data-roi="cur" value="${cur}" maxlength="4"></label></div>
     ${!R.cost&&R.cost!==0&&nA?`<div class="muted" style="font-size:12.5px;margin-top:6px">Önlem maliyeti: ${nA} önlemde girilen tutarların toplamı (${f(sumA)}).</div>`:''}
     <div class="stats" style="margin-top:12px">
       <div class="stat"><b>${annual?f(annual):'—'}</b><span>yıllık tahmini maliyet</span></div>
       <div class="stat"><b>${save?f(save):'—'}</b><span>yıllık beklenen tasarruf</span></div>
-      <div class="stat"><b>${pay!=null?(pay<1?'1 aydan az':Math.ceil(pay)+' ay'):'—'}</b><span>geri ödeme süresi</span></div>
+      <div class="stat"><b>${payTxt(pay)}</b><span>geri ödeme süresi</span></div>
       <div class="stat"><b style="color:${save*3-cost<0?LV[4]:'inherit'}">${save||cost?f(save*3-cost):'—'}</b><span>3 yıllık net kazanç</span></div></div>
     <div class="muted" style="font-size:12.5px;margin-top:6px">Hesap: vaka maliyeti = kayıp gün × günlük maliyet + diğer doğrudan maliyet; yıllık maliyet = vaka sayısı × vaka maliyeti × (1 + dolaylı çarpan); tasarruf = yıllık maliyet × beklenen azalma. Önlemlerin işletme giderleri ve verimlilik etkisi dahil değildir.</div>`;
   el.querySelectorAll('[data-roi]').forEach(i=>i.onchange=()=>{const k=i.dataset.roi; R[k]=k==='cur'?i.value.trim():(i.value===''?'':+i.value); persist(); renderRoi();});
@@ -2945,7 +3038,7 @@ $('#stAdd').onclick=()=>openStationDlg(null,id=>{S.openSt=S.openSt||{}; S.openSt
 document.addEventListener('click',e=>{const b=e.target.closest('[data-tipact]'); if(b){e.preventDefault(); actionFromTip(b.dataset.src,+b.dataset.tipact);}});
 function exportStation(stId){
   const s=stOf(stId), recs=recsOfStation(stId).sort((a,b)=>a.created.localeCompare(b.created)); if(!recs.length){toast('Bu istasyonda kayıt yok.');return;}
-  withExcel(async wb=>{addSummarySheet(wb,recs,s.name+' · ergonomi değerlendirmesi'); addResultsSheet(wb,recs); for(const r of recs)await addFormSheet(wb,r); addRiskSheet(wb,s.site,[s.id]); addActionsSheet(wb,s.site,[s.id]); await saveWorkbook(wb,`Durus_${slug(s.name)}_${today()}.xlsx`);});
+  withExcel(async wb=>{addSummarySheet(wb,recs,s.name+' · ergonomi değerlendirmesi'); addResultsSheet(wb,recs); for(const r of recs)await addFormSheet(wb,r); addRiskSheet(wb,s.site,[s.id]); addBodySheet(wb,s.site,[s.id]); addActionsSheet(wb,s.site,[s.id]); await saveWorkbook(wb,`Durus_${slug(s.name)}_${today()}.xlsx`);});
 }
 
 /* =====================================================================
@@ -3023,12 +3116,36 @@ function addRiskSheet(wb,siteId,stIds){
     row.alignment={wrapText:true,vertical:'top'}; const c=row.getCell(fk?12:11); c.fill=lvFill(r.cls[0]); c.font={bold:true,color:{argb:XC.white}};});
   ws.autoFilter={from:{row:1,column:1},to:{row:1,column:cols.length}};
 }
+function addBodySheet(wb,siteId,stIds){
+  const sts=S.stations.filter(s=>s.site===siteId&&(!stIds||stIds.includes(s.id)));
+  const tks=sts.flatMap(s=>S.tasks.filter(t=>t.st===s.id)).sort((a,b)=>tkLabel(a.id).localeCompare(tkLabel(b.id),'tr')).map(t=>({t,...taskRegions(t.id)})).filter(x=>Object.keys(x.lv).length);
+  const nq=nmqRegions(sts.flatMap(s=>recsOfStation(s.id))); if(!tks.length&&!nq)return;
+  const ws=wb.addWorksheet('Vücut bölgeleri',{views:[{state:'frozen',ySplit:1}]});
+  ws.columns=[{header:'İstasyon › görev',width:34},...BR.map(b=>({header:b[1],width:16})),{header:'Kaynak yöntemler',width:30}]; styleHeader(ws.getRow(1));
+  tks.forEach(x=>{const row=ws.addRow([tkLabel(x.t.id),...BR_K.map(k=>x.lv[k]?LVT[x.lv[k]]:''),[...new Set(Object.values(x.src).flatMap(z=>[...z]))].join(', ')]);
+    BR_K.forEach((k,i)=>{if(x.lv[k]){const c=row.getCell(i+2); c.fill=lvFill(x.lv[k]); c.font={bold:true,color:{argb:XC.white}};}});});
+  if(nq){const row=ws.addRow(['Şikâyet bildirenler (Nordik anketi, '+nq.n+' kişi)',...BR_K.map(k=>nq.c[k]?Math.round(nq.c[k]/nq.n*100)/100:''),'']); BR_K.forEach((k,i)=>{if(nq.c[k])row.getCell(i+2).numFmt='0%';}); row.font={italic:true};}
+  const sel=((S.rot&&S.rot.sel)||[]).filter(id=>tks.some(x=>x.t.id===id));
+  if(sel.length>=2){const P=rotPlan(tks,sel); ws.addRow([]); const h=ws.addRow(['İş rotasyonu planı (sıra döngüseldir)']); h.font={bold:true};
+    const hr=ws.addRow(['Sıra · görev','Zorlanan bölgeler','','','','','','Sonraki göreve geçiş']); styleHeader(hr);
+    P.xs.forEach((x,i)=>{const l=P.links[i], r=ws.addRow([(i+1)+'. '+tkLabel(x.t.id),BR_K.filter(k=>x.lv[k]>=2).map(k=>BR_N[k]+' · '+LVT[x.lv[k]]).join(', ')||'Belirgin zorlanma yok','','','','','',l==null?'':l.length?'⚠ '+l.map(k=>BR_N[k]).join(', ')+' iki görevde de yüksek':'Farklı bölgeler çalışır']); ws.mergeCells(r.number,2,r.number,7); r.alignment={wrapText:true,vertical:'top'};});
+    P.warn.forEach(w=>{const r=ws.addRow([stripT(w)]); ws.mergeCells(r.number,1,r.number,8); r.font={color:{argb:'FF9A3412'}}; r.alignment={wrapText:true};});}
+}
+function addRoiSheet(wb,siteId){
+  const C=roiCalc(siteId); if(!C.has)return;
+  const ws=wb.addWorksheet('Maliyet ve geri ödeme'); ws.columns=[{header:'Kalem',width:58},{header:'Değer',width:22},{header:'Açıklama',width:60}]; styleHeader(ws.getRow(1));
+  ROI_F.forEach(([k,l,u,h])=>{const raw=C.R[k], val=k==='cost'&&(raw===''||raw==null)?C.cost:(raw===''||raw==null?'':+raw); ws.addRow([l+(u==='para'?' ('+(C.R.cur||'')+')':u?' ('+u+')':''),val,k==='cost'&&(raw===''||raw==null)?'Önlemlere girilen maliyetlerin toplamı':h]);});
+  ws.addRow([]);
+  [['Vaka başına maliyet',C.caseC],['Yıllık tahmini maliyet',C.annual],['Yıllık beklenen tasarruf',C.save],['3 yıllık net kazanç',C.net3]].forEach(([l,v])=>{const r=ws.addRow([l+' ('+(C.R.cur||'')+')',Math.round(v)]); r.font={bold:true}; r.getCell(2).numFmt='#,##0';});
+  const r=ws.addRow(['Geri ödeme süresi (ay)',C.pay==null?'':Math.round(C.pay*10)/10]); r.font={bold:true};
+  ws.addRow([]); ws.addRow(['Rakamlar değerlendirenin tahminleridir; önlemlerin işletme giderleri ve verimlilik etkisi dahil değildir.']);
+}
 function addActionsSheet(wb,siteId,stIds){
   const acts=S.actions.filter(a=>{const s=stOf(a.st); return s&&s.site===siteId&&(!stIds||stIds.includes(a.st));}); if(!acts.length)return;
   const ws=wb.addWorksheet('Önlem planı',{views:[{state:'frozen',ySplit:1}]});
-  const cols=[['No',5],['Önlem',34],['Açıklama',40],['İstasyon › görev',30],['Önlem türü',22],['Sorumlu',18],['Termin',12],['Durum',14],['Tamamlanma',12],['Önce',16],['Sonra',16],['Sonuç',14]];
+  const cols=[['No',5],['Önlem',34],['Açıklama',40],['İstasyon › görev',30],['Önlem türü',22],['Sorumlu',18],['Termin',12],['Durum',14],['Tamamlanma',12],['Önce',16],['Senaryoda beklenen',16],['Sonra',16],['Sonuç',14],['Tahmini maliyet',14]];
   ws.columns=cols.map(([h,w])=>({header:h,width:w})); styleHeader(ws.getRow(1));
-  acts.forEach((a,i)=>{const af=afterOf(a); const row=ws.addRow([i+1,a.title,a.detail||'',tkLabel(a.tk),(CTRL.find(c=>c[0]===a.ctrl)||[,''])[1],a.owner||'',a.due?new Date(a.due+'T12:00:00'):null,(ASTAT.find(x=>x[0]===a.status)||[,''])[1],a.done?new Date(a.done+'T12:00:00'):null,a.before?`${a.before.n} ${a.before.txt}`:'',af?`${af.n} ${af.txt}`:'',af&&a.before?(af.lv<a.before.lv?'İyileşti':af.lv>a.before.lv?'Kötüleşti':'Aynı seviye'):'']);
+  acts.forEach((a,i)=>{const af=afterOf(a); const row=ws.addRow([i+1,a.title,a.detail||'',tkLabel(a.tk),(CTRL.find(c=>c[0]===a.ctrl)||[,''])[1],a.owner||'',a.due?new Date(a.due+'T12:00:00'):null,(ASTAT.find(x=>x[0]===a.status)||[,''])[1],a.done?new Date(a.done+'T12:00:00'):null,a.before?`${a.before.n} ${a.before.txt}`:'',a.exp?`${a.exp.n} ${a.exp.txt}`:'',af?`${af.n} ${af.txt}`:'',af&&a.before?(af.lv<a.before.lv?'İyileşti':af.lv>a.before.lv?'Kötüleşti':'Aynı seviye'):'',+a.cost||'']);
     row.getCell(7).numFmt='dd.mm.yyyy'; row.getCell(9).numFmt='dd.mm.yyyy'; row.alignment={wrapText:true,vertical:'top'}; if(overdue(a)){row.getCell(7).font={bold:true,color:{argb:'FFDC2626'}};}});
 }
 
@@ -3052,27 +3169,27 @@ function pdfReport(stIds){
     const tbl=(widths,head,body,o={})=>({table:{headerRows:1,widths,body:[head.map(h=>({text:h,style:'th'})),...body]},layout:{hLineColor:'#e2e5e0',vLineColor:'#e2e5e0',fillColor:(i)=>i===0?'#0f6b5f':null,paddingTop:()=>3,paddingBottom:()=>3},fontSize:8.5,margin:[0,2,0,8],...o});
     const open=acts.filter(a=>a.status==='plan'||a.status==='prog'), late=acts.filter(overdue), ver=acts.filter(a=>{const f=afterOf(a); return f&&a.before&&f.lv<a.before.lv;});
     const clsMap={}; rows.forEach(r=>{clsMap[r.cls[1]]=(clsMap[r.cls[1]]||0)+1;}); const clsN=Object.entries(clsMap).map(([l,n])=>[n,l.toLowerCase()]);
-    const content=[];
+    const content=[]; let secN=0; const N=()=>(++secN)+'. ';
     content.push({text:'Ergonomi Risk Değerlendirme Raporu',style:'title'},{text:site.name+(site.addr?' · '+site.addr:''),style:'sub'},
       {columns:[{text:[{text:'Tarih: ',bold:true},new Date().toLocaleDateString('tr-TR')]},{text:[{text:'Değerlendiren: ',bold:true},site.assessor||'—']}],margin:[0,6,0,0],fontSize:10},
       {text:[{text:'Kapsam: ',bold:true},`${sts.length} istasyon, ${sts.reduce((a,s)=>a+S.tasks.filter(t=>t.st===s.id).length,0)} görev, ${recs.length} kayıt. Yöntemler: ${types.map(typeName).join(', ')}.`],fontSize:10,margin:[0,4,0,0]});
-    content.push(H('1. Yönetici özeti'),
+    content.push(H(N()+'Yönetici özeti'),
       {ul:[...(rows.length?[`${rows.length} risk satırı değerlendirildi: ${clsN.map(([n,l])=>`${n} ${l}`).join(', ')}.`]:[]),
         `${acts.length} önlem: ${open.length} açık${late.length?` (${late.length} gecikmiş)`:''}, ${acts.filter(a=>a.status==='done').length} tamamlandı; ${ver.length} önlemde iyileşme yeniden ölçümle doğrulandı.`,
         ...(()=>{const n=sts.flatMap(s=>recsOfStation(s.id)).filter(r=>r.type==='nmq'); if(!n.length)return []; const any=n.filter(r=>Object.values((r.data&&r.data.g)||{}).some(x=>x&&(x.y12||x.d7||x.blk))).length; return [`Nordik anketi: ${n.length} çalışandan ${any} kişi son 12 ayda en az bir bölgede şikâyet bildirdi.`];})()],fontSize:10});
     if(rows.length)content.push({text:'En yüksek riskler',bold:true,margin:[0,8,0,2],fontSize:10},tbl([16,'*','*',70,40,70],['#','İstasyon','Tehlike','Mevcut durum','Risk','Sınıf'],rows.slice(0,5).map((r,i)=>[cell(i+1),cell(r.s.name),cell(r.hazard),lvCell(r.x.m.lv,`${r.x.n} ${r.x.m.txt}`),cell(fmtN(r.R),{bold:true}),lvCell(r.cls[0],r.cls[1])])));
     // risk haritası
     const cols=MAP_COLS.filter(c=>['pos','mmh','rep','off'].includes(c)||recs.some(r=>AREA_OF[r.type]===c));
-    content.push(H('2. Risk haritası'),{text:'Her hücre o alandaki güncel en kötü sonucu gösterir.',fontSize:9,color:'#67706b',margin:[0,0,0,4]},
+    content.push(H(N()+'Risk haritası'),{text:'Her hücre o alandaki güncel en kötü sonucu gösterir.',fontSize:9,color:'#67706b',margin:[0,0,0,4]},
       tbl(['*',...cols.map(()=>52),40],['İstasyon',...cols.map(c=>AREA_N[c]),'Çalışan'],sts.map(s=>{const w=areaWorst(recsOfStation(s.id)); return [cell(s.name,{bold:true}),...cols.map(c=>w[c]?{text:[{text:LVT[w[c].m.lv]+'\n',bold:true},{text:`${w[c].n} ${w[c].m.txt}`,fontSize:7}],fillColor:hexOf(w[c].m.lv),color:'#fff'}:cell('—',{color:'#999'})),cell(s.workers||'—')];})));
     // risk tablosu (yatay sayfa)
-    if(rows.length){content.push({text:'',pageBreak:'before',pageOrientation:'landscape'},H(`3. Risk değerlendirme tablosu (${fk?'Fine-Kinney':'5×5 matris'})`),
+    if(rows.length){content.push({text:'',pageBreak:'before',pageOrientation:'landscape'},H(`${N()}Risk değerlendirme tablosu (${fk?'Fine-Kinney':'5×5 matris'})`),
       tbl([14,70,80,'*',62,36,...(fk?[24,24,24]:[24,24]),34,62,'*'],['#','İstasyon / görev','Tehlike','Olası zarar','Mevcut durum','Etkilenen','O',...(fk?['F']:[]),'Ş','Risk','Sınıf','Önlemler'],
         rows.map((r,i)=>[cell(i+1),cell(r.s.name+(r.t?'\n'+r.t.name:'')),cell(r.hazard),cell(r.harm),lvCell(r.x.m.lv,`${r.x.n} ${r.x.m.txt}`),cell(r.s.workers||'—'),cell(fmtN(r.O)),...(fk?[cell(fmtN(r.F))]:[]),cell(fmtN(r.S)),cell(fmtN(r.R),{bold:true}),lvCell(r.cls[0],r.cls[1]),cell(r.acts.length?r.acts.map(a=>`• ${a.title} (${(ASTAT.find(x=>x[0]===a.status)||[,''])[1]}${a.owner?', '+a.owner:''}${a.due?', '+dateTR(a.due):''})`).join('\n'):'Önlem yok')])),
       {text:fk?'Risk = Olasılık × Frekans × Şiddet. Sınıflar: 20 altı önemsiz · 20–70 olası · 70–200 önemli · 200–400 yüksek · 400 ve üstü tolerans gösterilemez. Başlangıç değerleri yöntem sonucundan, görev süresinden ve tehlike türünden önerilmiş, değerlendiren tarafından gözden geçirilmiştir.':'Risk = Olasılık × Şiddet. Sınıflar: 1 önemsiz · 2–6 düşük · 8–12 orta · 15–16 yüksek · 20–25 tolerans gösterilemez.',fontSize:8,color:'#67706b'},
       {text:'',pageBreak:'after',pageOrientation:'portrait'});}
     // istasyon ayrıntıları
-    content.push(H((rows.length?'4':'3')+'. İstasyon ayrıntıları'));
+    content.push(H(N()+'İstasyon ayrıntıları'));
     for(const s of sts){
       const tks=S.tasks.filter(t=>t.st===s.id), rs=currentRecs(recsOfStation(s.id)), E=exposureData(s);
       content.push(H(s.name,2),{text:[s.dept?`Bölüm: ${s.dept} · `:'',`Çalışan: ${s.workers||'—'} · Vardiya: ${fmtN(+s.shiftH||8)} saat`,s.women?' · Kadın çalışan var':''].join(''),fontSize:9,color:'#67706b'});
@@ -3088,11 +3205,32 @@ function pdfReport(stIds){
       if(worstPost)content.push({columns:[{width:'*',stack:left},{width:200,stack:[{image:worstPost.r.thumb||worstPost.r.img,width:200},{text:`En kötü kare: ${worstPost.p.n} ${worstPost.p.m.txt}`,fontSize:8,color:'#67706b'}]}],columnGap:12,margin:[0,4,0,6]});
       else if(left.length)content.push({stack:left,margin:[0,0,0,6]});
     }
+    // vücut bölgeleri ve rotasyon
+    { const tks=sts.flatMap(s=>S.tasks.filter(t=>t.st===s.id)).map(t=>({t,...taskRegions(t.id)})).filter(x=>Object.keys(x.lv).length), nq=nmqRegions(recs);
+      if(tks.length||nq){
+        content.push(H(N()+'Vücut bölgeleri'),{text:'Her görevin vücut bölgelerini zorlama düzeyi: duruş analizinde REBA bileşen skorlarından, QEC’te bölge puanlarından, diğer yöntemlerde yöntemin sonucundan.',fontSize:9,color:'#67706b',margin:[0,0,0,4]},
+          tbl(['*',...BR.map(()=>52)],['Görev',...BR.map(b=>b[1])],[...tks.map(x=>[cell(tkLabel(x.t.id),{bold:true}),...BR_K.map(k=>x.lv[k]?lvCell(x.lv[k],LVT[x.lv[k]]):cell('—',{color:'#9aa19c'}))]),
+            ...(nq?[[cell('Şikâyet bildirenler (Nordik anketi, '+nq.n+' kişi)',{bold:true}),...BR_K.map(k=>{const n=nq.c[k]||0; return n?cell('%'+Math.round(n/nq.n*100),{fillColor:n/nq.n>=.5?hexOf(3):hexOf(2),color:'#ffffff',bold:true}):cell('—',{color:'#9aa19c'});})]]:[])]));
+        const sel=((S.rot&&S.rot.sel)||[]).filter(id=>tks.some(x=>x.t.id===id));
+        if(sel.length>=2){const P=rotPlan(tks,sel), n=P.xs.length;
+          content.push({text:'İş rotasyonu planı',bold:true,fontSize:10.5,margin:[0,10,0,3]},
+            tbl([16,'*','*',120],['#','Görev','Zorlanan bölgeler','Sonraki göreve geçiş'],P.xs.map((x,i)=>[cell(i+1),cell(tkLabel(x.t.id)+(x.t.min?'\n'+x.t.min+' dk/vardiya':'')),cell(BR_K.filter(k=>x.lv[k]>=2).map(k=>BR_N[k]+' · '+LVT[x.lv[k]]).join('\n')||'Belirgin zorlanma yok',{fontSize:8}),
+              P.links[i]==null?cell('—'):P.links[i].length?cell('⚠ '+P.links[i].map(k=>BR_N[k]).join(', ')+' iki görevde de yüksek',{color:hexOf(4)}):cell('Farklı bölgeler çalışır'+(i===n-1?' (son görevden ilkine dönüş)':''),{color:hexOf(1)})])),
+            ...(P.warn.length?[{ul:P.warn.map(w=>stripT(w)),fontSize:8.5,color:'#9a3412',margin:[0,4,0,0]}]:[]),
+            {text:'Sıra döngüseldir. Rotasyon idari bir önlemdir; teknik önlemin yerine geçmez.',fontSize:8.5,color:'#67706b',margin:[0,3,0,0]});}
+      } }
     // önlem planı
-    if(acts.length){content.push(H((rows.length?'5':'4')+'. Önlem planı'),
-      tbl([14,'*',75,55,50,46,44,72],['#','Önlem','İstasyon › görev','Tür','Sorumlu','Termin','Durum','Önce › sonra'],acts.map((a,i)=>{const af=afterOf(a); return [cell(i+1),cell(a.title+(a.detail?'\n'+a.detail:''),{fontSize:8}),cell(tkLabel(a.tk)),cell((CTRL.find(c=>c[0]===a.ctrl)||[,''])[1]),cell(a.owner||'—'),cell(a.due?dateTR(a.due):'—',overdue(a)?{color:'#dc2626',bold:true}:{}),cell((ASTAT.find(x=>x[0]===a.status)||[,''])[1]),cell(a.before?`${a.before.n} ${a.before.txt}${af?` › ${af.n} ${af.txt}`:' › ölçülmedi'}`:'—')];})));}
+    if(acts.length){content.push(H(N()+'Önlem planı'),
+      tbl([14,'*',75,55,50,46,44,72],['#','Önlem','İstasyon › görev','Tür','Sorumlu','Termin','Durum','Önce › sonra'],acts.map((a,i)=>{const af=afterOf(a); return [cell(i+1),cell(a.title+(a.detail?'\n'+a.detail:''),{fontSize:8}),cell(tkLabel(a.tk)),cell((CTRL.find(c=>c[0]===a.ctrl)||[,''])[1]),cell(a.owner||'—'),cell(a.due?dateTR(a.due):'—',overdue(a)?{color:'#dc2626',bold:true}:{}),cell((ASTAT.find(x=>x[0]===a.status)||[,''])[1]),cell(a.before?`${a.before.n} ${a.before.txt}${a.exp?` › beklenen ${a.exp.txt}`:''}${af?` › ${af.n} ${af.txt}`:' › ölçülmedi'}`:'—')];})));}
+    // maliyet ve geri ödeme
+    { const C=roiCalc(site.id); if(C.has){const f=v=>roiFmt(v,C.R), v=k=>C.R[k]===''||C.R[k]==null?'—':String(C.R[k]);
+      content.push(H(N()+'Maliyet ve geri ödeme'),
+        tbl(['*',110],['Varsayım','Değer'],ROI_F.map(([k,l,u])=>[cell(l),cell(k==='cost'&&(C.R.cost===''||C.R.cost==null)?f(C.cost)+' (önlem maliyetleri toplamı)':(u==='%'&&v(k)!=='—'?pctS(v(k)):v(k))+(u==='para'?' '+(C.R.cur||''):u==='%'?'':u==='×'?' ×':' '+u))])),
+        {columns:[{text:[{text:'Yıllık tahmini maliyet: ',bold:true},f(C.annual)]},{text:[{text:'Yıllık beklenen tasarruf: ',bold:true},f(C.save)]}],fontSize:9.5,margin:[0,6,0,0]},
+        {columns:[{text:[{text:'Geri ödeme süresi: ',bold:true},payTxt(C.pay)]},{text:[{text:'3 yıllık net kazanç: ',bold:true},f(C.net3)]}],fontSize:9.5,margin:[0,2,0,0]},
+        {text:'Rakamlar değerlendirenin tahminleridir; önlemlerin işletme giderleri ve verimlilik etkisi dahil değildir.',fontSize:8.5,color:'#67706b',margin:[0,4,0,0]});} }
     // yöntemler ve onay
-    content.push(H((rows.length?'6':'5')+'. Yöntemler ve onay'),{ul:types.flatMap(t=>t==='posture'?['reba','rula','owas']:[t]).filter((v,i,a)=>a.indexOf(v)===i).map(k=>LIBK[k]?`${LIBK[k].n} — ${LIBK[k].full}`:typeName(k)),fontSize:9},
+    content.push(H(N()+'Yöntemler ve onay'),{ul:types.flatMap(t=>t==='posture'?['reba','rula','owas']:[t]).filter((v,i,a)=>a.indexOf(v)===i).map(k=>LIBK[k]?`${LIBK[k].n} — ${LIBK[k].full}`:typeName(k)),fontSize:9},
       {text:'Bu rapor ergonomik risklerin ön değerlendirmesi ve önceliklendirilmesi içindir; değerlendirmeyi yapan uzmanın mesleki yargısının yerini tutmaz. Yöntem sonuçları kayıt tarihindeki gözlem ve ölçümlere dayanır.',fontSize:8.5,color:'#67706b',margin:[0,8,0,14]},
       {columns:[{stack:[{text:'Değerlendiren',bold:true,fontSize:9},{text:site.assessor||' ',fontSize:9},{text:'\n\nİmza: ____________________',fontSize:9}]},{stack:[{text:'İşveren / vekili',bold:true,fontSize:9},{text:' ',fontSize:9},{text:'\n\nİmza: ____________________',fontSize:9}]}]});
     const doc={pageSize:'A4',pageBreakBefore:(n,next)=>n.headlineLevel===1&&next.length<2,pageMargins:[36,44,36,44],info:{title:'Ergonomi risk değerlendirme raporu',author:site.assessor||'Duruş'},
@@ -3381,6 +3519,15 @@ const HELP=[
   <li>Önlem türünü (ortadan kaldırma, teknik, idari, KKD, eğitim), sorumluyu ve termini gir. Termini geçen açık önlem kırmızı görünür.</li>
   <li>Önlem uygulanınca önlem kartında “Yeniden ölç”e bas: form eski girdilerle açılır, değişen koşulları düzeltip kaydet.</li>
   <li>Kart önce → sonra farkını ve “iyileşti / aynı / kötüleşti” sonucunu gösterir. Risk haritası her zaman en son ölçümü kullanır.</li></ol>`},
+ {id:'scan',t:'Videoyu otomatik tara',b:`<p>Duruş analizinde bir video açınca oynatıcının altındaki “Videoyu tara”, videonun başından sonuna seçtiğin aralıkla (ör. 2 saniyede bir) kare alır, her karede noktaları otomatik bulur ve REBA, RULA, OWAS sonuçlarıyla seçili göreve kaydeder.</p>
+<ul>
+  <li><b>Neden:</b> Tek kare tek bir anı gösterir. Düzenli aralıklarla alınan kareler işin tamamını temsil eder (OWAS’ın örnekleme yaklaşımı). İstasyonlar sayfasında görevin zaman grafiği ve vardiyadaki yüksek riskli süre payı bu karelerden hesaplanır.</li>
+  <li><b>Önce görevi seç:</b> Kayıtlar kutudaki istasyon ve göreve gider. Görev süresi girilmişse riskli süre dakika olarak da hesaplanır.</li>
+  <li><b>Aralık:</b> Hızlı ve kısa çevrimli işlerde 1–2 saniye, yavaş işlerde 5–10 saniye. Kısa aralık daha çok kayıt ve daha uzun tarama demektir.</li>
+  <li><b>Yük ve taraf:</b> Girilen yük ve taraf tüm karelere uygulanır. Dönme, yana eğilme, tekrar gibi gözlemler otomatik bulunamaz; gerekirse önemli kareleri açıp elle ekle.</li>
+  <li><b>Kontrol:</b> Kişinin bulunamadığı kareler atlanır ve sayısı gösterilir. Otomatik noktalar kayabilir; en kötü kareleri açıp kontrol et. Beğenmezsen “Bu taramayı geri al” tüm tarama kayıtlarını siler.</li>
+  <li><b>Gizlilik ve boyut:</b> Görüntü cihazdan çıkmaz. Kayıtlarda yalnızca küçük resim saklanır; tam kare gerekirse aynı video açıkken kayıt açılınca videodan yeniden alınır.</li>
+</ul>`},
  {id:'scen',t:'Senaryo dene: “şunu değiştirsem ne olur?”',b:`<p>Formlarda ve duruş analizinde sonucun altındaki “Senaryo dene” düğmesi mevcut değerleri sabitler. Sonra değerleri değiştirerek bir önlemin sonucu nasıl etkileyeceğini kaydetmeden görebilirsin.</p>
 <ol>
   <li>Önce mevcut durumu gir (ya da kayıtlı bir analizi aç), sonra “Senaryo dene”ye bas.</li>
@@ -3471,7 +3618,7 @@ $$('#rmSeg button').forEach(b=>b.onclick=()=>{S.rm=b.dataset.rm; persist(); rend
 $('#pdfSite').onclick=()=>pdfReport(null);
 $('#xlSite').onclick=()=>exportSite();
 function exportSite(){const site=curSite(), sts=S.stations.filter(s=>s.site===site), recs=sts.flatMap(s=>recsOfStation(s.id)).sort((a,b)=>(a.task||'').localeCompare(b.task||'','tr')||a.created.localeCompare(b.created)); if(!recs.length){toast('Bu işyerinde kayıt yok.');return;} const sn=S.sites.find(x=>x.id===site).name;
-  withExcel(async wb=>{addSummarySheet(wb,recs,sn+' · ergonomi değerlendirmesi'); addRiskSheet(wb,site,null); addActionsSheet(wb,site,null); addResultsSheet(wb,recs); [...new Set(recs.map(r=>r.type))].forEach(t=>addTypeSheet(wb,t,recs.filter(r=>r.type===t))); await saveWorkbook(wb,`Durus_${slug(sn)}_${today()}.xlsx`);});}
+  withExcel(async wb=>{addSummarySheet(wb,recs,sn+' · ergonomi değerlendirmesi'); addRiskSheet(wb,site,null); addActionsSheet(wb,site,null); addBodySheet(wb,site,null); addRoiSheet(wb,site); addResultsSheet(wb,recs); [...new Set(recs.map(r=>r.type))].forEach(t=>addTypeSheet(wb,t,recs.filter(r=>r.type===t))); await saveWorkbook(wb,`Durus_${slug(sn)}_${today()}.xlsx`);});}
 load(); ensureStructure(); persist(); S.guide=S.guide||{ans:{},path:{}}; S.adv=!!S.adv; if(!S.adv&&!CORE.has(S.ftab))S.ftab='niosh'; buildFtabs(); $('#fps').value=S.fps; refreshTaskList();
 /* ===== Kullanılabilirlik iyileştirmeleri: yardımcılar ===== */
 (function(){
@@ -3484,7 +3631,7 @@ load(); ensureStructure(); persist(); S.guide=S.guide||{ans:{},path:{}}; S.adv=!
     try{new MutationObserver(()=>updMini()).observe(fr,{childList:true,subtree:true,characterData:true});}catch(e){}
     try{new IntersectionObserver(es=>{fResVisible=es[0].isIntersecting; updMini();}).observe(fr);}catch(e){}
   }
-  $('#fMini').onclick=()=>$('#fResult').scrollIntoView({behavior:'smooth',block:'center'});
+  $('#fMini').onclick=()=>{const m=$('#fMini'); (m.dataset.sc?$('#fScen'):$('#fResult')).scrollIntoView({behavior:'smooth',block:m.dataset.sc?'start':'center'});};
   addEventListener('resize',()=>updMini());
 })();
 window.__durus={postureCompute,FORMS,ADJ0,migrateAdj,S};

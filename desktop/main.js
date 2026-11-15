@@ -33,6 +33,34 @@ const ayarOku = () => { try { return JSON.parse(fs.readFileSync(AYAR(), 'utf8'))
 const ayarYaz = (a) => { try { fs.writeFileSync(AYAR(), JSON.stringify({ ...ayarOku(), ...a })); } catch {} };
 const adres = (dil) => (dil === 'en' ? 'app://durus/en/' : 'app://durus/');
 
+// ---------- güncelleme denetimi: GitHub'daki son sürümü sorar, yenisi varsa indirme sayfasını önerir ----------
+// Uygulama kendini değiştirmez; kullanıcı yeni kurulum dosyasını indirip çalıştırır (kayıtlar korunur).
+const SURUMLER = 'https://github.com/ysfdurak/durus-ergonomi/releases/latest';
+const sayi = (v) => String(v).replace(/^v/, '').split('.').map((x) => +x || 0);
+const yeniMi = (a, b) => { const x = sayi(a), y = sayi(b); for (let i = 0; i < 3; i++) { if (x[i] !== y[i]) return x[i] > y[i]; } return false; };
+async function guncellemeDenetle(win, elle) {
+  const en = ayarOku().dil === 'en';
+  try {
+    const r = await net.fetch('https://api.github.com/repos/ysfdurak/durus-ergonomi/releases/latest', { headers: { 'User-Agent': 'Durus-masaustu', Accept: 'application/vnd.github+json' } });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const son = String((await r.json()).tag_name || '').replace(/^v/, ''), simdi = app.getVersion();
+    if (son && yeniMi(son, simdi) && (elle || ayarOku().atla !== son)) {
+      const { response } = await dialog.showMessageBox(win, {
+        type: 'info', title: 'Duruş', noLink: true, defaultId: 0, cancelId: 1,
+        message: en ? `A new version is available: ${son}` : `Yeni sürüm var: ${son}`,
+        detail: en ? `You have ${simdi}. Download the new installer and run it; your records are kept.` : `Kullandığın sürüm ${simdi}. Yeni kurulum dosyasını indirip çalıştır; kayıtların korunur.`,
+        buttons: en ? ['Open download page', 'Later', 'Skip this version'] : ['İndirme sayfasını aç', 'Daha sonra', 'Bu sürümü atla'],
+      });
+      if (response === 0) shell.openExternal(SURUMLER);
+      if (response === 2) ayarYaz({ atla: son });
+    } else if (elle) {
+      dialog.showMessageBox(win, { type: 'info', title: 'Duruş', message: en ? `You have the latest version (${simdi}).` : `En güncel sürümü kullanıyorsun (${simdi}).` });
+    }
+  } catch (e) {
+    if (elle) dialog.showMessageBox(win, { type: 'warning', title: 'Duruş', message: en ? 'Could not check for updates.' : 'Güncellemeler denetlenemedi.', detail: en ? 'Check your internet connection. The app works offline.' : 'İnternet bağlantını kontrol et. Uygulama internetsiz de çalışır.' });
+  }
+}
+
 async function dilSor() {
   const tr = app.getLocale().toLowerCase().startsWith('tr');
   const { response } = await dialog.showMessageBox({
@@ -74,6 +102,7 @@ function menuKur(win, dil) {
     ] },
     { label: en ? 'Help' : 'Yardım', submenu: [
       { label: en ? 'Web version' : 'Web sürümü', click: () => shell.openExternal(SITE + (en ? 'en/' : '')) },
+      { label: en ? 'Check for updates' : 'Güncellemeleri denetle', click: () => guncellemeDenetle(win, true) },
       { label: en ? 'Source code and releases' : 'Kaynak kod ve sürümler', click: () => shell.openExternal('https://github.com/ysfdurak/durus-ergonomi') },
       { type: 'separator' },
       { label: (en ? 'Version ' : 'Sürüm ') + app.getVersion(), enabled: false },
@@ -127,6 +156,8 @@ async function baslat() {
   });
 
   win.loadURL(adres(dil));
+  // Açılıştan biraz sonra sessizce denetle (internet yoksa hiçbir şey göstermez)
+  setTimeout(() => guncellemeDenetle(win, false), 8000);
 }
 
 if (!app.requestSingleInstanceLock()) app.quit();
