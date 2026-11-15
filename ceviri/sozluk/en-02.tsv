@@ -1,0 +1,300 @@
+300	Keyboard, mouse, phone
+301	Elbows about 90° at the keyboard, shoulders relaxed
+302	Adjust the desk or chair height; consider a keyboard tray.
+303	Mouse at the same level as the keyboard and close to it
+304	Move the mouse right next to the keyboard; a compact (no number pad) keyboard reduces reaching.
+305	Wrists straight, palms not resting on a hard edge
+306	Use the wrist rest only while pausing; fold in the keyboard feet.
+307	Handset not clamped between neck and shoulder during calls
+308	Use a headset or speakerphone.
+309	Work pattern
+310	A short break or change of position every 30–60 minutes
+311	Set a reminder; break up static sitting with standing work and short walks.
+312	Frequently used items within arm’s reach
+313	Move the phone, documents and materials to where they can be reached without stretching.
+314	Enough legroom, nothing under the desk
+315	Remove boxes and cables from under the desk.
+316	No load entered
+317	Increased risk
+318	Enter the load weight.
+319	Considered safe for most workers.
+320	Improvement recommended.
+321	Improvement needed.
+322	The job should be redesigned.
+323	Bring the load closer to the body: remove obstacles, make the box pull towards the worker, use smaller packaging.
+324	Bring the start height closer to waist level (≈75 cm): use a pallet raiser or shelf instead of picking from the floor.
+325	Lower the start height below the shoulder; reduce picks from high shelves.
+326	Shorten the vertical travel: bring the start and destination heights closer together.
+327	Remove trunk twisting: put the pick and place points in the same direction or add a turntable between them.
+328	Reduce lifting frequency or duration: job rotation, breaks, slowing the flow, or automation.
+329	Improve the coupling: crates with handles, cut-out handholds or non-slip gloves.
+330	Good: crate with handles or an easy-to-grip object
+331	Fair: no handle, but fingers can wrap 90°
+332	Poor: large, slippery, irregularly shaped object
+333	Up to 1 hour (followed by at least the same time of light work)
+334	0 · None
+335	1 · Very light
+336	4 · Somewhat strong
+337	5 · Strong
+338	7 · Very strong
+339	Shoulders
+340	Upper back
+341	Elbows
+342	Hand / wrist
+343	Lower back
+344	Hip / thigh
+345	Knees
+346	Ankle / foot
+347	Check screen or workpiece height with RULA (neck score) and the office checklist.
+348	Look at the REBA/RULA upper-arm score and reach distances; check force frequency with HAL.
+349	Check REBA/RULA trunk and neck scores; in the office, check the chair and screen.
+350	Check force and repetition with the Strain Index and HAL, and forearm posture with RULA.
+351	Assess repetitive work with the Strain Index, HAL TLV and the RULA wrist score.
+352	Check lifting and carrying with NIOSH (CLI for mixed lifting) and KIM, and trunk bending with REBA.
+353	Check the seating set-up (office checklist) and the REBA leg score.
+354	Check work requiring squatting and kneeling with REBA/OWAS; check the working height.
+355	Assess prolonged standing, flooring and footwear; check leg postures with OWAS.
+356	Corridor, passageway
+357	Warehouse, storage area
+358	Warehouse: picking, packing, shipping
+359	Rough assembly, loading-unloading
+360	Medium-precision assembly, machine operation
+361	Office: writing, reading, computer
+362	Fine assembly, quality inspection
+363	Very fine assembly, colour inspection
+364	Precision work
+365	Light work
+366	Heavy work
+367	Precision work (forearm supported)
+368	Light work, keyboard, writing
+369	Manual handling
+370	NIOSH lifting
+371	Revised NIOSH lifting equation (1991). Calculates the recommended weight limit (RWL) and lifting index (LI) for smooth, balanced two-handed lifting/lowering tasks. Take the measurements at the start of the lift. If there are mixed lifts with different loads or heights, use the “NIOSH composite” form.
+372	Load
+373	Load weight
+374	Weight of the object lifted.
+375	Coupling
+376	Position measurements
+377	H · Horizontal distance
+378	Horizontal distance between the midpoint of the ankles and the midpoint of the hands. Below 25 counts as 25; above 63 the RWL drops to zero.
+379	V · Hand height from the floor
+380	The best value is 75 cm (waist height). Above 175 the RWL drops to zero.
+381	D · Vertical travel distance
+382	Difference between the start and destination hand heights. Below 25 counts as 25.
+383	A · Asymmetry angle
+384	How far to the side of the body front the load is taken. Above 135° the RWL drops to zero.
+385	Frequency and duration
+386	Lifting frequency (lifts/minute)
+387	More than 15
+388	0.2 or less (once every 5 minutes)
+389	Average over a 15-minute observation.
+390	Total work duration
+391	The multipliers are fine; the problem is the weight. Split the load or use a mechanical aid.
+392	<br>RWL = 23 kg × multipliers = <b>
+393	<br>One multiplier is zero: the measurements are outside the equation’s valid range.
+394	NIOSH multi-task
+395	Composite Lifting Index (CLI). For jobs where the same worker does lifts of different weight, height or frequency together (palletising, different shelf levels). Enter the measurements for each sub-task; tasks are ranked by single task lifting index (STLI) and the contribution of the others is added via the total frequency.
+396	Lifting tasks
+397	Sub-tasks
+398	Task
+399	H, V, D, A: cm and degrees, as defined in the NIOSH form. F: lifts per minute for that task.
+400	Good
+401	Fair
+402	Poor
+403	No task entered
+404	Enter load and frequency for at least one task.
+405	Task
+406	Total frequency
+407	Total lifting frequency is high: share out the tasks and reduce total repetition with rotation or mechanical aids.
+408	</b> · total frequency
+409	KIM lifting-holding-carrying (2001)
+410	Key Indicator Method (BAuA 2001 version). Scores the total load of lifting, holding or carrying repeated during the day. Also suitable for carrying and holding tasks that NIOSH does not cover. If there are different loads or postures, open a separate record for each.
+411	Time
+412	Type of work
+413	Lifting / lowering (shorter than 5 seconds)
+414	Holding (longer than 5 seconds)
+415	Carrying (longer than 5 metres)
+416	Lifts/lowerings per day
+417	Total holding time per day
+418	Total carrying distance per day
+419	Worker
+420	Male
+421	Female
+422	Load score tables differ by sex.
+423	Effective load
+424	The weight actually borne by the worker. Part of the load when tipping or dragging; roughly half in a two-person carry.
+425	Posture and conditions
+426	Posture and load position
+427	1 · Trunk upright, not twisted; load close to the body
+428	2 · Slight forward bend or twist; load close or at medium distance
+429	4 · Deep bend or bend+twist; load far away or above the shoulder
+430	8 · Deep bend+twist, load far away; squatting, kneeling, unstable posture
+431	Working conditions
+432	0 · Good: enough space, level floor, good lighting, good grip
+433	1 · Restricted movement space or unfavourable conditions (uneven floor etc.)
+434	2 · Space very restricted and/or the load’s centre of gravity unstable
+435	Load score high (
+436	Reduce or split the load; use a lifting aid, trolley or conveyor.
+437	Posture score high (
+438	Bring the pick/place height to waist level, bring the load closer to the body, remove twisting.
+439	Unfavourable conditions
+440	Widen the movement space, level the floor, use packaging that keeps the load balanced.
+441	Time score high (
+442	Reduce daily repetitions or distance: job rotation, bulk transport aids, a shorter layout.
+443	Low load
+444	Increased load
+445	Highly increased load
+446	High load
+447	Physical overload is unlikely.
+448	Overload possible for less resilient people; work redesign is useful for them.
+449	Overload possible for people of normal resilience too; work redesign is recommended.
+450	Overload is likely; work redesign is needed.
+451	Time score
+452	× (load
+453	+ posture
+454	+ conditions
+455	</b><br>Thresholds: under 10 low · 10–24 increased · 25–49 highly increased · 50+ high
+456	Repetitive work
+457	Strain Index (hand-wrist)
+458	Strain Index
+459	Moore and Garg Strain Index (1995). Estimates the risk of hand-wrist-elbow disorders in repetitive hand and wrist work (assembly, packing, cutting, tightening). Assess each hand separately.
+460	Hand assessed
+461	Right hand
+462	Left hand
+463	Force
+464	Intensity of exertion
+465	Light: barely noticeable, no clear effort
+466	Somewhat hard: noticeable effort
+467	Hard: obvious effort, no change in facial expression
+468	Very hard: facial expression changes
+469	Near maximal: shoulder or trunk also used
+470	Based on the observer’s rating or the worker’s Borg CR-10 answer.
+471	Duration of exertion (% of cycle)
+472	Less than 10%
+473	80% or more
+474	Total time force is applied in a cycle ÷ cycle time.
+475	Exertions per minute
+476	Fewer than 4
+477	20 or more
+478	Posture and pace
+479	Hand-wrist posture
+480	Very good / good: neutral or near neutral
+481	Fair: noticeable but not extreme deviation
+482	Bad: marked deviation
+483	Very bad: near the end of range
+484	Speed of work
+485	Very slow – normal pace
+486	Fast: rushing to keep up
+487	Very fast: barely or not able to keep up
+488	Task duration per day
+489	Up to 1 hour
+490	More than 8 hours
+491	Reduce the force required: tool maintenance, sharp blades, powered tools, lighter parts.
+492	Duration of exertion
+493	Shorten forceful holding: fixture, vice, tool balancer.
+494	Repetitions
+495	Reduce repetitions: split the job, rotation, automation.
+496	Tools and layout that keep the wrist straight: bent-handle tool, tilt or rotate the workpiece.
+497	Review line speed and pace pressure; add buffer stock.
+498	Duration per day
+499	Reduce the daily time spent on this task with rotation.
+500	multiplier
+501	Safe
+502	Uncertain
+503	Probably hazardous
+504	Hazardous
+505	Low risk of disorders.
+506	Borderline; should be monitored.
+507	Increased risk of disorders; improvement recommended.
+508	Associated with disorders; the job should be redesigned.
+509	</b><br>Thresholds: 3 or below safe · 3–5 uncertain · 5–7 probably hazardous · above 7 hazardous
+510	ACGIH hand activity level (HAL)
+511	ACGIH hand activity threshold limit value. Assesses the hand activity level (HAL, 0–10) together with the highest force in the job (normalised peak force, NPF, 0–10) and compares them with the threshold limit value (TLV) and action limit (AL). Developed for mono-task hand work lasting 4 hours or more a day. You can rate HAL by observation or calculate it from frequency and duty cycle.
+512	Hand activity level (HAL)
+513	How will HAL be determined?
+514	Calculate from frequency and duty cycle
+515	Observer rating (0–10 HAL scale)
+516	Exertion frequency
+517	Number of movements in which the hand applies noticeable force.
+518	Duty cycle
+519	Percentage of the cycle during which force is applied.
+520	HAL rating
+521	0 · Hand idle most of the time, no regular exertions
+522	2 · Consistent, conspicuous long pauses or very slow motions
+523	4 · Slow steady motion; frequent brief pauses
+524	6 · Steady motion; infrequent pauses
+525	8 · Rapid steady motion; very infrequent pauses
+526	10 · Rapid steady motion; difficulty keeping up
+527	Normalised peak force (NPF)
+528	Ratio of the highest force in the job to the person’s maximum force in that posture (0–10). Without measurement, the worker’s or observer’s 0–10 rating.
+529	Hand activity level high (
+530	Reduce movement frequency or force duration: split the job, automate, share between both hands, rotate.
+531	Peak force high (
+532	Lower the force required: tool maintenance, powered tools, better handles, looser part tolerances.
+533	Below the action limit
+534	Action limit exceeded
+535	Threshold limit exceeded
+536	Threshold limit clearly exceeded
+537	No further action needed.
+538	General controls and monitoring (training, surveillance, complaint follow-up) recommended.
+539	Exposure should be brought below the TLV with job-specific controls.
+540	Work redesign needed immediately.
+541	</b> (above 1 means the TLV is exceeded)
+542	(frequency
+543	/min, duty cycle %
+544	Workstation design
+545	Office workstation
+546	Office
+547	Checklist for desk and computer work. Not a scored scientific method; a compliance check based on common ergonomics guidelines. Mark each item Yes / No / Not applicable; every “No” produces a recommendation.
+548	Not marked yet
+549	Mark the items Yes / No.
+550	Good set-up
+551	Improvement recommended
+552	Improvement needed
+553	Priority changes
+554	items not compliant.
+555	All marked items are compliant.
+556	Compliant
+557	· Not compliant
+558	<br>Compliance rate =
+559	· Not marked
+560	Working height
+561	Work surface height calculator. The recommended height depends on elbow height and the type of work: slightly above the elbow for precision work, slightly below for light work, lower still for heavy work. Enter the current height to see the difference.
+562	Working posture
+563	Standing
+564	Sitting
+565	Precision work: fine assembly, high visual attention
+566	Light work: assembly, packing, keyboard
+567	Heavy work: pressing, cutting, heavy parts
+568	Elbow height
+569	How will you enter elbow height?
+570	I measured it
+571	Estimate from stature
+572	Stature
+573	Standing elbow height is taken as about 0.63 × stature. You can add 2–3 cm for shoes.
+574	Elbow height (from the floor)
+575	Arm at the side, elbow bent at 90°, from the floor to the underside of the elbow. Sitting: measure while the person sits on an adjusted chair.
+576	Current situation
+577	Current work surface height
+578	For precision work the height of the workpiece, for heavy work the height where the hand works. Leave empty to get a recommendation only.
+579	Elbow height required
+580	Measure the elbow height or enter the stature.
+581	Elbow height
+582	Users of different heights
+583	If several people use the station, a height-adjustable bench or a personal platform is the best solution.
+584	Recommended surface height
+585	Enter the current height and I’ll compare.
+586	Surface low (
+587	Raise the surface: adjustable legs, risers; or lift the workpiece with a fixture. A low surface leads to bending forward.
+588	Surface high (
+589	Lower the surface or give the worker a platform (it must cover the whole movement area). A high surface leads to raised shoulders.
+590	Suitable
+591	Within the recommended range
+592	Slightly mismatched
+593	Mismatched
+594	Clearly mismatched
+595	Current height is within the recommended range.
+596	Current surface
+597	cm;
+598	above the recommended range
+599	below the recommended range

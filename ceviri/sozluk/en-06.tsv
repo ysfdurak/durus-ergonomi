@@ -1,0 +1,206 @@
+1500	Measure the acceleration of the tool or vehicle, or take it from the manufacturer’s declaration
+1501	Determine the actual daily usage (trigger) time
+1502	If the action value is exceeded, plan tool, maintenance and duration measures
+1503	WBGT meter (natural wet-bulb + globe thermometer)
+1504	For special clothing such as protective coveralls (a correction is needed).
+1505	A quick screening method; results near the limit need a detailed assessment (ISO 7933).
+1506	Measure with natural wet-bulb and globe thermometers (with dry-bulb outdoors)
+1507	Choose the workload class and heat acclimatisation
+1508	If close to or above the reference, plan a work-rest schedule and a detailed assessment
+1509	Lux meter
+1510	For glare or colour problems (this method does not measure them).
+1511	Compares the average and lowest values with the typical requirement of the task.
+1512	Measure with a lux meter at several points on the working plane
+1513	Enter the average and lowest values
+1514	Compare with the reference for the area type
+1515	~5 min per worker
+1516	Interview
+1517	For diagnosis; the questionnaire only shows where complaints are and how widespread they are.
+1518	Shows which region has a problem; then analyse with a method suited to that region.
+1519	Hold a 5-minute interview with each worker; use a code instead of a name
+1520	Mark the 12-month, prevented-work and 7-day questions for the 9 regions
+1521	Save under the same task name; look at the region summary in Records
+1522	Analyse the region with the most complaints using a suitable method
+1524	Is a load of 3 kg or more lifted, carried, held, pushed or pulled by hand?
+1525	What type of work is it?
+1526	Lifting or lowering
+1527	Are the load and heights the same every time?
+1528	Yes, uniform lifting
+1529	Can you measure the distances with a tape measure?
+1530	Yes
+1531	Gives the recommended weight limit for uniform lifting directly; the most common lifting method in the field.
+1532	When you cannot measure or a report in BAuA format is required
+1533	To see the cumulative load on the lower back over the day
+1534	No, I’ll rely on observation
+1535	BAuA’s method; scores the daily lifting load for women and men separately without measurements.
+1536	For an exact weight limit once you can measure
+1537	No, different loads or shelf levels
+1538	The multi-task form of NIOSH; combines different lifts into one index.
+1539	When you cannot measure
+1540	To compare cumulative damage and improvement scenarios
+1541	Gives an observation-based score with a separate record for each different load.
+1542	Carrying (longer than a few metres)
+1543	Can you measure the hand height, distance and frequency?
+1544	Calculates what percentage of workers would accept the weight carried (the current form of the Snook tables).
+1545	To score holding and carrying by observation
+1546	Scores carrying distance and duration by observation.
+1547	Pushing or pulling (cart, pallet truck, crate)
+1548	Do you have a digital force gauge?
+1549	Compares the measured force with the limit the working population would accept (the current form of the Snook tables).
+1550	For a BAuA score that also accounts for equipment, floor and daily distance; both together give the most robust result
+1551	BAuA’s method; scores from equipment type, total weight, daily distance, floor and equipment condition without measuring force.
+1552	For an exact population limit once you have a force gauge
+1553	To also see the posture while pushing
+1554	Holding a load for a long time
+1555	The BAuA 2019 version scores holding time under conditions.
+1556	Repetitive hand-arm work
+1557	Do the hands and arms repeat a short movement cycle, and does this work last 1 hour or more in total per shift?
+1558	What do you want to assess?
+1559	Repetition, force, posture and breaks together (recommended)
+1560	The approach recommended by ISO 11228-3; the most common field method for repetitive work, which also accounts for the break pattern.
+1561	To also look at arm-wrist posture from video
+1562	For a numerical second opinion if you have force and duration measurements
+1563	For a quick preliminary result with little data
+1564	Only arm, wrist and neck posture
+1565	Scores posture angles from video.
+1566	To also include repetition, force and breaks
+1567	Awkward posture
+1568	Is the trunk, neck or arm clearly bent or raised, and is this posture held for more than a few seconds or repeated often?
+1569	Which is the job closer to?
+1570	Whole body used, varied postures (warehouse, maintenance, healthcare)
+1571	REBA also scores the legs and changing postures.
+1572	To classify many postures over a shift
+1573	Static station, mainly arm-wrist-neck (assembly, desk work, checkout)
+1574	RULA scores the upper limb in more detail.
+1575	If the legs and trunk also matter; calculated automatically from the same frame
+1576	Classify many postures quickly over a shift
+1577	OWAS was developed for quick coding; it shows how postures are distributed.
+1578	To assess critical frames in detail
+1579	Office and computer work
+1580	Does the worker spend a large part of the day at a computer?
+1581	A published, scored method for offices; assesses the chair, screen, mouse and keyboard together. 5 and above requires action.
+1582	If you only want a to-do list
+1583	To decide on desk height
+1584	Do people need to raise their voice to talk to someone about 2 m away?
+1585	Compare the daily exposure with the regulatory values using noise measurements.
+1586	Are vibrating hand tools (grinder, breaker, drill) or vibrating vehicles (forklift, construction machinery) used regularly?
+1587	Calculate the daily vibration exposure with A(8).
+1588	Is physical work done in a hot environment (oven, foundry, warehouse or outdoors in summer)?
+1589	Assess heat stress for the workload with WBGT measurements.
+1590	Is it hard to read or see detail, are there complaints of eye strain?
+1591	Measure the illuminance with a lux meter.
+1592	Worker complaints
+1593	Do workers report aches, pains or discomfort?
+1594	Collects systematically where complaints are and how widespread; then you choose the method suited to that region.
+1595	<div class="grec"><div class="row" style="justify-content:space-between;align-items:flex-start"><div><span class="muted" style="font-size:12px">Recommended method</span><div style="font-size:18px;font-weight:700">
+1597	">Method card</button><button class="primary small" data-start="
+1598	">Start</button></div></div>\n  <div class="muted" style="margin-top:6px">Needs:
+1599	· Time:
+1600	<div class="galt"><b>When to use another method?</b>
+1602	<span class="lvl" style="background:#64748b">Advanced</span>
+1603	</b></div><div class="muted" style="margin-top:4px">Noise, vibration, heat and lighting are mostly assessed with accredited measurement reports. To see the calculators, <button class="linkbtn" data-advon="1">open the advanced methods</button>.</div></div>
+1605	">Card</button> <button class="primary small" data-start="
+1606	">Start</button></div>
+1610	<div class="muted">No assessment needed for this area.</div>
+1612	">Yes</button><button data-gans="
+1613	">No</button></span>
+1614	</ol><p class="muted" style="margin:8px 0 0">Save them all under the same task name; they appear together on the Records page and are collected in a single Excel report.</p>
+1616	">Card</button><button class="primary small" data-start="
+1617	">Start</button></span></div></li>
+1618	As you complete the questions for the areas you said yes to, the recommended methods are listed here.
+1619	Your assessment plan builds up here as you answer the key questions above.
+1620	</h3><div class="tblwrap"><table class="cmp"><thead><tr><th>Method</th><th>Level</th><th>When</th><th>Needs</th><th>Time</th></tr></thead><tbody>
+1623	Hide advanced methods
+1624	Also show advanced methods (12)
+1625	</div></div><button class="ghost" id="cardX" aria-label="Close">✕</button></div>\n  <div class="cgrid">\n    <div><h3>What it measures</h3><p>
+1626	</p></div>\n    <div><h3>Needs and time</h3><p>
+1627	</span></p></div>\n    <div><h3>When to use</h3><p>
+1628	</p></div>\n    <div><h3>When not to use</h3><p>
+1629	</p></div>\n  </div>\n  <h3>How to apply</h3><ol class="csteps">
+1630	</ol>\n  <h3>Reading the result</h3><div class="scale">
+1631	</div>\n  <h3>How it differs from similar methods</h3><p>
+1632	\n  <h3>Limitation</h3><p>
+1634	: start</button></div>
+1638	Video ready:
+1639	This video format could not be opened in the browser. You can try MP4 (H.264).
+1642	Load a video first.
+1643	no image
+1644	Sample frame: worker reaching for a box
+1645	sample
+1646	photo
+1647	Save changes
+1648	Analysis without an image: type the angles into the table on the right (from a goniometer, observation or another tool).
+1649	Now tap the <b style="color:
+1650	</b> point.
+1651	All points placed. Drag to correct if needed.
+1659	<div class="warn">Missing angle:
+1660	. Treated as neutral; the score may come out lower than it is.</div>
+1661	<b>What can be done?</b><ul>
+1663	">+ Action</button>
+1664	<div class="muted" style="font-size:12.5px">After saving you can create an action from each suggestion.</div>
+1665	<b>What can be done?</b><div class="muted" style="margin-top:4px">
+1667	Automatic (
+1668	Mark the points or enter the angles first to get suggestions.
+1669	No clear source of risk is visible.
+1670	No image
+1671	Enter the angles in the table on the right
+1672	Saved · REBA
+1673	. You can create actions from the suggestions or pick a new frame.
+1675	<div class="fgroup"><span>Posture (video)</span><div class="fchips"><button data-go="posture">REBA · RULA · OWAS → Posture analysis</button></div></div>
+1676	<div class="fadv"><b>Advanced methods</b>
+1677	</button><span class="muted">Core set: the methods most used in the field.</span></div>
+1678	Show advanced methods (
+1681	" title="Measure from image" aria-label="
+1682	: measure from image">📏</button>
+1687	Not applicable
+1688	Row
+1690	">Remove</button>
+1696	">Uniform lifting</button><button data-mode="cli" class="
+1697	">Different loads / heights (multi-task)</button></div><div style="width:100%"></div>
+1699	">Method card</button>
+1700	<div class="gnote" style="width:100%">Old version: for new assessments
+1701	is recommended.</div>
+1702	<div class="muted" style="width:100%">Similar:
+1704	Suggestions appear here once there is a result.
+1705	No clear point for improvement is visible.
+1706	Fill in the form before saving.
+1707	Saved ·
+1708	). You can create actions from the suggestions; for a new record use “New / clear”.
+1709	<div class="nmqsum"><b>Nordic questionnaire summary</b> <span class="muted">·
+1710	workers · reporting complaints in the last 12 months</span>
+1711	· 7 days:
+1712	<div class="muted" style="margin-top:4px">No complaints reported.</div>
+1714	" role="img" aria-label="Over time:
+1715	" font-size="11" text-anchor="middle" fill="#67706b">video time</text>
+1718	copied to the clipboard.
+1719	below; you can select and copy it.
+1720	No records to copy.
+1721	Paste the JSON you copied earlier here. The records are added to the existing ones.
+1722	Imported
+1723	records imported.
+1724	The JSON could not be read. Make sure you pasted text copied from Duruş.
+1725	Delete all records? Press again
+1726	ExcelJS could not be loaded
+1727	Neutral
+1728	Very high
+1729	Arm abducted/rotated
+1730	Arm supported
+1731	Sudden/jerky force
+1732	Static posture over 1 min
+1733	4+ repetitions per minute
+1734	Forearm crosses the midline
+1735	Wrist twist at the limit
+1736	Unacceptable
+1737	Standing, both feet balanced
+1738	Standing, one foot / unbalanced
+1739	Posture analysis (REBA · RULA · OWAS)
+1740	angle
+1741	Direction the person faces
+1742	Right
+1743	Left
+1744	Load / force
+1745	Conditions marked
+1746	OWAS posture code
+1747	(corrected by hand)
+1748	Not marked
+1749	Record

@@ -1,0 +1,194 @@
+Durus_
+---
+<details class="hsec" id="help_
+---
+<button class="chipsel" data-hjump="
+---
+<button class="linkbtn" data-open="
+---
+<button class="small ghost" data-sfm="
+---
+<button class="small" data-sfm="
+---
+<div class="row" style="gap:4px;margin-top:4px"><button class="small" data-sfpos="
+---
+<div class="fth"><img src="
+---
+</div></div>
+      <div class="row" style="gap:6px"><button class="small" data-sfed="
+---
+<div class="fcap
+---
+<button class="chip
+---
+<button class="small ghost danger" data-sfdel="
+---
+<button class="small ghost" data-mzdel="
+---
+<button class="small primary" data-mzuse="
+---
+</span><button class="primary" id="mzGo" 
+---
+<option value="
+---
+"><img src="
+---
+<button data-mzs="
+---
+Roboto
+---
+</td>
+    <td><button class="small" data-redit="
+---
+</b><div><span class="badge" style="background:
+---
+</td>
+    <td><span class="badge" style="background:
+---
+</div></div><div class="chart" id="chart_
+---
+<button data-cm="
+---
+">Excel</button><button class="small xl" data-pdfst="
+---
+</span></div>
+    <div class="row" style="gap:6px"><button class="small" data-sted="
+---
+"><div class="ghead"><div><button class="linkbtn" data-stog="
+---
+<div class="group" id="st_
+---
+</td><td><span class="badge" style="background:
+---
+<span class="muted">—</span>
+---
+<td class="muted">—</td>
+---
+<td style="background:
+---
+<tr><td><button class="linkbtn" data-goto="
+---
+<button class="small" data-arem="
+---
+
+    <div class="acts row" style="margin-top:8px;gap:6px"><button class="small" data-aedit="
+---
+<span style="color:
+---
+</div></div>
+      <select data-ast="
+---
+<div class="acard
+---
+</span> → <span class="badge" style="background:
+---
+<span class="badge" style="background:
+---
+#editBody input[data-df],#editBody select[data-df]
+---
+<input data-df="
+---
+<label class="
+---
+<label class="chkl full"><input type="checkbox" data-df="
+---
+<textarea data-df="
+---
+<select data-df="
+---
+<circle cx="
+---
+<polyline fill="none" stroke="#1b1f1d" stroke-width="1.6" points="
+---
+<svg viewBox="0 0 
+---
+<button class="linkbtn" data-card="
+---
+</span> <button class="small" data-card="
+---
+<div class="seg" style="margin-bottom:4px"><button data-mode="niosh" class="
+---
+<td><input type="checkbox" data-gf="
+---
+<button class="small" data-radd="
+---
+</span><input type="number" min="0" step="
+---
+<select data-rf="
+---
+<button class="small ghost danger" data-rdel="
+---
+<button data-v="
+---
+</span><span class="yn" data-yn="
+---
+<div class="fld"><label class="lab" style="justify-content:flex-start;gap:10px;font-weight:500;cursor:pointer"><input type="checkbox" data-fc="
+---
+</div><select data-ff="
+---
+<button class="small mzf" data-fmz="
+---
+</span><span><input type="number" min="
+---
+<button data-ftab="
+---
+<button class="tile
+---
+ <button class="small tipbtn" data-tipact="
+---
+<div class="bd">
+---
+</div><div class="act">
+---
+</span><div><div class="lvl">
+---
+<div class="big"><span class="num">
+---
+</div></td><td><input type="number" step="1" data-ang="
+---
+</b><div class="sub">
+---
+ArrowLeft
+---
+ArrowRight
+---
+Escape
+---
+</p>
+  <div class="row" style="justify-content:flex-end;margin-top:14px"><button class="primary" data-start="
+---
+<button class="small" data-card="
+---
+<span style="background:
+---
+"><td><button class="linkbtn" data-card="
+---
+<tr class="
+---
+</span><span class="row"><button class="small" data-card="
+---
+<span class="yn2"><button data-gans="
+---
+<div class="garea
+---
+<button data-gpick="
+---
+</span> <button class="chipsel" data-gback="
+---
+ <button class="linkbtn" data-card="
+---
+<div><button class="linkbtn" data-card="
+---
+</div></div><div class="row"><button class="small" data-card="
+---
+<span class="lvl" style="background:
+---
+<div class="acts"><button data-open="
+---
+<button class="xl" data-xl="
+---
+<button data-seek="
+---
+<img src="
+---
+English

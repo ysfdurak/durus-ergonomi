@@ -2,7 +2,7 @@
 
 **Bir iş istasyonunu videodan, fotoğraftan ya da ölçümden ergonomik olarak değerlendiren Türkçe uygulama. Kurulum yok, hesap yok.**
 
-**Dene:** https://durus.ysfdurak.com/
+**Dene:** https://durus.ysfdurak.com/ · **English:** https://durus.ysfdurak.com/en/
 
 ![Duruş analizi: örnek karede eklemler işaretlenmiş, REBA, RULA ve OWAS birlikte hesaplanmış](docs/ekran/durus-analizi.webp)
 
@@ -24,6 +24,12 @@
 - Kayıtlar yalnızca kullanıcının tarayıcısında saklanır (localStorage, fotoğraf ve kareler için IndexedDB). Video ve fotoğraflar hiçbir sunucuya gönderilmez.
 - Excel ve PDF raporlar için ExcelJS ve pdfmake ilk kullanımda CDN'den (cdnjs, jsDelivr) yüklenir.
 - Sonuçlar karar desteği içindir; bir iş güvenliği uzmanının ya da işyeri hekiminin değerlendirmesinin yerine geçmez.
+
+## İngilizce sürüm
+- `en/index.html` İngilizce sürümdür; **elle düzenlenmez**, Türkçe `index.html`'den üretilir.
+- Üretim: `cd ceviri && npm install && npm run en`. Araç Türkçe dosyadaki metinleri (HTML metinleri, JS dizgileri ve şablon parçaları) bulur, `ceviri/sozluk/` içindeki sözlükle değiştirir, sonra `ceviri/yamalar.mjs`'deki kod düzeltmelerini uygular (dil etiketi, tarih biçimi, ondalık nokta, Türkçe metne bakan birkaç kural).
+- Türkçe dosyada metin değiştirirsen ya da eklersen: `npm run en` çıktısındaki "eksik" sayısı artar, `ceviri/sozluk/eksik.txt` yeni metinleri listeler. Çevirisini `ceviri/sozluk/ek-1.tsv` dosyasına `Türkçe<TAB>English` satırı olarak ekle (baştaki/sondaki boşluk için `␣`), sonra yeniden üret. `npm run kalan` gözden kaçan kısa parçaları gösterir.
+- Dil seçimi: üstteki TR/EN düğmesi; `?lang=en` / `?lang=tr` adresi (portföy sitesinin "Dene" bağlantısı bunu kullanır). Seçim tarayıcıda hatırlanır. İki sürüm aynı kayıtları paylaşır.
 
 ## Yayın
 - Canlı adres **durus.ysfdurak.com**: Cloudflare Workers, `main` dalına her gönderimde otomatik yayın (ayarlar `wrangler.jsonc`, yayın dışı dosyalar `.assetsignore`).

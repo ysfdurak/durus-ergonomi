@@ -1,0 +1,200 @@
+2000	Intolerable
+2001	Act immediately; stop the work if necessary.
+2002	Action not a priority.
+2003	Existing controls are maintained.
+2004	<div class="tblwrap"><table class="cmp rtbl"><thead><tr><th>#</th><th>Station</th><th>Hazard</th><th>Possible harm</th><th>Current situation</th><th>Affected</th>
+2005	<th>Risk</th><th>Actions</th><th></th></tr></thead><tbody>
+2006	These are starting values; the assessor should correct each row for the workplace’s conditions.</p>
+2007	<th>P</th><th>F</th><th>S</th>
+2008	<th>P</th><th>S</th>
+2012	<span class="muted">No actions</span>
+2013	<div class="muted" style="font-size:11px">corrected by hand</div>
+2014	Fine-Kinney: Risk = Probability × Frequency × Severity. Probability is suggested from the method’s risk level, frequency from the task duration (≥120 min/shift → continuous), severity from the hazard type.
+2015	5×5 matrix: Risk = Probability × Severity. Probability is suggested from the method’s risk level, severity from the hazard type.
+2016	<div class="muted">Risk rows are built from the analyses saved to stations.</div>
+2017	Risk row ·
+2018	Current situation:
+2019	). Suggested:
+2020	Hazard
+2021	Possible harm
+2022	Probability
+2023	Frequency
+2024	Severity
+2025	Back to suggested values
+2026	Risk table
+2027	No.
+2028	Station
+2029	Workers affected
+2030	Risk
+2031	Risk class
+2032	Required action
+2033	Action plan
+2034	Completion
+2035	Before
+2036	After
+2037	Improved
+2038	Worsened
+2039	Same level
+2040	library could not be loaded
+2041	No records to report.
+2042	Preparing PDF…
+2043	Ergonomic Risk Assessment Report
+2044	Date:
+2045	Assessor:
+2046	Scope:
+2047	tasks,
+2048	records. Methods:
+2049	1. Executive summary
+2050	risk rows assessed:
+2051	actions:
+2052	open
+2053	completed;
+2054	actions with improvement verified by re-measurement.
+2055	overdue)
+2056	Nordic questionnaire:
+2057	of
+2058	workers reported a complaint in at least one region in the last 12 months.
+2059	Highest risks
+2060	Class
+2061	2. Risk map
+2062	Each cell shows the current worst result in that area.
+2063	3. Risk assessment table (
+2064	Station / task
+2065	Affected
+2066	No actions
+2067	Risk = Probability × Frequency × Severity. Classes: under 20 negligible · 20–70 possible · 70–200 significant · 200–400 high · 400 and above intolerable. Starting values were suggested from the method result, task duration and hazard type and reviewed by the assessor.
+2068	Risk = Probability × Severity. Classes: 1 negligible · 2–6 low · 8–12 medium · 15–16 high · 20–25 intolerable.
+2069	. Station details
+2070	Department:
+2071	Workers:
+2072	· Women work here
+2073	frames, worst)
+2074	No records
+2075	Posture exposure (
+2076	share %
+2077	time-weighted
+2078	equally weighted
+2079	high/very high
+2080	, about
+2081	people reported complaints (
+2082	Worst frame:
+2083	. Action plan
+2084	Before › after
+2085	› not measured
+2086	. Methods and approval
+2087	This report is for the preliminary assessment and prioritisation of ergonomic risks; it does not replace the professional judgement of the assessor. Method results are based on the observations and measurements on the record date.
+2088	\n\nSignature: ____________________
+2089	Employer / representative
+2090	Ergonomic risk assessment report
+2091	· Ergonomic risk assessment
+2093	PDF report ready:
+2094	PDF could not be created:
+2095	I’ll enter the length myself
+2096	Euro pallet, long side · 120 cm
+2097	Euro pallet, short side · 80 cm
+2098	Industrial pallet side · 100 cm
+2099	Door frame height · about 200 cm
+2100	A4 paper, long side · 29.7 cm
+2101	Worker’s stature (sole of foot → top of head)
+2102	Frame in the posture analysis
+2103	Posture record
+2104	Field record ·
+2105	<div class="row" style="justify-content:space-between"><h2 style="margin:0">Measure distance · choose image</h2><button class="ghost" data-mzx>✕</button></div>\n    <p class="about">Choose a frame showing the object to measure and a reference of known length.
+2106	\n    <button data-mzfile><b style="font-size:26px">＋</b><span>Choose a photo from the device</span></button></div>\n    <input type="file" id="mzFile" accept="image/*" hidden>
+2107	Images of this task are listed.
+2110	<div class="row" style="justify-content:space-between"><h2 style="margin:0">Measure distance
+2111	</h2><button class="ghost" data-mzx>✕</button></div>\n   <div class="seg" style="margin:10px 0 6px"><button data-mzstep="ref" class="
+2112	">1 · Reference</button><button data-mzstep="meas" class="
+2113	>2 · Measure</button></div>\n   <div class="hint" id="mzHint"></div>\n   <div class="mzwrap"><canvas id="mzCv"></canvas></div>\n   <div id="mzPanel"></div>\n   <p class="muted" style="font-size:12.5px;margin:8px 0 0">For accuracy, the reference and the measured object must be at the same distance from the camera and the camera must face the measuring plane squarely (side-on shot). A difference in distance creates an error of a few centimetres; treat the result as “approximate” and check borderline values with a tape measure.</p>
+2114	Tap <b>one end</b> of the object of known length (e.g. a pallet corner).
+2115	Now tap <b>the other end</b>.
+2116	Drag the ends to correct them and type the real length below.
+2117	Tap the <b>end point</b> of the measurement.
+2118	Tap the <b>start</b> of the distance you want to measure, then its end (or press and drag).
+2119	<div class="dfields" style="margin-top:8px"><label>Reference<select id="mzPre">
+2120	</select></label>\n      <label>Real length (cm)<input id="mzCm" type="number" min="0" step="any" inputmode="decimal" value="
+2122	>Go to measuring →</button></div>
+2123	Scale: 1 cm =
+2124	No scale yet
+2127	<div class="muted">No measurements yet.</div>
+2128	<div class="mzauto"><b>NIOSH measurements from posture points</b><div>H (ankle → hand, horizontal) ≈ <b>
+2129	cm</b> · V (hand height from the floor) ≈ <b>
+2130	cm</b></div><div class="muted" style="font-size:12.5px">For V, an average of
+2131	cm was added to the ankle point. “Hand (knuckles)” was used as the hand point.</div><button class="small primary" id="mzNiosh" style="margin-top:6px">Open the NIOSH form with these values</button></div>
+2132	<p class="muted" style="font-size:12.5px;margin:6px 0 0">For this field the
+2133	component is used; you don’t need to align the two points exactly
+2134	.</p>
+2135	cm (measured from image)
+2136	NIOSH: H and V were measured from the image. Complete D, A, frequency and coupling.
+2137	Reference
+2138	image could not be opened
+2139	Lifting / lowering
+2140	Pushing-pulling
+2141	Holding a load
+2142	Computer work
+2143	Hot environment
+2144	Worker complaint
+2147	" aria-label="Remove">✕</button></div>
+2150	">Edit</button><button class="small
+2151	\n      <div class="row" style="gap:6px;margin-top:8px;flex-wrap:wrap"><span class="muted" style="font-size:12.5px">Analyse:</span>
+2153	.__other">Another method…</button></div>\n
+2154	No task selected
+2155	Reopen
+2157	">Posture</button><button class="small" data-sfmz="
+2158	" aria-label="Measure distance">📏</button></div></div>
+2159	<span>Load <b>
+2161	Posture (REBA/RULA/OWAS)
+2162	<div class="fmeta" style="margin-top:6px">Linked analyses:
+2164	No field records awaiting analysis.
+2165	No field records.
+2166	Choose method
+2167	Start analysis
+2168	No task is selected for this field record; choose the task before saving.
+2169	field record
+2170	The field record’s information was carried into the form; complete the remaining fields.
+2171	A photo could not be opened.
+2172	Frame added · t =
+2173	Add at least one photo, hazard or note to save.
+2174	Field record updated.
+2175	Field record added; it is in the “Awaiting analysis” list.
+2176	No task selected; choose one before the analysis.
+2177	Quick start: your first assessment in 10 minutes
+2178	<ol>\n  <li><b>Define the workplace.</b> On the Stations page, use “Edit workplace” to enter the workplace name, address and assessor. These appear on the cover of the Excel and PDF reports.</li>\n  <li><b>Add a station and a task.</b> Add the station (e.g. Shipping dock) with “+ Station” and the task (e.g. Palletising) with “+ Task” on the station card. Entering the task’s time in the shift (min) makes the daily exposure and risk table more accurate.</li>\n  <li><b>Choose the method.</b> If you’re not sure, answer a few questions in the <a href="#" data-go="guide">Guide</a>; it shows the recommended method for each risk area and why.</li>\n  <li><b>Do the analysis and save it.</b> Use Posture analysis if you have a video or photo, the Forms page if you have measurements or observations. Choose the station and task in the box before saving.</li>\n  <li><b>Open an action.</b> After saving, “+ Action” appears next to each suggestion under the result. Assign an owner and a due date.</li>\n  <li><b>Get the report.</b> Download a PDF or Excel from the Stations page.</li></ol>
+2179	What are the pages for?
+2180	<table class="cmp"><tbody>\n  <tr><td><b>Home</b></td><td>Recent records and quick entry points.</td></tr>\n  <tr><td><b>Guide</b></td><td>A decision tree asking which method to use when, plus method cards.</td></tr>\n  <tr><td><b>Field</b></td><td>Collect photos, video frames and short notes in the field; do the analysis later at your desk.</td></tr>\n  <tr><td><b>Stations</b></td><td>Workplace → station → task structure, risk map, risk assessment table, daily exposure, reports and backup.</td></tr>\n  <tr><td><b>Posture analysis</b></td><td>Pick a frame from video and mark the joint points; REBA, RULA and OWAS together. The distance measuring tool is here too.</td></tr>\n  <tr><td><b>Forms</b></td><td>Forms for NIOSH, KIM, Liberty Mutual, OCRA, ROSA, Nordic and the other methods.</td></tr>\n  <tr><td><b>Actions</b></td><td>List of all actions, their status, overdue items and before/after results.</td></tr>\n  <tr><td><b>Manual</b></td><td>This page.</td></tr></tbody></table>
+2181	Field mode: collect first, analyse later
+2182	<p>Analysing every job on the spot takes time. Field mode separates observation from assessment.</p><ol>\n  <li>On the Field page choose the station and task (if you don’t know, leave it empty and choose later with “Edit”).</li>\n  <li>Use <b>📷 Photo</b> to take a picture with the phone camera or choose from the gallery. There can be several photos.</li>\n  <li>If you shot a video, open it with <b>🎞 Grab a video frame</b>, go to the important moments and press “Add this frame”. Frames are stored with their video time.</li>\n  <li>Mark the hazards you saw (lifting, pushing-pulling, repetitive work…). If you know them, enter the load, repetitions per shift and task duration.</li>\n  <li>Add a note. You can dictate with the microphone on the phone keyboard.</li>\n  <li>“Save field record”. The record goes to the <b>Awaiting analysis</b> list.</li></ol>\n  <p>Back at your desk, the record in the list shows method buttons for the hazards you marked (e.g. Lifting → NIOSH, KIM-LHC). Pressing a button selects the station/task and carries the load and frequency into the form. The “Posture” button on a photo opens that frame in posture analysis. The analyses you save are linked to the field record; mark it “Completed” when done.</p>\n  <p class="muted">Photos are stored in the browser database on the device (IndexedDB) and never uploaded. Only thumbnails go into the JSON backup.</p>
+2183	<ol>\n  <li>Open the file with “Choose a video or photo”. In a video, go to the most demanding moment with the slider and the ±1 frame and ±1 s buttons (←/→ on the keyboard, with Shift for 1 s).</li>\n  <li>Press “Analyse this frame”. Choose the direction the person faces.</li>\n  <li>Tap the 8 points in the order the on-screen hint gives: ear, shoulder, elbow, wrist, hand, hip, knee, ankle. Drag a wrong point to correct it; to re-place a specific point, select it below.</li>\n  <li>The angles are calculated automatically. If you measured an angle with a goniometer, type it into the table; the value you type shows in orange and is used.</li>\n  <li>Mark the observations: load, coupling, legs, twisting, static posture, repetition. All three methods use this information.</li>\n  <li>Choose the task and save. Save several frames of the same task; the station card shows the timeline and the worst value.</li></ol>\n  <p><b>For a good recording:</b> hold the camera side-on and level to the person, keep the whole body in view, and record at least 2–3 work cycles. If you’ll measure distances, have a reference (pallet, door, tape measure) in the frame.</p>
+2184	Measuring distances (calibration)
+2185	<p>Converts pixels in the video to centimetres; you get measurements such as the NIOSH horizontal (H) and vertical (V) distance, reach distance or bench height from the image without a tape measure.</p><ol>\n  <li>Press “📏 Measure distance” in posture analysis, the 📏 button next to a centimetre field in the forms, or the 📏 in a field record.</li>\n  <li><b>Reference:</b> Tap both ends of an object of known length (Euro pallet 120 × 80 cm, door frame, A4 paper, the worker’s stature). Choose it from the list or type the real length.</li>\n  <li><b>Measure:</b> Tap the start and end of the distance you want to measure (or press and drag). Each measurement shows its length and horizontal and vertical components. A magnifier appears while dragging.</li>\n  <li>If you opened it from a form, carry the value into the field with a button such as “H = 42 cm”. Horizontal fields use the horizontal component, height fields the vertical component.</li></ol>\n  <p><b>NIOSH from posture points:</b> if the ankle and hand points are placed in posture analysis, the tool calculates H and V directly and shows the “Open the NIOSH form with these values” button. For V, an average of
+2186	cm is added to the ankle point.</p>\n  <p><b>Limitation:</b> the reference and the measured object must be at the same distance from the camera, and the camera must face them side-on and squarely. Otherwise there is an error of a few centimetres. If the result is close to a limit value (e.g. H around 25 or 63 cm), check it with a tape measure. The calibration is stored with the frame; you don’t need to redo it when measuring again on the same frame.</p>
+2187	Assessing with forms
+2188	<ol>\n  <li>Choose the method on the Forms page. For lifting, switching between uniform / different loads is the button at the top of the method.</li>\n  <li>Fill in the fields; the result and suggestions update instantly as you type. How to measure is written under each field.</li>\n  <li>Choose the task and press “Save”. After saving you can open “+ Action” from the suggestions; to correct the same record, change it and press “Save changes”.</li>\n  <li>“New / clear” resets the form. “Excel form” downloads that record’s A4 assessment form.</li></ol>\n  <p>Less used or older methods (KIM 2001, Strain Index, HAL, noise, vibration, heat, lighting…) appear when “Show advanced methods” is on.</p>
+2189	Action tracking and re-measurement
+2190	<ol>\n  <li>Open an action with “+ Action” on a suggestion of a saved analysis; the title and description come from the suggestion and the current result is stored as “before”.</li>\n  <li>Enter the action type (elimination, technical, administrative, PPE, training), owner and due date. Open actions past their due date show in red.</li>\n  <li>When the action is implemented, press “Re-measure” on the action card: the form opens with the old inputs; correct the changed conditions and save.</li>\n  <li>The card shows the before → after difference and the “improved / same / worsened” result. The risk map always uses the latest measurement.</li></ol>
+2191	Risk assessment table (Fine-Kinney / 5×5)
+2192	<p>The table on the Stations page makes each risk area of each station a row. Choose Fine-Kinney or the 5×5 matrix with the button at the top.</p><ul>\n  <li><b>Suggested values:</b> probability comes from the method’s risk level, frequency from the task duration (120 min or more per shift is “continuous”), severity from the hazard type.</li>\n  <li><b>Correct:</b> use “Edit” to change the hazard, possible harm, probability, frequency and severity for the workplace. A changed row is marked “corrected by hand”; undo it with “Back to suggested values”.</li>\n  <li>The scale values come from common practice; compare them with your organisation’s own table.</li></ul>
+2193	Daily exposure
+2194	<p>When you enter the tasks’ times in the shift (min), the station card shows the shift profile: each task’s share of the shift, the time-weighted share of high-risk postures (REBA and OWAS) and a sub-activity table for the other methods. Tasks without a duration get equal weight, and this is stated on screen.</p>
+2195	Reports: PDF and Excel
+2196	<ul>\n  <li><b>PDF report</b> (PDF on the Stations page or a station card): cover, executive summary, risk map, risk table, station details, action plan, methods and signature fields.</li>\n  <li><b>Excel</b>: summary, risk table, action plan, results and method sheets; the station file contains each record’s A4 form (with photos).</li>\n  <li><b>CSV</b>: one method result per row; for Power BI or pivots.</li>\n  <li>For the first PDF/Excel the library is loaded once from the internet; without a connection the download does not work.</li></ul>
+2197	Where is the data, how do I back it up?
+2198	<ul>\n  <li>All records are stored in the browser on this device; they are not sent to a server. If you clear the browser data, the records are deleted too.</li>\n  <li><b>Backup:</b> “Copy JSON” on the Stations page is a full backup; paste it into a file and keep it. On another device, merge it with “Import JSON” (the same record is not added twice).</li>\n  <li>Full-size field photos do not go into the backup, only thumbnails.</li>\n  <li>If storage fills up, the app drops the full frames, keeps thumbnails and warns you. You can clear old records after exporting them to Excel.</li>\n  <li>If several people need to work with the same data or a central backup is needed, the app has to run on a server.</li></ul>
+2199	Frequently asked questions and problems
+2200	<dl>\n  <dt>The video won’t open.</dt><dd>The browser cannot open some formats (e.g. HEVC/H.265, some iPhone videos). Export it as MP4 (H.264) or choose the “Most compatible” camera setting on the phone.</dd>\n  <dt>The score is lower than I expected.</dt><dd>A missing angle is treated as neutral and a warning appears. Place all the points and tick the observation boxes (load, twisting, repetition).</dd>\n  <dt>The Save button says “choose the station and task”.</dt><dd>Choose the station and task in the selector in the save box; if it is not in the list, create it with “＋ New”.</dd>\n  <dt>How do I correct an earlier analysis?</dt><dd>Press the record on the station card; the analysis opens, change it and press “Save changes”.</dd>\n  <dt>Download doesn’t work.</dt><dd>File download is disabled in some views; open the app as a full page. Copying CSV and JSON works everywhere.</dd>\n  <dt>I don’t know which method to choose.</dt><dd>The Guide page asks about the risky areas and recommends one method for each area; the method card also says when not to use it.</dd></dl>
+2201	Shortcuts
+2202	<table class="cmp"><tbody><tr><td>← / →</td><td>One frame back / forward (Posture analysis)</td></tr><tr><td>Shift + ← / →</td><td>One second back / forward</td></tr><tr><td>Space</td><td>Play / pause</td></tr><tr><td>A</td><td>Analyse this frame</td></tr></tbody></table>
+2205	<div class="empty">No section matches this search.</div>
+2206	Measuring distance needs a frame with an image.
+2207	No records for this workplace.
+2208	pcs
+2209	minutes
+2210	hours
+2211	metres
+2212	per minute
+2213	per hour
+2214	times
+2215	men
+2216	seconds
+2217	horizontal
+2218	vertical

@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-<url><loc>https://durus.ysfdurak.com/</loc><lastmod>2026-11-15</lastmod></url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<url><loc>https://durus.ysfdurak.com/</loc><lastmod>2026-11-15</lastmod>
+<xhtml:link rel="alternate" hreflang="tr" href="https://durus.ysfdurak.com/"/><xhtml:link rel="alternate" hreflang="en" href="https://durus.ysfdurak.com/en/"/></url>
+<url><loc>https://durus.ysfdurak.com/en/</loc><lastmod>2026-11-15</lastmod>
+<xhtml:link rel="alternate" hreflang="tr" href="https://durus.ysfdurak.com/"/><xhtml:link rel="alternate" hreflang="en" href="https://durus.ysfdurak.com/en/"/></url>
 </urlset>

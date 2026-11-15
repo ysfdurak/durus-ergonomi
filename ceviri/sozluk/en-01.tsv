@@ -1,0 +1,300 @@
+0	Duruş — Ergonomics Analysis Centre
+1	Ergonomic risk analysis from video and observation: REBA, RULA, the NIOSH lifting equation and other methods in one place, with Excel and PDF reports. No install, no account.
+2	Ergonomic risk analysis from video and observation, method guidance and Excel/PDF reports. Runs in the browser.
+3	Duruş
+4	Ergonomics analysis centre
+5	Home
+6	Guide
+7	Field
+8	Stations
+9	Posture analysis
+10	Forms
+11	Actions
+12	Manual
+13	Assess a workstation ergonomically
+14	The 10 most widely used field methods in one place: REBA, RULA, OWAS, NIOSH, KIM lifting and pushing-pulling (BAuA), Liberty Mutual (Snook), OCRA, ROSA and the Nordic questionnaire. Advanced methods are ready for more specific cases. Every result shows what drives the risk and what can be done.
+15	I don’t know where to start
+16	Find the risky areas with a few yes/no questions; see one recommended method for each area and why.
+17	Go to the guide →
+18	I have a video or photo
+19	Pick the frame and mark the joints. REBA, RULA and OWAS are calculated together.
+20	Go to posture analysis →
+21	I’m in the field, I’ll analyse later
+22	Take photos, grab video frames, mark hazards. Analyse from the list back at your desk.
+23	Go to field mode →
+24	I have measurements, observations or a survey
+25	NIOSH, KIM lifting and pushing-pulling (BAuA), Liberty Mutual, OCRA, ROSA and Nordic questionnaire forms.
+26	Go to forms →
+27	Recent records
+28	Guide: which method to use when?
+29	Assess a workstation in four steps. The key questions follow the pre-screening approach of ISO/TR 12295; the environment questions are common field rules.
+30	Answer the key questions yes/no
+31	2. Choose the method
+32	1–3 short questions for each area you said yes to
+33	3. Measure and calculate
+34	Apply the recommended method and save it under the same task name
+35	4. Act, then measure again
+36	Compare before and after, get the Excel report
+37	Key questions
+38	Reset
+39	Your assessment plan
+40	Methods
+41	The list has the 10 core methods most used in the field; advanced methods can be opened for more specific cases. Levels:
+42	Screening
+43	quick result with little data,
+44	Detailed
+45	needs measurements,
+46	Measurement
+47	done with an instrument,
+48	Old version
+49	only for comparison with old reports. Tap a method name to open its card.
+50	Choose the source, find the frame to analyse
+51	How?
+52	Choose a video or photo
+53	Try with a sample frame
+54	No image: enter angles by hand
+55	Drag and drop works too. The file stays on your device and is never uploaded.
+56	Speed
+57	Keyboard: ←/→ one frame, Shift+←/→ one second, space play/pause, A analyse.
+58	Analyse this frame
+59	Which frame should I pick? What makes a good recording?
+60	Place the camera
+61	side-on and level
+62	to the person; this is how trunk and arm angles are measured most accurately.
+63	Record one cycle from start to finish (at least 2–3 cycles). Analyse the most demanding moments separately: the deepest bend, the highest reach, the moment the load is lifted.
+64	Also record frequently repeated or long-held postures; an “average” frame also tells you about the job.
+65	Save frames of the same task under the same
+66	task name
+67	; the Records page then shows the timeline and the worst value together.
+68	Mark the points, enter observations
+69	Person faces right →
+70	← Faces left
+71	Delete last point
+72	Clear points
+73	📏 Measure distance
+74	Drag a point to correct it. To re-place a specific point, select it below first.
+75	Angles
+76	If a box is empty the angle is calculated from the points. If you type a value, it is used (orange).
+77	Observations
+78	· used by all three methods
+79	Load and coupling
+80	Load carried / force applied (kg)
+81	Sudden, jerky or rapidly increasing force
+82	Coupling good: firm handle
+83	Coupling fair: acceptable
+84	Coupling poor: handle not suitable
+85	Coupling unacceptable: unsafe
+86	Legs
+87	Standing, weight balanced on both feet
+88	Standing, weight on one foot / unbalanced
+89	Sitting
+90	Kneeling
+91	Walking
+92	Trunk and neck
+93	Trunk twisted
+94	Trunk side-bent
+95	Neck twisted
+96	Neck side-bent
+97	Arm and wrist
+98	Arm abducted or rotated
+99	Shoulder raised
+100	Arm supported or person leaning
+101	Wrist deviated sideways
+102	Activity
+103	Posture held static for more than 1 minute
+104	Small-range repetition, 4+ times a minute
+105	Rapid, large posture changes or unstable base
+106	Whole body; varied, mixed tasks (warehouse, healthcare, services). Score 1–15.
+107	Method card
+108	Static workstation tasks loading the arm, wrist and neck (assembly, desk work). Score 1–7.
+109	RULA only
+110	Forearm crosses the body midline or works out to the side
+111	Wrist twist near the end of range
+112	Quick posture coding: back, arms, legs, load. Action category 1–4.
+113	Codes (suggested automatically, you can change them)
+114	Back
+115	Automatic
+116	1 · Straight
+117	2 · Bent forward/backward
+118	3 · Twisted or side-bent
+119	4 · Bent and twisted
+120	Arms
+121	1 · Both arms below shoulder
+122	2 · One arm at/above shoulder
+123	3 · Both arms at/above shoulder
+124	2 · Standing, both legs straight
+125	3 · Standing, one leg straight
+126	4 · Standing, both knees bent
+127	5 · On one leg, knee bent
+128	6 · Kneeling
+129	7 · Walking
+130	Side assessed
+131	Not specified
+132	Right
+133	Left
+134	Note
+135	e.g. picking from the bottom shelf
+136	Save analysis
+137	Excel form
+138	Close
+139	optional
+140	Save
+141	New / clear
+142	Editing record
+143	Field record
+144	Quickly collect what you see in the field and do the analysis later at your desk. Photos stay on this device.
+145	📷 Take / choose photo
+146	🎞 Grab a video frame
+147	Add this frame
+148	Hazards you saw
+149	Quick facts
+150	Load (kg)
+151	Times per shift
+152	Task duration (min/shift)
+153	e.g. picking cartons from the bottom shelf, pallet truck wheel sticks. You can dictate with your keyboard’s microphone.
+154	Save field record
+155	Stop editing
+156	Awaiting analysis
+157	Pending
+158	Completed
+159	All
+160	User manual
+161	How to use the app, step-by-step workflows and frequently asked questions. For choosing a method see
+162	Search the manual (e.g. pallet, PDF, backup)
+163	Edit workplace
+164	+ Station
+165	Structure: Workplace → Station → Task. Analyses are saved to a task; a station’s risk is the worst of the current measurements of its tasks.
+166	Risk map
+167	Download PDF report
+168	Excel (this workplace)
+169	Risk assessment table
+170	Fine-Kinney
+171	Each station × risk area is one row. Values are suggested from the method result; adjust them for your workplace with “Edit”. The table goes into the Excel and PDF reports as is.
+172	Export / import
+173	Excel report
+174	contains a summary, results and a separate sheet per method; download a task’s own report from its heading and a single record’s assessment form from its card. The CSV is in long format (one method result per row) and goes straight into an Excel or Power BI pivot. JSON is a full backup.
+175	Download Excel report
+176	Excel download is not available in this view; use Copy CSV instead.
+177	Import JSON
+178	Delete all
+179	Import
+180	+ Action
+181	Plan an action → implement it → measure the same task again. When the re-measurement is saved, the before-after comparison appears here and on the station page.
+182	All statuses
+183	Open
+184	Overdue
+185	Completed
+186	Cancelled
+187	Measure distance
+188	Ear
+189	Shoulder
+190	Elbow
+191	Wrist
+192	Hand (knuckles)
+193	Hip
+194	Knee
+195	Ankle
+196	Trunk
+197	from vertical; + forward, − backward
+198	Neck
+199	relative to trunk; + forward, − backward
+200	Upper arm
+201	relative to trunk; + forward raise
+202	Forearm (elbow)
+203	elbow flexion
+204	Wrist
+205	deviation from straight
+206	knee flexion
+207	Straight
+208	Bent
+209	Twisted/side-bent
+210	Bent and twisted
+211	Both arms below shoulder
+212	One arm above shoulder
+213	Both arms above shoulder
+214	Standing, both legs straight
+215	Standing, one leg straight
+216	Standing, both knees bent
+217	On one leg, knee bent
+218	Negligible risk
+219	Low risk
+220	Medium risk
+221	High risk
+222	Very high risk
+223	No action needed.
+224	Action may be needed.
+225	Investigation and action needed.
+226	Investigate and change soon.
+227	Change immediately.
+228	Trunk
+229	+ load
+230	</b><br>Upper arm
+231	· Forearm
+232	</b><br>Table C
+233	Acceptable
+234	Low-medium risk
+235	Medium-high risk
+236	Acceptable if the posture is not held or repeated for long.
+237	Further investigation needed, change may be needed.
+238	Investigate and change soon.
+239	Investigate and change immediately.
+240	Upper arm
+241	· Wrist twist
+242	</b><br>Neck
+243	· Trunk
+244	= <b>Neck-trunk
+245	</b><br>Table C → <b>RULA
+246	Category 1 · Normal
+247	Category 2 · Slightly harmful
+248	Category 3 · Distinctly harmful
+249	Category 4 · Extremely harmful
+250	Corrective action needed in the near future.
+251	Corrective action needed as soon as possible.
+252	Corrective action needed immediately.
+253	Back
+254	) · Load
+255	)<br>Posture code <b>
+256	</b> → <b>Action category
+257	under 10 kg
+258	over 20 kg
+259	Trunk bent well forward
+260	Bring the work point between waist and shoulder: lift table, pallet raiser, tilted bin. Reduce picks from the floor.
+261	Trunk slightly bent
+262	Set the working height relative to elbow level; bring the material closer to the body.
+263	Trunk twisting or side-bending
+264	Move pick and place points in front of the worker; leave room to turn with the feet instead of the trunk.
+265	Neck bent
+266	Bring the screen, display or workpiece closer to eye level; improve lighting and reading distance.
+267	Arm high or far out
+268	Shorten the reach and lower the work point; place frequently used parts within arm’s length.
+269	Lower the work surface or raise the worker with a platform/step.
+270	Wrist deviation
+271	Use a bent-handle tool, put the workpiece on a rotating fixture; lay out the work so the wrist stays straight.
+272	Knees bent or poor balance
+273	Raise work that requires squatting; provide a firm, level floor and knee pads/sitting support if needed.
+274	High load or force
+275	Split the load, use a mechanical aid (vacuum lifter, pallet truck, balance arm); use a two-person lift if needed.
+276	Poor coupling
+277	Switch to crates and boxes with handholds; add handles to slippery surfaces.
+278	Static posture or frequent repetition
+279	Plan job rotation and short micro-breaks; reduce long holding with a fixture or support.
+280	Rapid posture change
+281	Rearrange the flow, remove steps that require sudden movements; check floor stability.
+282	Chair
+283	Seat height adjustable; feet flat on the floor (or a footrest is provided)
+284	Set the chair so the knees are level with the hips; provide a footrest if the feet do not reach the floor.
+285	Seat depth suitable: 2–3 fingers’ gap between the back of the knee and the seat edge
+286	Use a chair with depth adjustment or shorten the depth with a lumbar cushion.
+287	Lumbar support present and in line with the small of the back
+288	Adjust the lumbar support height or add a separate lumbar cushion.
+289	Armrests do not lift the shoulders; elbows comfortably supported
+290	Lower or remove the armrests; bring them level with the desk.
+291	Screen
+292	Top edge of the screen at or slightly below eye level
+293	Adjust the screen with a monitor arm/riser. On a laptop use a riser + external keyboard/mouse.
+294	Screen about an arm’s length away (50–75 cm)
+295	Move the screen to where your fingertips touch it with an outstretched arm; enlarge the text.
+296	Screen straight ahead, neck not turned
+297	Put the main screen straight ahead; with two screens, centre the one used most.
+298	No reflections or glare on the screen, documents at screen level
+299	Place the screen at right angles to the window and use a document holder.

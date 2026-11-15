@@ -1,0 +1,300 @@
+900	The whole cycle (4 in one source)
+901	Force (Borg CR-10)
+902	Moderate force (Borg 3–4)
+903	None
+904	About 1/3 of the time
+905	About half of the time
+906	More than half of the time
+907	Almost all the time
+908	Strong force (Borg 5–7)
+909	Once every 10 minutes, 2 seconds
+910	1% of the time
+911	5% of the time
+912	More than 10% of the time
+913	Near-maximal force (Borg 8–10)
+914	Arm down / supported
+915	Arm slightly raised, more than half of the time
+916	Arm at shoulder height, about 10% of the time
+917	Arm at shoulder height, about 1/3 of the time
+918	Arm at shoulder height, more than half of the time
+919	Arm at shoulder height, almost all the time
+920	Are the hands above head height?
+921	No
+922	Yes (the shoulder score is doubled)
+923	Elbow (sudden flexion-extension, rotation)
+924	At least 1/3 of the time
+925	Wrist (extreme bending, deviation)
+926	All the time
+927	Grip (fingertip, hook, palmar grip)
+928	Stereotypy (repetition of the same movement)
+929	At least 2/3 of the time or a cycle of 8–15 s
+930	Almost all the time or a cycle shorter than 8 s
+931	Additional factors
+932	Physical-mechanical factors
+933	At least one for more than half of the time
+934	One or more for almost all the time
+935	Gloves that hinder grip, 2+ sudden movements per minute, 10+ impacts per hour, cold below 0 °C, vibrating tools (1/3 of the time), tools pressing on the skin, precision work below 2–3 mm.
+936	Organisational factor (pace)
+937	The worker sets the pace
+938	Pace partly machine-driven (buffer available)
+939	Pace fully machine-driven
+940	No duration entered
+941	Enter the net repetitive work time.
+942	Green · acceptable
+943	Yellow · borderline / very low risk
+944	Light red · low risk
+945	Red · medium risk
+946	Purple · high risk
+947	Recovery
+948	Improve the distribution of breaks: at least 8–10 minutes of recovery every hour.
+949	Reduce the number of technical actions: remove unnecessary movements, share between both hands, automate.
+950	Lower the force requirement: tool maintenance, powered tools, lighter parts.
+951	Correct shoulder, elbow and wrist postures through the work point layout; bring parts within arm’s length.
+952	Review gloves, vibration and machine pace; add buffer stock.
+953	Risk borderline; improvement recommended, should be monitored.
+954	Improvement and health surveillance recommended.
+955	The job should be reorganised; health surveillance needed.
+956	+ Frequency
+957	+ Posture
+958	) × duration multiplier
+959	<br>⚠ Below 60 minutes is outside the table; 0.5 was used.
+960	<br>Bands: ≤7.5 green · ≤11 yellow · ≤14 light red · ≤22.5 red · above purple
+961	−1 · Less than 1 hour a day or less than 30 min continuously
+962	0 · 1–4 hours a day or 30–60 min continuously
+963	+1 · More than 4 hours a day or more than 1 hour continuously
+964	Rapid Office Strain Assessment (ROSA; Sonne, Villalta, Andrews, 2012). Scores the chair, screen, phone, mouse and keyboard; usage time is added for each section. The result is 1–10; 5 and above calls for further assessment or change. Unlike the office checklist, it is a scored, published method.
+965	Chair · seat height
+966	Seat height
+967	Knees at about 90°
+968	Too low (knee angle below 90°)
+969	Too high (knee angle above 90°)
+970	Feet not touching the floor
+971	Insufficient space under the desk (legs cannot move) +1
+972	Height not adjustable +1
+973	Chair · seat depth
+974	Seat depth
+975	About 8 cm between the back of the knee and the seat edge
+976	Too deep (less than 8 cm gap)
+977	Too shallow (more than 8 cm gap)
+978	Depth not adjustable +1
+979	This extra point appears on the official form but not in the written guide; it could not be verified.
+980	Chair · armrests
+981	Armrests
+982	Elbows supported in line with the shoulders, shoulders relaxed
+983	Too high (shoulders raised)
+984	Too low or no armrests
+985	Hard or damaged surface +1
+986	Armrests too wide +1
+987	Armrests not adjustable +1
+988	Chair · back support
+989	Back support
+990	Adequate lumbar support, 95–110° recline
+991	No lumbar support or not in the small of the back
+992	Angle below 95° or above 110°
+993	No back support (stool) or working leaning forward
+994	Work surface too high (shoulders raised) +1
+995	Backrest not adjustable +1
+996	Chair usage time
+997	Screen position
+998	At arm’s length (40–75 cm), top edge at eye level
+999	Too low (looking down more than 30°)
+1000	Too high (neck extended)
+1001	Screen too far away +1
+1002	Neck twisted more than 30° +1
+1003	Glare on the screen +1
+1004	No document holder +1
+1005	Screen usage time
+1006	Phone
+1007	Headset or held with one hand, neck neutral
+1008	Phone too far away (reaching more than 30 cm)
+1009	Handset clamped between neck and shoulder +2
+1010	No hands-free (speaker/headset) option +1
+1011	Phone usage time
+1012	Mouse
+1013	Mouse position
+1014	In line with the shoulder, close to the body
+1015	Reaching for the mouse
+1016	Mouse and keyboard on different surfaces/heights +2
+1017	Pinch grip on the mouse +1
+1018	Palm rest in front of the mouse (pressure on the wrist) +1
+1019	Mouse usage time
+1020	Keyboard
+1021	Wrists straight, shoulders relaxed
+1022	Wrists extended or keyboard tilted more than 15°
+1023	Wrists deviated sideways while typing +1
+1024	Keyboard too high (shoulders raised) +1
+1025	Reaching for overhead items +1
+1026	Keyboard tray not adjustable +1
+1027	Keyboard usage time
+1028	Set the chair so the knees are at about 90°; provide a footrest if the feet do not reach the floor.
+1029	Under the desk
+1030	Remove boxes, crates and cables from under the desk.
+1031	Leave about 8 cm behind the knee with a depth-adjustable chair or a lumbar cushion.
+1032	Bring the armrests to elbow height or remove them; use soft, narrow armrests.
+1033	Put the lumbar support in the small of the back and set a 95–110° recline; adjust the desk height to the elbows.
+1034	Put the screen straight ahead, at arm’s length, top edge at eye level; remove glare with blinds or positioning, use a document holder.
+1035	Bring the phone within 30 cm; use a headset for long calls.
+1036	Put the mouse next to the keyboard on the same surface; choose a palm-sized mouse, remove the wrist rest.
+1037	Fold in the keyboard feet, set the height to the elbows; move frequently used items within reach.
+1038	Low
+1039	Should be monitored
+1040	Further assessment needed
+1041	High
+1042	ROSA 5 or above: immediate change or a detailed assessment is needed.
+1043	Below the action level of 5.
+1044	Chair: height+depth
+1045	, armrests+back
+1046	+ time
+1047	</b><br>Screen
+1048	</b> · peripherals =
+1049	<br>ROSA = max(chair
+1050	, peripherals
+1051	</b><br><span style="opacity:.85">The action level of 5 is the published value; the other colour bands are the app’s own.</span>
+1052	KIM lifting-holding-carrying (BAuA)
+1053	Key Indicator Method, 2019 version (BAuA, form V12.5). Score = time score × (load + load handling + posture + unfavourable conditions + work organisation); calculated separately for women and men. Holding and carrying are now scored under “unfavourable conditions”. Because the posture weighting is given with pictograms on the official form, choose it by looking at the matching row of the form.
+1054	Time and load
+1055	Lifts / holds / carries per day
+1056	Total count of this sub-activity in the shift. Linear interpolation is used for intermediate values.
+1057	When tipping, about 50% of the load is taken; in a two-person carry, about 60% per person. If the load score is 25 or above, each different load should be a separate record.
+1058	Load handling
+1059	Both hands, symmetrical
+1060	Briefly with one hand and/or load unevenly distributed
+1061	Mainly with one hand or the load’s centre of gravity unstable
+1062	Posture weighting (pictogram row on the official form)
+1063	Left block row 1 · 0
+1064	Left block row 2 · 3
+1065	Left block row 3 · 5
+1066	Left block row 4 · 7
+1067	Left block row 5 · 9
+1068	Right block row 1 · 10
+1069	Right block row 2 · 13
+1070	Right block row 3 · 15
+1071	Right block row 4 · 18
+1072	Right block row 5 · 20
+1073	Choose by the pictogram pair showing the start and end posture (BAuA KIM-LHC form). The left block covers upright and slightly bent postures, the right block deep bending and squatting.
+1074	Trunk twisting or side bending
+1075	Occasionally +1
+1076	Frequent / constant +3
+1077	Load or hands far from the body (more than 17 cm between chest and hands)
+1078	Arms raised (hands between elbow and shoulder)
+1079	Occasionally +0.5
+1080	Frequent / constant +1
+1081	Hands above shoulder height
+1082	Frequent / constant +2
+1083	The additional posture points are capped at 6.
+1084	Unfavourable conditions
+1085	Hand/arm at the limit of movement
+1086	Grip / force transmission
+1087	No problem
+1088	Restricted +1
+1089	Clearly impeded +2
+1090	Unfavourable ambient conditions (weather, heat, draughts, cold, wetness) +1
+1091	Work area
+1092	Restricted: smaller than 1.5 m², slightly uneven, slope up to 5° +1
+1093	Unfavourable: cramped, steps, slope 5–10° +2
+1094	Clothing or equipment restricting movement +1
+1095	Holding or carrying
+1096	None or short
+1097	Holding 5–10 s or carrying 2–5 m +2
+1098	Holding longer than 10 s or carrying more than 5 m +5
+1099	For carrying over 10 m, an additional body movement (KIM-BM) assessment is recommended.
+1100	Work organisation
+1101	Temporal distribution
+1102	Good: frequent variation, high loads do not come back to back
+1103	Restricted: rare variation, occasional back-to-back loads
+1104	Unfavourable: hardly any variation, frequent back-to-back loads
+1105	Enter the count per day and the effective load.
+1106	Load score high
+1107	Reduce or split the load; lifting aid, vacuum gripper, trolley.
+1108	Posture score
+1109	Bring pick and place heights to waist level, bring the load closer to the body, remove twisting.
+1110	Unfavourable conditions
+1111	Shorten holding/carrying time and distance, widen the area, level the floor, provide a good grip.
+1112	Alternate high-load work with other tasks; avoid back-to-back heavy loading.
+1113	Reduce the daily number of operations: bulk transport, automation, rotation.
+1114	Slightly-moderately increased
+1115	Highly increased
+1116	load
+1117	Overload possible for less resilient people; work redesign is useful.
+1118	Overload possible even with normal resilience; work redesign needed, health surveillance recommended.
+1119	(worst:
+1120	/day)<br>Men:
+1121	+ handling
+1122	<br>Women:
+1123	<br>Bands: under 20 · 20–50 · 50–100 · 100+ (approximate limits)
+1124	Wheelbarrow (single wheel)
+1125	Sack truck (two wheels)
+1126	Two-wheeled waste container (outdoors)
+1127	Cart with swivel castors only (e.g. roll cage)
+1128	Large container with swivel castors only (outdoors)
+1129	Cart with fixed + swivel castors (e.g. manual stacker, wheeled cage)
+1130	Cart with fixed + swivel castors, 6 wheels (e.g. shelved platform cart)
+1131	Vehicle with drawbar (e.g. hand pallet truck, drawbar cart)
+1132	Overhead rail system (monorail)
+1133	Overhead crane (single-girder)
+1134	KIM pushing-pulling (BAuA)
+1135	Key Indicator Method – pushing and pulling (BAuA LMM-ZS, form V12.5, 2019). Scores manual pushing and pulling with carts, pallet trucks, sack trucks, containers, overhead rail systems or overhead cranes without measuring force. Score = time score × (load + floor + working conditions + equipment characteristics + posture + organisation); × 1.3 for women, × 0.7 for two-person work. Different push-pull tasks are assessed as separate records.
+1136	Equipment and load
+1137	Transport equipment
+1138	Total weight moved (including the equipment)
+1139	Besides the forward pushing force, the load score also covers lifting, tipping, balancing and lowering forces.
+1140	How will you enter the time?
+1141	Total distance per day
+1142	Total time per day
+1143	Total distance per day (loaded + empty)
+1144	Walking speed is taken as about 0.7 m/s (2.5 km/h). Linear interpolation is used for intermediate values; the time score is at least 1.
+1145	Total pushing-pulling time per day
+1146	Floor
+1147	Route condition
+1148	Everywhere level, smooth, solid, dry, no slopes
+1149	Mostly smooth and level, small damaged spots, no slopes
+1150	Mixed paving, concrete, asphalt; slight slope (up to 2°), dropped kerbs
+1151	Rough paving, compacted sand; slight slope, small edges and thresholds
+1152	Loose or rough paving, potholes, heavy dirt, steps and thresholds
+1153	For overhead rail systems and overhead cranes the floor score is 0 (the load does not touch the floor).
+1154	Marked slope or stairs
+1155	Slope 2–4° (4–8%) +5
+1156	Slope 5–10° (9–18%) +10
+1157	Stairs (stair climber) or slope above 10° +25
+1158	Unfavourable working conditions (total max 4)
+1159	Regularly very high initial force because of sinking into or getting stuck in the floor +3
+1160	Frequent stops
+1161	Frequent stops, without braking +1
+1162	Frequent stops, with braking +3
+1163	Many changes of direction, curves, frequent manoeuvring +3
+1164	Load must be positioned and stopped precisely, route followed exactly +1
+1165	High movement speed (about 1.0–1.3 m/s) +2
+1166	Unfavourable equipment characteristics (total max 4)
+1167	No handle or part suitable for applying force +2
+1168	No brakes on slopes steeper than 2° (3%) +3
+1169	Wheels not suitable (e.g. too small for soft/uneven floors) +2
+1170	Wheels defective (loose, rubbing, stiff, under-inflated) +2
+1171	Posture and organisation
+1172	Typical body posture
+1173	3 · Trunk upright or slightly bent forward, no twisting; free handle height; unobstructed leg room
+1174	5 · Trunk leaning in the direction of movement or slight twisting when pulling one-sided; fixed handle at 0.9–1.2 m; pulling with body weight
+1175	8 · Constrained posture: handle below 0.9 m or above 1.2 m, one-sided lateral force, obstructed view; leg room clearly restricted; frequent trunk twisting or side bending
+1176	Choose the typical posture. Marked bending when starting, braking and manoeuvring is scored under working conditions.
+1177	Work organisation / temporal distribution
+1178	Good: frequent change of task, high loads do not come back to back
+1179	Restricted: rare change of task, occasional back-to-back high loads
+1180	Unfavourable: hardly any variation, frequent back-to-back loads and load peaks
+1181	Performed by
+1182	Women (score × 1.3)
+1183	Two people pushing-pulling (score × 0.7)
+1184	Enter the total weight and the daily distance or time.
+1185	This weight cannot be moved safely with this equipment
+1186	Choose more suitable equipment (e.g. with a drawbar or powered), split the load or use a mechanical tug.
+1187	Reduce the load or switch to equipment suited to this weight; scores are markedly lower for drawbar vehicles.
+1188	Level the floor, remove thresholds and potholes, use ramps or powered help on slopes.
+1189	Simplify the route, reduce manoeuvres and stop-starts, add guides or stops for positioning.
+1190	Equipment characteristics
+1191	Add a suitable handle, choose wheels for the floor and maintain them, provide brakes on slopes.
+1192	Bring the handle to 0.9–1.2 m, prefer pushing to pulling, keep the view and leg room clear.
+1193	Shorten the total daily distance: change the layout, reduce trips, apply rotation.
+1194	Health surveillance
+1195	At risk level 3 and above design measures are needed; regular health surveillance is recommended.
+1196	Moderately increased
+1197	This weight cannot be moved safely with this equipment (grey area on the form).
+1198	Overload possible for less resilient people; design and prevention measures are useful.
+1199	Overload possible even with normal resilience; design and prevention measures should be considered.

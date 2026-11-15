@@ -1,0 +1,76 @@
+␣·␣Boyun␣	␣·␣Neck␣
+␣·␣Bacak␣	␣·␣Legs␣
+␣→␣Tablo␣A␣	␣→␣Table␣A␣
+␣=␣<b>Skor␣A␣	␣=␣<b>Score␣A␣
+␣·␣Bilek␣	␣·␣Wrist␣
+␣→␣Tablo␣B␣	␣→␣Table␣B␣
+␣+␣kavrama␣	␣+␣coupling␣
+␣=␣<b>Skor␣B␣	␣=␣<b>Score␣B␣
+␣+␣aktivite␣	␣+␣activity␣
+␣+␣kas␣	␣+␣muscle␣
+␣+␣kuvvet␣	␣+␣force␣
+␣=␣<b>Kol-bilek␣	␣=␣<b>Arm-wrist␣
+)␣·␣Kollar␣	)␣·␣Arms␣
+)<br>Bacaklar␣	)<br>Legs␣
+1–2 saat	1–2 hours
+2–8 saat	2–8 hours
+2–4 saat	2–4 hours
+4–8 saat	4–8 hours
+2␣·␣Hafif	2␣·␣Light
+3␣·␣Orta	3␣·␣Moderate
+10␣·␣Maksimum	10␣·␣Maximum
+/dakika	/minute
+␣·␣AL␣=␣0,36␣×␣(10␣−␣HAL)␣=␣	␣·␣AL␣=␣0.36␣×␣(10␣−␣HAL)␣=␣
+:␣dirsekten␣	:␣from␣the␣elbow␣
+␣ile␣	␣to␣
+␣(boy␣×␣0,63)	␣(stature␣×␣0.63)
+␣m/s²</b><br>Eylem␣	␣m/s²</b><br>Action␣
+␣°C</b><br>Referans␣(	␣°C</b><br>Reference␣(
+␣°C<br>Fark␣	␣°C<br>Difference␣
+)<br>Ortalama␣	)<br>Average␣
+vardiyada (8 saat)	per shift (8 hours)
+2␣·␣Kolay	2␣·␣Easy
+8␣·␣Zor	8␣·␣Hard
+␣→␣hasar␣	␣→␣damage␣
+(Toparlanma␣	(Recovery␣
+␣+␣Kuvvet␣	␣+␣Force␣
+ROSA (ofis)	ROSA (office)
+␣→␣tablo␣	␣→␣table␣
+␣·␣telefon␣	␣·␣phone␣
+␣·␣klavye␣	␣·␣keyboard␣
+␣+␣organizasyon␣	␣+␣organisation␣
+␣+␣zemin␣	␣+␣floor␣
+>1,5 TLV	>1.5 TLV
+">Sil</button></div>	">Delete</button></div>
+␣taraf</span>	␣side</span>
+␣(elle)	␣(manual)
+␣skor	␣score
+">Termin:␣<b>	">Due:␣<b>
+␣saat␣=␣	␣h␣=␣
+␣dk/vardiya</b>	␣min/shift</b>
+␣kare	␣frames
+␣sa␣vardiya	␣h␣shift
+␣dk/vardiya	␣min/shift
+␣istasyon,␣	␣stations,␣
+5×5 matris	5×5 matrix
+␣·␣Vardiya:␣	␣·␣Shift:␣
+␣saat	␣hours
+_rapor_	_report_
+PDF indirilemedi (	PDF could not be downloaded (
+␣piksel	␣pixels
+␣cm</b>␣<span␣class="muted">·␣yatay␣	␣cm</b>␣<span␣class="muted">·␣horizontal␣
+␣·␣dikey␣	␣·␣vertical␣
+␣cm</b>␣·␣yatay␣	␣cm</b>␣·␣horizontal␣
+␣bekliyor	␣pending
+1. Tara	1. Screen
+1 · Oturuyor	1 · Sitting
+· biliyorsan	· if you know them
+’e bak.	.
+−1 sn	−1 s
++1 sn	+1 s
+−1 kare	−1 frame
++1 kare	+1 frame
+CSV kopyala	Copy CSV
+JSON kopyala	Copy JSON
+</b>␣dk/vardiya</span>	</b>␣min/shift</span>
+</b>␣kez/vardiya</span>	</b>␣times/shift</span>

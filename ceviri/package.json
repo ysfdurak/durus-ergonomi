@@ -1,0 +1,10 @@
+{
+  "name": "durus-ceviri",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "en": "node uret.mjs ../index.html sozluk ../en/index.html yamalar.mjs",
+    "kalan": "node kalan.mjs ../en/index.html"
+  },
+  "dependencies": { "acorn": "^8.14.0", "acorn-walk": "^8.3.4", "parse5": "^7.2.1" }
+}

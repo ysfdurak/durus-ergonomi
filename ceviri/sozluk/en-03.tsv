@@ -1,0 +1,300 @@
+600	Environmental conditions
+601	Noise exposure
+602	Noise
+603	Daily personal noise exposure (LEX,8h). Enter the sound levels and durations of the different jobs or areas during the day; the 8-hour equivalent level is calculated and compared with the action and limit values of the Noise Regulation (80 / 85 / 87 dB(A)).
+604	Exposures during the day
+605	Exposures
+606	Exposure
+607	Each row is a separate job or area: the measured LAeq and the time spent at that level.
+608	Sound level
+609	Duration
+610	Impulse noise
+611	Peak sound pressure (if any)
+612	LpC,peak measured for sudden noise such as impacts, hammers or presses. Thresholds 135 / 137 / 140 dB(C).
+613	No measurement entered
+614	Enter at least one sound level and duration.
+615	Largest contribution: exposure
+616	Reduce at this source first: enclosure, silencer, vibration isolation, maintenance; otherwise distance and barriers.
+617	Reduce the duration
+618	Halving the time at a source lowers its contribution by 3 dB: rotation, a quiet rest area.
+619	Hearing protection
+620	Hearing protection is mandatory; mark the area and enforce its use.
+621	Hearing protection must be provided; inform the workers.
+622	Below the lower action value
+623	Lower action value exceeded
+624	Upper action value exceeded
+625	Limit value exceeded
+626	No further action needed; regular checks are enough.
+627	Hearing protection must be provided; information, training and hearing tests on request.
+628	Programme of technical and organisational measures; hearing protection mandatory, area must be marked.
+629	The limit value (including the effect of hearing protection) must not be exceeded: act immediately.
+630	<br>Peak
+631	<br>Total duration exceeds 12 hours; check the durations.
+632	Vibration exposure
+633	Vibration
+634	Daily vibration exposure A(8). For hand-arm vibration (grinders, drills, breakers) and whole-body vibration (forklifts, construction machinery), enter each source’s acceleration and daily usage time; the result is compared with the action and limit values of the Vibration Regulation.
+635	Vibration type
+636	Hand-arm (action 2.5 · limit 5 m/s²)
+637	Whole body (action 0.5 · limit 1.15 m/s²)
+638	Sources
+639	Tool / vehicle
+640	Source
+641	Hand-arm: three-axis total value (a_hv). Whole body: the highest axis (1.4·ax, 1.4·ay, az). Duration: time actually exposed to vibration (trigger time).
+642	Acceleration
+643	No source entered
+644	Enter at least one acceleration and duration.
+645	Largest contribution: source
+646	With this source alone, the action value is reached after
+647	, the limit value after
+648	of use.
+649	Tool and method
+650	Choose low-vibration tools, maintain them (balance, sharp bits), use anti-vibration handles; hangers and supports that reduce grip force.
+651	Vehicle and floor
+652	Suspension seat, smooth floor and road, speed control, tyre and suspension maintenance.
+653	Duration and rotation
+654	Share out the daily usage time; plan exposure in intervals rather than continuously.
+655	Below the action value
+656	Close to the action value
+657	Action value exceeded
+658	Keep monitoring; tool selection and maintenance matter.
+659	A programme of technical/organisational measures to reduce exposure and health surveillance is needed.
+660	The limit value must not be exceeded: reduce exposure immediately.
+661	· limit
+662	Heat stress (WBGT)
+663	ISO 7243 WBGT method. WBGT is calculated from the measured temperatures and compared with a reference value based on the workload (metabolic rate). Standard work clothing is assumed; special clothing such as protective coveralls needs a correction. Results near the limit call for a detailed assessment (ISO 7933).
+664	Environment
+665	Indoors or outdoors without sun
+666	Outdoors in the sun
+667	Measurements
+668	Natural wet-bulb temperature (tnw)
+669	Thermometer with a wet wick in natural air movement.
+670	Globe temperature (tg)
+671	Black globe (150 mm) measuring radiant heat.
+672	Dry-bulb temperature (ta)
+673	Air temperature shielded from the sun.
+674	Workload and acclimatisation
+675	Workload (metabolic rate)
+676	Resting (seated)
+677	Light: seated hand work, light bench work standing, slow walking
+678	Moderate: sustained arm-leg work, wheelbarrow, walking 3.5–5.5 km/h
+679	Heavy: intense arm-trunk work, shovelling, carrying heavy material
+680	Very heavy: near-maximal pace, stairs, running
+681	Heat acclimatisation
+682	Acclimatised (working in these conditions for at least 1–2 weeks)
+683	Not acclimatised (new starter, back from leave)
+684	Measurement missing
+685	Enter the temperature measurements.
+686	Reduce the workload
+687	Lowering the workload class with mechanical aids and pacing raises the reference value.
+688	Improve the environment
+689	Ventilation and air speed, shielding radiant sources, shade, local cooling.
+690	Organisation
+691	Work-rest cycles, a cool rest area, water and salt, avoiding the hottest hours.
+692	Run a gradual 1–2 week acclimatisation programme for new workers and those back from leave.
+693	Below the reference value
+694	Close to the reference value
+695	Reference value exceeded
+696	Reference value clearly exceeded
+697	Low heat stress risk.
+698	Borderline: provide water, shade and monitoring.
+699	Heat stress risk: a work-rest schedule and technical measures are needed; a detailed assessment is recommended.
+700	High risk: lighten the work, shorten the duration, do a detailed assessment.
+701	acclimatised
+702	not acclimatised
+703	Lighting
+704	Compares the measured illuminance with the typical value the task requires. References are the typical values in EN 12464-1; for special tasks check the relevant row of the standard. Measure with a lux meter at several points on the working plane.
+705	Area / task type
+706	Average illuminance
+707	Average of the measurement points on the working plane.
+708	Lowest reading
+709	Optional; for uniformity (U₀ = lowest ÷ average).
+710	Enter the average illuminance.
+711	Uniformity low (U₀
+712	Place luminaires more closely and evenly; review rack and machine positions that cast shadows.
+713	Illuminance low (
+714	Clean the luminaires, replace failed lamps, add luminaires if needed; add local lighting at the work point.
+715	Adequate
+716	Slightly inadequate
+717	Inadequate
+718	Very inadequate
+719	The measured value meets the reference.
+720	Below the reference or uniformity inadequate.
+721	Reference
+722	lx → ratio to reference <b>
+723	<br>Uniformity U₀ =
+724	Worker feedback
+725	Nordic musculoskeletal questionnaire
+726	Nordic
+727	Nordic Musculoskeletal Questionnaire (Kuorinka et al., 1987). Open a separate record for each worker; use a code instead of a name (e.g. W-07), because this is health information. Questionnaires saved under the same task name are summarised by body region on the Records page and show which analysis to prioritise.
+728	Body regions
+729	Complaints by region
+730	Ache, pain, discomfort in the last 12 months
+731	Prevented normal work or daily activities
+732	In the last 7 days
+733	Additional information
+734	Perceived physical exertion of the job (Borg CR-10)
+735	Not asked
+736	Time in this job
+737	years
+738	(last 7 days)
+739	(prevented work)
+740	regions
+741	No complaints reported
+742	Past complaints
+743	Current complaints
+744	Widespread / limiting complaints
+745	In the last 7 days
+746	regions, preventing work in
+747	regions.
+748	No complaints in any region.
+749	No complaints in 12 months
+750	<br>7 days:
+751	<br>Perceived exertion (CR-10):
+752	0 · Extremely easy
+753	4 · Somewhat easy
+754	6 · Somewhat hard
+755	10 · Extremely hard
+756	Pushing, pulling, carrying (Liberty Mutual)
+757	Liberty Mutual manual material handling equations (Potvin et al., 2021; the equation form of the Snook and Ciriello tables). Calculates the maximum acceptable force or weight for the task characteristics and shows what percentage of the working population would find your measured value acceptable. Design target: at least 75% of women. For a mixed workforce use the female values.
+758	Task
+759	Pushing (cart, pallet truck, roller conveyor)
+760	Pulling
+761	Carrying (two-handed, in front of the body)
+762	Population assessed
+763	Female (recommended for a mixed workforce)
+764	Task characteristics
+765	Hand height
+766	From the floor to the midpoint of the hands. Valid range for pushing/pulling: female 58–133, male 63–144 cm; for carrying: female 71–103, male 78–110 cm.
+767	Distance (one push, pull or carry)
+768	Valid range 2.1–61 m (2.1–10 m for carrying).
+769	Frequency
+770	Frequency unit
+771	Measured value
+772	Fi
+773	Initial force (getting it moving)
+774	The highest reading on a force gauge while getting the load moving.
+775	Fs
+776	Sustained force (keeping it moving)
+777	The average reading while the load keeps moving.
+778	Weight carried
+779	Information missing
+780	Enter hand height, distance and frequency.
+781	Hand height outside the valid range (
+782	cm).
+783	Distance outside the valid range (
+784	m).
+785	Frequency outside the valid range (1 per shift – 10 per minute).
+786	Distance × frequency
+787	m/min; upper limit
+788	women
+789	</b>: measured
+790	→ acceptable to: <b>
+791	%
+792	No weight entered
+793	Enter the weight carried.
+794	Carrying
+795	No force entered
+796	Enter the measured initial or sustained force.
+797	Initial force
+798	Sustained force
+799	Weight
+800	Split the load or switch to a trolley; shorten the carrying distance.
+801	Reduce the force
+802	Use larger wheels and maintain them, level the floor, reduce the load, use a powered tug or pallet truck.
+803	Long distance
+804	Shorten the distance or create intermediate set-down points.
+805	High frequency
+806	Reduce the number of moves: bulk transport, larger wheeled containers, rotation.
+807	Bring the handle between waist and chest (about 90–110 cm).
+808	Population choice
+809	The published design target is 75% of women; for a mixed workforce, also check with the female values.
+810	Design target met
+811	Below the target
+812	Hard for most of the population
+813	Unacceptable for the vast majority of the population
+814	Share finding the measured value acceptable:
+815	(target: at least 75% of women).
+816	<br>Frequency
+817	<br><span style="opacity:.85">The colour bands are the app’s own; the publication only defines the 75% design target.</span>
+818	LiFFT (lifting fatigue failure)
+819	LiFFT
+820	Lifting Fatigue Failure Tool (Gallagher et al., 2017). Every lift during the day accumulates a small amount of fatigue damage in the lower back tissue. Enter the load, horizontal distance and daily count for each lift type; the probability of a high-risk job for the lower back is calculated from the cumulative damage.
+821	Lift types
+822	Lifts
+823	Lift
+824	Horizontal distance: the largest horizontal distance from the spine to the hands/load during the lift.
+825	Horizontal distance
+826	Count per day
+827	No lift entered
+828	Enter load, distance and count for at least one lift.
+829	Largest damage: lift
+830	Damage grows exponentially with moment, so first bring the load closer to the body or reduce the weight in this lift; shortening the distance is more effective than reducing the count.
+831	Number of lifts
+832	Reduce daily repetitions with mechanical aids, rotation or batch lifting.
+833	<br>⚠ The publication advises careful interpretation for moments above 100 N·m.
+834	Cumulative damage
+835	above the 0.03 high-risk limit.
+836	below the 0.03 limit.
+837	<br>Cumulative damage = <b>
+838	</b><br>Probability = 1/(1+e^−(1.72 + 1.03·log₁₀CD)) = <b>
+839	DUET (hand-arm fatigue failure)
+840	Distal Upper Extremity Tool (Gallagher et al., 2018). Enter the difficulty of each type of exertion on the OMNI-RES scale (0–10) and its daily count; cumulative damage and the probability of disorders for the hand, wrist and elbow are calculated. Assess each arm separately.
+841	Arm assessed
+842	Exertions
+843	Exertions
+844	Exertion
+845	OMNI-RES: the worker’s or observer’s rating of “how hard is this force?”. Count per day: total repetitions in the shift.
+846	Difficulty (OMNI-RES)
+847	No exertion entered
+848	Enter at least one difficulty and daily count.
+849	Largest damage: exertion
+850	Lowering the difficulty by one step cuts the damage to about a third: powered tools, maintenance, better handles, part tolerances.
+851	Reduce daily repetitions or share them between both arms; apply rotation.
+852	above the 0.03 limit (36%).
+853	</b><br>Probability = 1/(1+e^−(0.573 + 0.747·log₁₀CD)) = <b>
+854	Revised Strain Index
+855	Revised Strain Index (Garg, Moore, Kapellusch, 2017). The original Strain Index renewed with continuous variables: force, frequency, duration per exertion, wrist angle and daily duration are entered directly as numbers. RSI ≤ 10 is considered safe, > 10 hazardous. Assess each hand separately.
+856	Percentage of maximum voluntary contraction. Without measurement it can be estimated as Borg CR-10 rating × 10 (e.g. “moderate” 3 → 30%).
+857	Duration per exertion
+858	Wrist and duration
+859	Wrist posture direction
+860	Flexion (bending towards the palm)
+861	Extension (bending towards the back of the hand)
+862	Wrist angle
+863	Deviation from neutral. Use the most frequent posture in which the highest force is applied.
+864	Enter force, frequency, duration and hours per day.
+865	<br>⚠ Frequency × duration exceeds the cycle (duty cycle above 100%); check the values.
+866	Force (IM)
+867	Lower the force required: powered tools, sharp blades, better handles, part tolerances.
+868	Frequency (EM)
+869	Reduce the number of exertions: split the job, share between both hands, automate.
+870	Duration (DM)
+871	Shorten forceful holding with a fixture, vice or tool balancer.
+872	Wrist (PM)
+873	Bring the wrist closer to neutral: bent-handle tool, change the workpiece angle.
+874	Hours per day (HM)
+875	RSI below the limit of 10.
+876	RSI above the limit of 10; the job should be redesigned.
+877	OCRA checklist
+878	OCRA checklist, classic version (Colombini and Occhipinti). Scores recovery, frequency, force, posture and additional factors in repetitive upper-limb work and multiplies them by the net repetitive work time. Assess each arm separately. The 2011 revised version (ISO TR 12295) applies recovery as a multiplier; the classic version is used because those tables could not be verified.
+879	Duration and recovery
+880	Net repetitive work time in the shift
+881	Breaks and non-repetitive tasks are deducted from the shift length.
+882	Recovery (breaks)
+883	At least 8 min break every hour (including lunch) or recovery within the cycle
+884	4 breaks besides lunch in 7–8 hours (or 4 in 6 hours)
+885	3 breaks besides lunch in 7–8 hours (or 2 in 6 hours)
+886	2 breaks besides lunch in 7–8 hours; or 3 breaks without lunch; or 1 in 6 hours
+887	1 break without lunch in 7 hours; or only a lunch break in 8 hours
+888	No breaks apart from a few pauses shorter than 5 minutes
+889	Frequency of dynamic technical actions
+890	Slow, about 20 per minute; frequent short pauses
+891	About 30 per minute; short pauses
+892	More than 40 per minute; pauses possible
+893	More than 40 per minute; pauses rare and irregular
+894	More than 50 per minute
+895	More than 60 per minute
+896	70 or more per minute; no pauses
+897	Static holding (holding an object for more than 5 s)
+898	None or negligible
+899	About 2/3 of the cycle

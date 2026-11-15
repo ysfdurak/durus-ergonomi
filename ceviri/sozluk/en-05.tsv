@@ -1,0 +1,294 @@
+1200	Overload is likely; design measures are needed.
+1201	/day)<br>Load
+1202	+ equipment
+1203	</b><br>Bands: under 20 · 20–50 · 50–100 · 100+ (approximate limits)
+1204	(grey area)
+1205	× 1.3 (women)
+1206	× 0.7 (two people)
+1207	Video / photo
+1208	Rapid Entire Body Assessment
+1209	Risk score from whole-body posture, load, coupling and activity.
+1210	Varied jobs using the whole body: warehouse, logistics, healthcare, maintenance, cleaning.
+1211	A side-on frame; observation of load, coupling and repetition.
+1212	Assesses one moment and one side; reflects duration and frequency only to a limited extent.
+1213	Rapid Upper Limb Assessment
+1214	Risk score from arm, wrist, neck and trunk posture plus muscle use and force.
+1215	Static workstation jobs loading the arms and neck: assembly line, desk work, cashier.
+1216	A side-on frame; observation of force, static posture or repetition.
+1217	Legs are assessed roughly; one side only.
+1218	Ovako Working Posture Analysing System
+1219	Action category from the back, arm, leg and load codes.
+1220	Classifying many postures quickly; sampling observation over a shift.
+1221	A rough posture class is enough; angle measurement not required.
+1222	Neck, wrist and elbow are not assessed; rough classification.
+1223	Revised NIOSH Lifting Equation
+1224	Recommended weight limit and lifting index for the lifting conditions.
+1225	Uniform two-handed lifting/lowering: cartons, crates, sacks, loading parts.
+1226	Load in kg, horizontal and vertical distances (cm), asymmetry angle, frequency, duration, coupling.
+1227	Not valid for one-handed or seated lifting, pushing-pulling, carrying or unstable floors.
+1228	Composite Lifting Index
+1229	Composite index of lifts with different loads, heights and frequencies.
+1230	Jobs where the same person does mixed lifting at different shelf levels or with different cartons: palletising, shelf loading.
+1231	NIOSH measurements and lifts per minute for each sub-task.
+1232	Tasks must be in the same duration category; FM is interpolated for intermediate frequencies.
+1233	Observation
+1234	Key Indicator Method – Lifting, Holding, Carrying
+1235	Load score from daily repetitions/time/distance plus load, posture and conditions.
+1236	Manual handling including carrying and holding; a quick estimate when measurement is not possible.
+1237	Daily count, time or distance; effective load; posture and condition class.
+1238	2001 version; BAuA published an extended version in 2019. A rough screening tool.
+1239	Moore-Garg Strain Index
+1240	Hand-wrist risk index from force, duration, repetition, wrist posture, speed and daily duration.
+1241	Repetitive hand and wrist work: assembly, packing, cutting, screwdriving, meat processing.
+1242	An observation for each multiplier; estimates of cycle time and exertion time.
+1243	Hand, wrist and elbow only; for a single task.
+1244	Observation / measurement
+1245	ACGIH Hand Activity Threshold Limit Value
+1246	Compares hand activity level and peak force with the threshold limit value (TLV) and action limit.
+1247	Repetitive hand work; a second opinion to the Strain Index.
+1248	Exertions per minute and duty cycle, or a HAL rating; a 0–10 peak force rating.
+1249	For mono-task hand work of 4 hours or more a day; shoulder and elbow not covered.
+1250	Checklist
+1251	Desk and computer work checklist
+1252	Compliance rate of the chair, screen, keyboard-mouse and work pattern.
+1253	Office, call centre, control room, working from home.
+1254	Yes / No marking while looking at the workstation.
+1255	Not a scientific scoring method; a guideline-based check.
+1256	Calculator
+1257	Work surface height
+1258	Recommended surface height based on elbow height and type of work, and the difference from the current surface.
+1259	Designing a new station, checking an existing bench, deciding on an adjustable desk.
+1260	Elbow height (or stature) and current surface height.
+1261	In range
+1262	Estimating from stature is approximate; an adjustable surface is the best solution for workers of different heights.
+1263	Daily noise exposure LEX,8h
+1264	8-hour equivalent exposure from different levels and durations, with the regulatory thresholds.
+1265	Noisy areas such as presses, compressors, cutting, assembly lines.
+1266	dB(A) measurement and duration for each job or area; peak dB(C) if any.
+1267	Measure with a calibrated instrument; the limit value is assessed including the effect of hearing protection.
+1268	Measurement / declared value
+1269	Hand-arm and whole-body vibration A(8)
+1270	Daily exposure from the sources’ acceleration and durations, with action/limit values.
+1271	Grinders, breakers, drills; forklifts, construction machinery, driving.
+1272	m/s² value and daily usage time for each tool or vehicle.
+1273	Manufacturers’ declared values can differ from those in the field; use measurements where possible.
+1274	ISO 7243 WBGT reference value
+1275	WBGT from temperature measurements and the difference from the reference value for the workload.
+1276	Foundries, ovens, kitchens, warehouse and outdoor work in summer.
+1277	Natural wet-bulb and globe temperature (dry-bulb outdoors); workload class.
+1278	below −2 °C
+1279	Near the limit
+1280	0–2 °C over
+1281	>2 °C over
+1282	Standard work clothing is assumed; borderline results need a detailed assessment (ISO 7933).
+1283	Illuminance check
+1284	Compares the measured average and lowest lux with the typical requirement of the task.
+1285	Tasks requiring visual attention, warehouse picking areas, offices.
+1286	Measurements with a lux meter at several points on the working plane.
+1287	References are the typical values in EN 12464-1; glare and colour are not measured.
+1288	Questionnaire
+1289	Nordic questionnaire
+1290	Nordic Musculoskeletal Questionnaire (NMQ)
+1291	Pain/discomfort in nine body regions over the last 12 months and the last 7 days.
+1292	Collecting complaints systematically, setting analysis priorities, before-after comparison.
+1293	A short interview with each worker (about 5 minutes).
+1294	Past
+1295	Current
+1296	Widespread
+1297	Not a diagnostic tool; contains health information, use a code instead of a name.
+1298	Liberty Mutual pushing, pulling and carrying equations
+1299	Calculates the maximum acceptable push-pull force or carrying weight for the task conditions and what percentage of the population finds the measured value acceptable.
+1300	Pushing-pulling carts, pallet trucks, roller conveyors; manual carrying.
+1301	Hand height, distance, frequency; initial and sustained force (N) with a force gauge, or the weight carried.
+1302	Outside the valid ranges the result comes with a warning; an 8-hour day and a moderate climate are assumed. The publication only defines the 75% female target.
+1303	Key Indicator Method – Lifting, Holding, Carrying (2019)
+1304	Separate load scores for women and men from daily count, load, handling, posture, unfavourable conditions and organisation.
+1305	Common in Germany/EU; detailed screening of manual handling jobs.
+1306	Daily count, effective load, the posture pictogram on the official form, condition observations.
+1307	The posture weighting must be chosen from the pictograms on the official form; linear interpolation is used for intermediate counts; female load scores above 30–35 and 40 kg were extrapolated as 100.
+1308	Key Indicator Method – Pushing and Pulling (BAuA LMM-ZS, 2019)
+1309	Push-pull load score from equipment type and total weight, daily distance, floor, conditions, equipment condition, posture and organisation.
+1310	Manual pushing-pulling of carts, pallet trucks, sack trucks, containers, overhead rail systems or overhead cranes; without a force gauge.
+1311	Equipment type, total weight including the equipment, daily distance or time, observation of floor and equipment.
+1312	Rolling or dragging without equipment, powered vehicles and special carts with support wheels are out of scope. The floor score is taken as 0 for overhead systems.
+1313	Lifting Fatigue Failure Tool
+1314	Probability of a high-risk job from the fatigue damage that all lifts during the day accumulate on the lower back.
+1315	Many lifts at different weights and distances; comparing the effect of improvements.
+1316	Load, horizontal distance from the spine to the load and daily count for each lift type.
+1317	Moments above 100 N·m should be interpreted carefully; one published example probability (25%) is not reproduced with these coefficients.
+1318	Distal Upper Extremity Tool (DUET)
+1319	Cumulative damage and probability of disorders for the hand-wrist-elbow from exertion difficulty (OMNI-RES) and daily repetitions.
+1320	Repetitive hand work; several movements of different difficulty.
+1321	A 0–10 difficulty rating and daily count for each type of movement.
+1322	The web version of the tool may have updated the coefficients in later versions; the published paper values were used.
+1323	Measurement / observation
+1324	Revised Strain Index (2017)
+1325	A continuous risk index from force (%MVC), frequency, exertion duration, wrist angle and daily duration.
+1326	Repetitive hand work; more precise than the original Strain Index when numerical measurements are available.
+1327	%MVC (or Borg × 10), exertions per minute, seconds per exertion, wrist angle, hours per day.
+1328	For a single task; the multi-task composite (COSI/CUSI) rules were not added.
+1329	OCRA checklist (classic version)
+1330	Combines recovery, frequency, force, posture and additional factor scores with a duration multiplier.
+1331	Repetitive upper-limb work on assembly and packing lines; the ISO 11228-3 approach.
+1332	Break pattern, action frequency, force durations, shoulder-elbow-wrist-grip observation, net repetitive time.
+1333	The classic version was applied; the tables of the 2011 revised version could not be verified. The sources contain no fully worked example.
+1334	Rapid Office Strain Assessment
+1335	Office risk score from 1 to 10 from the chair, screen, phone, mouse and keyboard.
+1336	Computer work; a scored, comparable office assessment.
+1337	A choice for each item while looking at the workstation, plus daily usage times.
+1338	Only the action level of 5 is published; the extra point for depth adjustment could not be verified.
+1339	Earlier records
+1340	Your earlier records were moved to the new structure.
+1341	Browser storage is full: thumbnails were stored instead of full frames.
+1342	The record could not be written to the browser. Don’t forget to take a JSON backup.
+1344	: choose a video or photo, or enter the angles by hand.
+1347	<span class="muted">No results</span>
+1348	<span class="muted">No note</span>
+1349	right
+1351	">Open</button>
+1353	">Excel</button><button class="danger" data-del="
+1355	">Go to in video</button>
+1356	">Open</button></div>
+1357	First reload the video on the Posture analysis page.
+1358	Are you sure?
+1359	</b><span>records</span></div><div class="stat"><b>
+1360	</b><span>tasks / stations</span></div><div class="stat"><b style="color:
+1361	</b><span>records needing action</span></div><div class="stat"><b>
+1362	</b><span>method types used</span></div></div>
+1363	<div class="empty" style="grid-column:1/-1">No records yet. Start with one of the options above.</div>
+1364	~5 min per frame
+1365	Side-on video or photo; scales for the load
+1366	When the total daily load or the effect of repetition must be measured (KIM, LiFFT, OCRA).
+1367	RULA scores the arm-wrist-neck in more detail; REBA captures the legs and varied postures better. All three are calculated together from the same frame.
+1368	Record the cycle side-on, at a right angle
+1369	Pick frames of the most demanding and the most frequent postures
+1370	Mark the eight joint points; the angles are calculated
+1371	Enter the load, coupling, leg and activity observations
+1372	Save the frames under the same task name; act on the worst score
+1373	Side-on video or photo
+1374	For jobs where the legs and trunk are decisive and the worker keeps moving (REBA).
+1375	If the job is mainly upper-limb, base it on RULA; this is why it may differ from REBA.
+1376	Record the cycle side-on, pick the critical frames
+1377	Mark the joint points
+1378	Answer the two questions in the RULA tab (midline, wrist twist)
+1379	Enter the force and static/repetition observations
+1380	Check which of the arm-wrist and neck-trunk scores is higher
+1381	~1 min per frame
+1382	Video
+1383	When the neck, wrist and elbow risk must be measured (RULA).
+1384	To see how postures are distributed over time rather than a single frame; codes are suggested automatically.
+1385	Take frames at regular intervals over the shift (e.g. every 30 s)
+1386	Check the back, arm and leg codes on each frame
+1387	Enter the load class
+1388	Look at the distribution of categories on the timeline in Records
+1389	Tape measure, scales, stopwatch
+1390	One-handed, seated or unstable-floor lifting; pushing-pulling or long carrying; changing loads or heights (CLI).
+1391	NIOSH gives the limit for uniform lifting; CLI combines different lifts; LiFFT calculates the day’s cumulative damage; KIM is an estimate that needs no measurements.
+1392	Weigh the load
+1393	At the start of the lift measure the horizontal (H) and vertical (V) distance, note the destination height
+1394	Determine the asymmetry angle and coupling quality
+1395	Find the frequency by counting for 15 minutes and the duration from the shift plan
+1396	If LI is above 1, improve starting with the smallest multiplier
+1397	For uniform lifting (NIOSH is enough); for more than 8 different sub-tasks.
+1398	The multi-task form of NIOSH. You can also calculate the same job with LiFFT and compare improvement scenarios.
+1399	Define each different lift (load, shelf level) as a separate sub-task
+1400	Enter the NIOSH measurements and lifts per minute for each
+1401	Choose the total duration category
+1402	Improve starting with the highest single task index (STLI)
+1403	Tape measure, scales, daily count information
+1404	When the question is whether a single lift is acceptable (NIOSH).
+1405	Very good for comparing improvement scenarios: damage falls exponentially as the horizontal distance shortens.
+1406	Group the lifts into types by load and distance
+1407	For each type weigh the load and measure the horizontal distance from the spine to the load
+1408	Enter the daily counts
+1409	Improve the lift that causes most of the damage, recalculate
+1410	Digital force gauge (push-pull), tape measure, stopwatch
+1411	If force cannot be measured (use KIM pushing-pulling) or the distance/height is outside the valid range.
+1412	The only method that assesses the measured force against the population; without a force gauge use KIM pushing-pulling. For carrying it is more detailed than KIM.
+1413	Measure the handle height
+1414	Attach the force gauge to the handle, measure initial and sustained force 3 times and average them
+1415	Determine the distance and frequency
+1416	For a mixed workforce assess with the female values (target 75%)
+1417	Scales, daily count information, the official BAuA form (posture pictograms)
+1418	When an exact weight limit is needed (NIOSH) or for pushing-pulling.
+1419	The version replacing KIM 2001; gives separate results for women and men and also covers holding and carrying.
+1420	Separate the sub-activities (each different load separately)
+1421	Enter the daily count and effective load
+1422	Choose the posture weighting by looking at the pictogram on the official form
+1423	Mark the conditions and work organisation
+1424	Plan actions on the worse of the female and male results
+1425	Scales or equipment-load weight, daily distance (pedometer or trips × distance)
+1426	If you have force measurements and want an exact limit for the population (Liberty Mutual); for rolling/dragging without equipment.
+1427	Liberty Mutual assesses the measured force; KIM pushing-pulling scores without measuring force, from equipment type, weight and conditions. If measurements are available, using both together gives the most robust result.
+1428	Determine the equipment type and the total weight including the equipment
+1429	Find the total daily distance (loaded + empty) or time
+1430	Mark the floor, slope, working conditions and equipment condition
+1431	Choose the typical posture and work organisation
+1432	Indicate female workers or two-person work; improve starting with the highest-scoring indicator
+1433	Scales, daily count information
+1434	For new assessments; use the 2019 version.
+1435	Kept only for comparison with old reports.
+1436	Use only if a comparison with old reports is needed
+1437	Choose the time, load, posture and condition scores
+1438	Video, stopwatch, break schedule
+1439	For non-repetitive jobs or those lasting less than 1 hour per shift.
+1440	The ISO 11228-3 approach; the only method that takes the break pattern into account.
+1441	Get the break pattern and net repetitive time from the shift plan
+1442	Count technical actions per minute in the video
+1443	Ask the worker about force durations with the Borg scale
+1444	Mark the time shares of shoulder, elbow, wrist and grip postures
+1445	Open a separate record for each arm
+1446	Force gauge or Borg CR-10, stopwatch, goniometer
+1447	If force and duration cannot even be estimated (OCRA or DUET).
+1448	The current form of the original Strain Index; shows the effect of improvements more precisely with numerical inputs.
+1449	Measure force as %MVC or estimate it as Borg CR-10 × 10
+1450	Find exertions per minute and duration per exertion with a stopwatch
+1451	Determine the wrist angle with a goniometer or from video
+1452	Enter the daily task duration; open a separate record for each hand
+1453	A 0–10 difficulty rating asked of the worker, daily count
+1454	When the detailed effect of the break pattern and posture is needed (OCRA).
+1455	Works with the least data; combines movements of different difficulty into one result.
+1456	List the different exertions in the task
+1457	For each, ask the worker “how hard is it?” (0–10)
+1458	Enter the daily repetition counts
+1459	Lower the difficulty of the movement causing the most damage
+1460	Stopwatch, 0–10 force rating
+1461	For jobs shorter than 4 hours a day or made of very different tasks.
+1462	A threshold-value approach common in the US; use it as a second opinion to RSI or OCRA.
+1463	Measure exertions per minute and the duty cycle, or rate on the HAL scale
+1464	Rate the highest force 0–10
+1465	If the NPF/TLV ratio is above 1, reduce frequency or force
+1466	Observation, stopwatch
+1467	For new assessments; use the Revised Strain Index.
+1468	The revised version is more precise with numerical inputs; this version is for comparison with old reports.
+1469	The Revised Strain Index is recommended for new assessments
+1470	Choose the six multipliers by observation
+1471	Observation, usage time information
+1472	For non-computer desk/bench work (RULA, working height).
+1473	The office checklist gives a to-do list; ROSA gives a comparable score.
+1474	Observe the worker working normally
+1475	Mark the chair, screen, phone, mouse and keyboard options
+1476	Choose the daily usage time for each
+1477	For a result of 5 or more, adjust starting with the highest section
+1478	When a scored, comparable result is needed (ROSA).
+1479	Every “No” item is directly an action; use ROSA for a score.
+1480	Mark each item Yes / No while looking at the workstation
+1481	The “No” items are the to-do list
+1482	Apply ROSA if a scored result is needed
+1483	Tape measure
+1484	When a risk score is needed (RULA, ROSA).
+1485	Does not measure risk, it suggests a design; verify the posture after the change with RULA.
+1486	Measure the worker’s elbow height (or enter the stature)
+1487	Choose the type of work
+1488	Measure the current surface height; raise or lower it according to the difference
+1489	Depends on the measurement time
+1490	Calibrated sound level meter or dosimeter
+1491	If there are no measurements; a legal assessment cannot be made from estimated decibels.
+1492	Compares directly with the 80 / 85 / 87 dB(A) values of the regulation.
+1493	Measure LAeq for each job or area with a calibrated sound meter
+1494	Determine the daily time spent at each level
+1495	Measure the peak value if there is impulse noise
+1496	Plan reduction at source, duration and hearing protection measures
+1497	Vibration meter or manufacturer’s declaration, stopwatch
+1498	If the usage time is not known.
+1499	Compares hand-arm and whole-body vibration with the regulatory values.
