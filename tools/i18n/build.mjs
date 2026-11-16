@@ -22,11 +22,19 @@ if (!src.includes('<!--DIL-->') || !src.includes('<!--HREFLANG-->')) throw new E
 const HREFLANG = `<link rel="alternate" hreflang="tr" href="${SITE}">\n<link rel="alternate" hreflang="en" href="${SITE}en/">\n<link rel="alternate" hreflang="x-default" href="${SITE}">`;
 
 // ?lang=en / ?lang=tr ile gelen ziyaretçiyi doğru dile yönlendir (portföy sitesi bu parametreyle bağlantı verir)
-const yon = (hedefDil, hedefYol) => `<script>(function(){var q=new URLSearchParams(location.search);if(q.get('lang')==='${hedefDil}'){q.delete('lang');var s=q.toString();location.replace('${hedefYol}'+(s?'?'+s:'')+location.hash);}})();</script>`;
+// Dil seçimi (ilk eşleşen kazanır):
+//   1) ?lang=tr|en  2) kişinin önceki seçimi (localStorage durus_dil)  3) yalnız Türkçe sayfada: tarayıcı dili Türkçe değilse İngilizceye.
+// Arama motoru botları ve masaüstü uygulaması (app://) yönlendirilmez; her dil kendi adresinde dizinlenir.
+const yon = (buDil, hedefDil, hedefYol, tarayici) => `<script>(function(){try{var q=new URLSearchParams(location.search),p=q.get('lang'),k='durus_dil',git=function(){q.delete('lang');var s=q.toString();location.replace('${hedefYol}'+(s?'?'+s:'')+location.hash);};
+if(p==='tr'||p==='en'){localStorage.setItem(k,p);if(p==='${hedefDil}')git();return;}
+if(location.protocol==='app:'||/bot|crawl|spider|slurp|lighthouse/i.test(navigator.userAgent))return;
+var s=localStorage.getItem(k);if(s==='${hedefDil}'){git();return;}
+${tarayici ? `if(!s&&!(navigator.languages||[navigator.language]).some(function(l){return /^tr/i.test(l||'');}))git();` : ''}}catch(e){}})();</script>`;
+const secim = (d) => ` onclick="try{localStorage.setItem('durus_dil','${d}')}catch(e){}"`;
 
 // ---------- Türkçe ----------
-let tr = src.replace('<!--HREFLANG-->', HREFLANG).replace('<!--DILYON-->', yon('en', 'en/'))
-  .replace('<!--DIL-->', '<a class="langsw" href="en/" hreflang="en" lang="en" title="English version">English</a>');
+let tr = src.replace('<!--HREFLANG-->', HREFLANG).replace('<!--DILYON-->', yon('tr', 'en', 'en/', true))
+  .replace('<!--DIL-->', `<a class="langsw" href="en/" hreflang="en" lang="en" title="English version"${secim('en')}>English</a>`);
 
 // ---------- İngilizce ----------
 const segs = findSegments(src);
@@ -74,8 +82,8 @@ head = head
   .replace(`property="og:url" content="${SITE}"`, `property="og:url" content="${SITE}en/"`)
   .replace('href="favicon.svg"', 'href="../favicon.svg"')
   .replace('<!--HREFLANG-->', HREFLANG)
-  .replace('<!--DILYON-->', yon('tr', '../'))
-  .replace('<!--DIL-->', '<a class="langsw" href="../" hreflang="tr" lang="tr" title="Türkçe sürüm">Türkçe</a>');
+  .replace('<!--DILYON-->', yon('en', 'tr', '../', false))
+  .replace('<!--DIL-->', `<a class="langsw" href="../" hreflang="tr" lang="tr" title="Türkçe sürüm"${secim('tr')}>Türkçe</a>`);
 const en = head + js + tail;
 
 if (err.length) { console.error('HATA:\n' + err.join('\n')); process.exit(1); }

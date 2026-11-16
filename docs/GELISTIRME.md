@@ -82,6 +82,8 @@ Uygulama Türkçe yazılır; İngilizce sürüm otomatik üretilir. Kodu iki kez
    - `lang`, canonical ve hreflang etiketlerini ayarlar, dil düğmesini koyar.
    - Bir çevirideki HTML etiketleri orijinalle aynı değilse durur ve hatayı söyler (bozuk sayfa yayınlanmasın diye).
 
+**Hangi dil açılır?** Her iki sayfanın başında `build.mjs`'in eklediği küçük bir betik var. Sırasıyla: adreste `?lang=tr|en` varsa o dil seçilir ve hatırlanır; kişi daha önce dil düğmesine bastıysa (tarayıcıda `durus_dil`) o dil açılır; hiç seçim yoksa ve tarayıcı dili Türkçe değilse Türkçe sayfa İngilizceye yönlendirilir. Arama motoru botları ve masaüstü uygulaması (`app://`) yönlendirilmez; böylece iki dil de kendi adresinde dizinlenir, masaüstünde dil menüden seçilir.
+
 **Bir şey değiştirdiğinde iş akışı:**
 
 ```bash

@@ -28,7 +28,7 @@
 |---|---|---|
 | ![](docs/ekran/baslangic.webp) | ![](docs/ekran/formlar-niosh.webp) | ![](docs/ekran/rehber.webp) |
 
-- **İki dil:** Türkçe ve İngilizce; sağ üstteki düğmeyle geçilir. İki dil aynı kayıtları kullanır.
+- **İki dil:** Türkçe ve İngilizce; sağ üstteki düğmeyle geçilir, seçim hatırlanır. Tarayıcı dili Türkçe olmayan ziyaretçi ilk girişte İngilizce sürüme yönlendirilir. İki dil aynı kayıtları kullanır.
 
 ## Nasıl çalışıyor?
 - Tek bir HTML dosyası; sunucu yok. Hesaplar tarayıcıda yapılır.
