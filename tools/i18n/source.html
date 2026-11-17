@@ -2,6 +2,7 @@
 <html lang="tr">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; font-src 'self' data:; connect-src 'self' data: blob:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Duruş — Ergonomi Analiz Merkezi</title>
 <meta name="description" content="Videodan ve gözlemden ergonomi risk analizi: REBA, RULA, NIOSH kaldırma denklemi ve diğer yöntemler tek yerde, Excel ve PDF raporla. Kurulum ve hesap yok.">
@@ -15,8 +16,7 @@
 <meta property="og:image" content="https://durus.ysfdurak.com/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link href="/lib/fonts/fonts.css" rel="stylesheet">
 <style>
 :root{--bg:#f4f5f2;--card:#fff;--ink:#1b1f1d;--muted:#67706b;--line:#e2e5e0;--acc:#0f6b5f;--acc2:#e6f2ef;--warn:#b45309}
 *{box-sizing:border-box}
@@ -2068,7 +2068,7 @@ $('#clearBtn').onclick=()=>{if(!cur)return; cur.points={}; activeKey=null; updat
 $('#cancelBtn').onclick=()=>{cur=null; $('#workCard').hidden=true;};
 
 /* ---------- otomatik nokta bulma (MediaPipe Pose; tarayıcıda çalışır, görüntü cihazdan çıkmaz) ---------- */
-const MP_BASE='https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.5.1675469404/';
+const MP_BASE='/lib/pose/'; // depodaki kopya (tools/kutuphaneler.mjs); dış adrese gidilmez
 let poseP=null;
 function loadPose(){
   if(!poseP)poseP=new Promise((res,rej)=>{const s=document.createElement('script'); s.src=MP_BASE+'pose.js'; s.crossOrigin='anonymous';
@@ -2360,7 +2360,7 @@ const tarayiciIndirme={save:async({filename,data})=>{const u=URL.createObjectURL
   document.body.classList.toggle('dl-on',!!DL); document.body.classList.add('dl-checked');})();
 function loadExcel(){
   if(window.ExcelJS)return Promise.resolve(window.ExcelJS);
-  if(!ExcelP)ExcelP=new Promise((res,rej)=>{const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js';
+  if(!ExcelP)ExcelP=new Promise((res,rej)=>{const s=document.createElement('script'); s.src='/lib/exceljs.min.js';
     s.onload=()=>res(window.ExcelJS); s.onerror=()=>{ExcelP=null; rej(new Error('ExcelJS yüklenemedi'));}; document.head.appendChild(s);});
   return ExcelP;
 }
@@ -3151,7 +3151,7 @@ function addActionsSheet(wb,siteId,stIds){
 function loadScripts(list){return list.reduce((p,alts)=>p.then(()=>new Promise((res,rej)=>{let i=0; const tryOne=()=>{const s=document.createElement('script'); s.src=alts[i]; s.onload=res; s.onerror=()=>{s.remove(); if(++i<alts.length)tryOne(); else rej(new Error('kütüphane yüklenemedi'));}; document.head.appendChild(s);}; tryOne();})),Promise.resolve());}
 let PdfP=null;
 function loadPdf(){ if(window.pdfMake&&window.pdfMake.vfs)return Promise.resolve(window.pdfMake);
-  if(!PdfP)PdfP=loadScripts([['https://cdn.jsdelivr.net/npm/pdfmake@0.2.7/build/pdfmake.min.js','https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js'],['https://cdn.jsdelivr.net/npm/pdfmake@0.2.7/build/vfs_fonts.js','https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js']]).then(()=>window.pdfMake).catch(e=>{PdfP=null; throw e;});
+  if(!PdfP)PdfP=loadScripts([['/lib/pdfmake.min.js'],['/lib/vfs_fonts.js']]).then(()=>window.pdfMake).catch(e=>{PdfP=null; throw e;});
   return PdfP;}
 const hexOf=lv=>LV[lv];
 function pdfReport(stIds){
@@ -3637,5 +3637,6 @@ go(location.hash.slice(1)||'home');
 })();
 
 </script>
+<script>/* Çevrimdışı çalışma: yalnız web sürümünde (masaüstü app:// adresinde çalışır, gerek yok) */if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));</script>
 </body>
 </html>

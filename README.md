@@ -34,7 +34,8 @@
 - Tek bir HTML dosyası; sunucu yok. Hesaplar tarayıcıda yapılır.
 - Düzenlenen tek kaynak `tools/i18n/source.html` (Türkçe). İngilizce sürüm ve yayındaki `index.html` bu kaynaktan üretilir (ayrıntı: [docs/GELISTIRME.md](docs/GELISTIRME.md)).
 - Kayıtlar yalnızca kullanıcının tarayıcısında saklanır (localStorage, fotoğraf ve kareler için IndexedDB). Video ve fotoğraflar hiçbir sunucuya gönderilmez.
-- Excel ve PDF raporlar için ExcelJS ve pdfmake web sürümünde ilk kullanımda CDN'den (cdnjs, jsDelivr) yüklenir; masaüstü sürümünde uygulamanın içinde gelir.
+- **Dış bağlantı yok:** ExcelJS, pdfmake, MediaPipe Pose (otomatik nokta bulma) ve IBM Plex yazı tipleri depodaki `lib/` klasöründen gelir; CDN'e ya da Google Fonts'a istek gitmez. Sayfadaki güvenlik kuralı (CSP, `connect-src 'self'`) başka adrese bağlantıyı tarayıcı düzeyinde engeller. `lib/` klasörünü `node tools/kutuphaneler.mjs` üretir (sürümler `desktop/package.json`'da sabit); lisans bildirimleri `lib/lisanslar/`.
+- **İnternetsiz çalışma:** Web sürümü ilk açılıştan sonra internet olmadan da açılır (`sw.js`). Otomatik nokta bulma dosyaları (~25 MB) ilk kullanımda indirilir, sonra internetsiz de çalışır.
 - Sonuçlar karar desteği içindir; bir iş güvenliği uzmanının ya da işyeri hekiminin değerlendirmesinin yerine geçmez.
 
 ## Yayın
