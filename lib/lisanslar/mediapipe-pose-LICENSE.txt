@@ -1,0 +1,3 @@
+@mediapipe/pose 0.5.1675469404
+Lisans: Apache-2.0 (paketin package.json dosyasına göre)
+https://google.github.io/mediapipe/solutions/pose
