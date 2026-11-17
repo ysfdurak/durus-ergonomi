@@ -7,7 +7,7 @@ name: Masaüstü (Windows)
 on:
   push:
     branches: [main]
-    paths: ['index.html', 'en/**', 'desktop/**', '.github/workflows/masaustu.yml']
+    paths: ['index.html', 'en/**', 'lib/**', 'desktop/**', '.github/workflows/masaustu.yml']
     tags: ['v*']
   workflow_dispatch:
 permissions:
