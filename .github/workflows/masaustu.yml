@@ -1,23 +1,35 @@
-# Duruş Windows masaüstü sürümünü üretir ve GitHub Releases'e koyar.
-# - main'e uygulama ya da masaüstü dosyalarında değişiklik gelince: sürüm desktop/package.json'daki "version"dan alınır,
-#   "v<sürüm>" etiketli Release oluşturulur ya da (aynı sürümse) dosyaları güncellenir.
-# - "v1.2.0" gibi bir etiket gönderilirse: sürüm etiketten alınır.
-# - Actions sekmesinden elle de çalıştırılabilir.
+# Duruş Windows masaüstü sürümünü üretir.
+#
+# - main'e gönderim, PR ve elle çalıştırma: yalnızca derler, EXE'leri Actions çıktısı (artifact) olarak saklar.
+#   Herkese açık Release'e dokunmaz.
+# - "v1.5.0" gibi bir etiket gönderilince: etiket desktop/package.json'daki "version" ile aynı olmalı.
+#   O sürüm için daha önce Release yoksa yeni Release oluşturulur. Varsa iş durur: yayımlanmış bir sürümün
+#   dosyaları asla değiştirilmez (aynı sürüm numarası = aynı dosya).
+#
+# Yeni sürüm yayımlama: desktop/package.json'da "version"ı artır → main'e gönder → "v<sürüm>" etiketini gönder.
+#   git tag v1.5.0 && git push origin v1.5.0
 name: Masaüstü (Windows)
 on:
   push:
     branches: [main]
     paths: ['index.html', 'en/**', 'lib/**', 'desktop/**', '.github/workflows/masaustu.yml']
     tags: ['v*']
+  pull_request:
+    paths: ['index.html', 'en/**', 'lib/**', 'desktop/**', '.github/workflows/masaustu.yml']
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
+concurrency:
+  group: masaustu-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
 jobs:
-  windows:
+  derle:
     runs-on: windows-latest
     defaults:
       run:
         working-directory: desktop
+    outputs:
+      surum: ${{ steps.surum.outputs.v }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -26,34 +38,64 @@ jobs:
           cache: npm
           cache-dependency-path: desktop/package-lock.json
       - run: npm ci
-      - name: Sürüm numarasını etiketten al
-        if: startsWith(github.ref, 'refs/tags/v')
-        shell: bash
-        run: npm version --no-git-tag-version --allow-same-version "${GITHUB_REF_NAME#v}"
       - name: Sürüm
         id: surum
         shell: bash
         run: echo "v=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+      - name: Etiket package.json sürümüyle aynı mı
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        run: |
+          if [ "${GITHUB_REF_NAME#v}" != "${{ steps.surum.outputs.v }}" ]; then
+            echo "::error::Etiket ${GITHUB_REF_NAME}, desktop/package.json sürümü ${{ steps.surum.outputs.v }}. Önce package.json'daki sürümü güncelle, sonra aynı numarayla etiketle."
+            exit 1
+          fi
       - run: npm run dist
       - uses: actions/upload-artifact@v4
         with:
-          name: Durus-Windows
-          path: |
-            desktop/dist/*.exe
+          # main derlemeleri commit'e göre ayrışır; aynı sürüm numarası altında karışmaz.
+          name: Durus-Windows-${{ steps.surum.outputs.v }}-${{ github.sha }}
+          path: desktop/dist/*.exe
           if-no-files-found: error
-      - name: Release'e yükle
+          retention-days: 30
+
+  yayimla:
+    needs: derle
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Bu sürüm daha önce yayımlanmış mı
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "::error::$GITHUB_REF_NAME zaten yayımlanmış. Yayımlanmış dosyalar değiştirilmez; desktop/package.json'da sürümü artırıp yeni etiket gönder."
+            exit 1
+          fi
+      - uses: actions/download-artifact@v4
+        with:
+          name: Durus-Windows-${{ needs.derle.outputs.surum }}-${{ github.sha }}
+          path: dist
+      - name: SHA-256 özetleri
+        run: cd dist && sha256sum *.exe > SHA256SUMS.txt && cat SHA256SUMS.txt
+      - name: Release oluştur
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.surum.outputs.v }}
-          target_commitish: ${{ github.sha }}
+          tag_name: ${{ github.ref_name }}
           make_latest: true
-          files: desktop/dist/*.exe
-          name: Duruş v${{ steps.surum.outputs.v }}
+          fail_on_unmatched_files: true
+          files: |
+            dist/*.exe
+            dist/SHA256SUMS.txt
+          name: Duruş ${{ github.ref_name }}
           body: |
             **Duruş — Windows masaüstü sürümü / Windows desktop app**
 
             - `Durus-…-kurulum.exe`: kurulumlu sürüm (önerilen) / installer (recommended)
             - `Durus-…-tasinabilir.exe`: kurulum gerektirmez / portable, no install
+            - `SHA256SUMS.txt`: dosya özetleri; indirdiğin dosyanın bu sürüme ait olduğunu doğrulamak için / checksums to verify your download
 
             Türkçe ve İngilizce; ilk açılışta dil seçilir, menüden değiştirilebilir. İnternet gerekmez; kayıtlar yalnızca bu bilgisayarda (%APPDATA%\Durus) tutulur.
             Turkish and English; choose at first launch, change from the menu. Works offline; records stay on this computer.

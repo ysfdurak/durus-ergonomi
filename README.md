@@ -42,7 +42,7 @@
 - Canlı adres **durus.ysfdurak.com**: Cloudflare Workers, `main` dalına her gönderimde otomatik yayın (ayarlar `wrangler.jsonc`, yayın dışı dosyalar `.assetsignore`).
 - Kendi bilgisayarında: depo kökünde `python -m http.server 8000`, sonra http://localhost:8000/ (İngilizce: /en/).
 - **Masaüstü güncellemeleri:** Uygulama açılışta yeni sürüm olup olmadığını sessizce denetler, varsa indirme sayfasını önerir (Yardım → Güncellemeleri denetle). Kendini değiştirmez; yeni kurulum dosyası kayıtları korur.
-- **Masaüstü:** `v1.0.0` gibi bir etiket gönderilince GitHub Actions (`.github/workflows/masaustu.yml`) Windows kurulum dosyalarını üretip Releases'e koyar. Elle denemek için: `cd desktop && npm install && npm start`.
+- **Masaüstü:** `main`'e gelen her değişiklik Windows dosyalarını yalnızca derler (Actions çıktısı). Herkese açık sürüm, `desktop/package.json` sürümüyle aynı `v1.5.0` gibi yeni bir etiket gönderilince yayımlanır. Yayımlanmış bir sürümün dosyaları sonradan değiştirilmez (ayrıntı: [docs/GELISTIRME.md](docs/GELISTIRME.md)). Elle denemek için: `cd desktop && npm install && npm start`.
 
 ## Nasıl yapıldı?
 Ürünü, kapsamı ve yöntem seçimini Yusuf Durak belirledi; kod ve içerik yapay zekâ (Claude) ile geliştirildi. İlk sürüm bir claude.ai artifact'ı olarak yapıldı; bu depodaki sürüm bağımsız çalışacak şekilde uyarlandı (dosya indirme tarayıcının kendi indirmesiyle yapılır).

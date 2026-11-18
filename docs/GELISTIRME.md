@@ -115,11 +115,21 @@ Electron ile yazılmış ince bir kabuk; içinde web sürümünün aynısı çal
 
 **Yeni sürüm çıkarmak:**
 
+1. `desktop/package.json` içindeki `"version"` değerini artır (ör. `1.4.0` → `1.5.0`) ve `main`'e gönder.
+2. Aynı numarayla etiket gönder:
+
 ```bash
-git tag v1.0.1 && git push origin v1.0.1
+git tag v1.5.0 && git push origin v1.5.0
 ```
 
-GitHub Actions Windows makinesinde paketler ve Releases sayfasına iki dosyayı yükler. Sürüm numarası etiketten alınır. Uygulama imzasız olduğu için Windows ilk açılışta SmartScreen uyarısı verebilir (“Ek bilgi → Yine de çalıştır”); bunu kaldırmak için kod imzalama sertifikası gerekir (ücretli).
+GitHub Actions Windows makinesinde paketler, yeni bir Release oluşturur ve iki `.exe` ile `SHA256SUMS.txt` dosyasını yükler.
+
+Kurallar (aynı sürüm numarası her zaman aynı dosya demek):
+- `main`'e gelen değişiklikler yalnızca derlenir; EXE'ler Actions çalıştırmasının **Artifacts** bölümünde 30 gün durur. Herkese açık Release'e dokunulmaz. Yayımlamadan önce denemek için buradan indir.
+- Etiket `package.json` sürümüyle aynı değilse iş durur.
+- O etiket için Release zaten varsa iş durur; yayımlanmış dosyalar değiştirilmez. Düzeltme gerekiyorsa sürümü artırıp yeni etiket gönder.
+
+Uygulama imzasız olduğu için Windows ilk açılışta SmartScreen uyarısı verebilir (“Ek bilgi → Yine de çalıştır”); bunu kaldırmak için kod imzalama sertifikası gerekir (ücretli).
 
 **Kendi bilgisayarında denemek:** `cd desktop && npm install && npm start` (önce kökte `node tools/i18n/build.mjs` çalışmış olmalı).
 
