@@ -18,6 +18,7 @@
 - **Rehber:** Birkaç evet/hayır sorusuyla riskli alanları bulur; her alan için tek bir önerilen yöntemi ve nedenini gösterir.
 - **Saha modu:** Sahada fotoğraf çek ya da videodan kare al, tehlikeleri işaretle; analizi masaya dönünce yap.
 - **İstasyonlar ve önlemler:** İşyeri, istasyon ve görev yapısı; Fine-Kinney ya da 5×5 matrisle risk değerlendirme tablosu; önlem takibi ve önlem sonrası yeniden ölçüm.
+- **Önce–sonra bağı:** Yeniden ölçüm önleme bağlanır: aynı istasyon, görev ve yöntem; aynı tutulan koşullar, önce ve sonra fotoğrafı, yeniden ölçüm tarihi. Kart ve raporlar “tahmini senaryo (ölçüm değil)” ile “sahada yeniden ölçülen iyileşme”yi ayrı etiketler ([ayrıntı](docs/GELISTIRME.md#önce–sonra-bağı-kasım-2026)).
 - **Videoyu otomatik tara:** Videonun tamamından belirli aralıklarla kare alıp noktaları otomatik bulur, her kareyi göreve kaydeder; vardiyadaki yüksek riskli süre payı ve zaman grafiği bu karelerden çıkar.
 - **Senaryo dene:** Mevcut durumu sabitleyip değerleri değiştir (ör. yük 25 → 15 kg); sonuçlar yan yana karşılaştırılır, beğenilen senaryo tek tıkla önleme dönüşür ve yeniden ölçümde beklenenle karşılaştırılır.
 - **Vücut bölgeleri ve iş rotasyonu:** Her görevin boyun, sırt-bel, omuz, dirsek, el-bilek ve bacak bölgelerini ne düzeyde zorladığı vücut figürü ve tabloyla; seçilen görevler için aynı bölgeyi art arda zorlamayan rotasyon sırası ve uyarılar.

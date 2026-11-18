@@ -231,7 +231,7 @@ body:not(.dl-on) .xl{display:none!important}
 .gareas{display:flex;flex-direction:column;gap:10px}
 .garea{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:#fff}
 .garea.on{border-color:var(--acc);box-shadow:inset 4px 0 0 var(--acc)}
-.garea.off{opacity:.6}
+.garea.off{background:#f6f7f5;border-style:dashed}.garea.off .ghd b{color:var(--muted)}
 .ghd{display:flex;gap:10px;align-items:center;margin-bottom:2px}
 .gnum{width:24px;height:24px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:700;flex:none}
 .yn2{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;flex:none}
@@ -307,7 +307,7 @@ table.rmap td{padding:6px 8px;border-radius:8px;background:#f6f7f5;vertical-alig
 .ba{margin-top:8px;background:#f6f7f5;border-radius:10px;padding:8px 10px;font-size:13px;display:flex;flex-direction:column;gap:4px}
 .alist{display:flex;flex-direction:column;gap:8px}
 .acard{border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff}
-.acard.done{opacity:.75}
+.acard.done{background:#f6f7f5;border-style:dashed}
 .acard.late{border-color:#fca5a5;box-shadow:inset 4px 0 0 #dc2626}
 .stsel{border:1px solid var(--line);border-radius:8px;padding:5px;background:#fff;font-size:13px}
 .tipbtn{min-height:24px;padding:1px 8px;font-size:12px;margin-left:4px}
@@ -405,6 +405,30 @@ select.need{border-color:#dc2626;box-shadow:0 0 0 3px #dc262633}
   nav{margin-top:8px;-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(to right,#000 calc(100% - 28px),transparent)}
 }
 @media (pointer:coarse){button.small,.linkbtn{min-height:40px}.linkbtn{padding:0 4px}}
+.ba2{margin-top:8px;background:#f6f7f5;border-radius:10px;padding:8px 10px;font-size:13px;display:flex;flex-direction:column;gap:5px}
+.ba2>div{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.bal{display:inline-block;min-width:150px;font-size:12px;font-weight:600;color:var(--muted)}
+.bal.est{font-style:italic}
+.bal.okm{color:#15803d}
+.vmiss{font-size:12.5px;color:#9a3412}
+.vpair{display:flex;gap:10px;flex-wrap:wrap}
+.vpair figure{margin:0;font-size:12px;color:var(--muted)}
+.vpair img{display:block;width:140px;max-width:40vw;border-radius:8px;border:1px solid var(--line)}
+.vgrid{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin:12px 0 4px;font-size:13px}
+.vok{color:#15803d}
+.vok b{color:var(--ink)}
+.vconds{border:1px solid var(--line);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;gap:4px;font-size:13px}
+.vconds legend{font-size:12.5px;color:var(--muted);padding:0 4px}
+.vphs{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}
+.vph{display:flex;flex-direction:column;gap:6px;font-size:13px}
+.vph>img{width:100%;max-height:200px;object-fit:contain;background:#f6f7f5;border-radius:8px;border:1px solid var(--line)}
+.vnone{height:90px;display:grid;place-items:center;background:#f6f7f5;border-radius:8px;color:var(--muted);font-size:12.5px}
+.vpick{display:flex;gap:4px;flex-wrap:wrap;max-height:120px;overflow:auto}
+.vth{padding:0;border:2px solid transparent;border-radius:6px;background:none;width:52px;height:40px;overflow:hidden}
+.vth img{width:100%;height:100%;object-fit:cover;display:block}
+.vth.on{border-color:var(--acc)}
+.vup{align-self:flex-start;cursor:pointer;color:var(--acc);font-weight:600;font-size:13px}
+@media (max-width:640px){.vgrid,.vphs{grid-template-columns:1fr}.bal{min-width:0;width:100%}}
 </style>
 </head>
 <body>
@@ -715,7 +739,7 @@ select.need{border-color:#dc2626;box-shadow:0 0 0 3px #dc262633}
     <div class="row" style="justify-content:space-between"><h2 style="margin:0">Önlemler</h2><button class="primary" id="acAdd">+ Önlem</button></div>
     <p class="about" style="margin-top:8px">Önlem al → uygula → aynı görevi yeniden ölç. Yeniden ölçüm kaydedildiğinde önce-sonra karşılaştırması burada ve istasyon sayfasında görünür.</p>
     <div class="stats" id="acStats"></div>
-    <div class="filters" style="margin-top:12px"><select id="acSt"></select><select id="acStatus"><option value="">Tüm durumlar</option><option value="open">Açık</option><option value="late">Gecikmiş</option><option value="done">Tamamlandı</option><option value="cancel">İptal</option></select></div>
+    <div class="filters" style="margin-top:12px"><select id="acSt" aria-label="İstasyon filtresi"></select><select id="acStatus" aria-label="Durum filtresi"><option value="">Tüm durumlar</option><option value="open">Açık</option><option value="late">Gecikmiş</option><option value="done">Tamamlandı</option><option value="cancel">İptal</option></select></div>
   </div>
   <div id="acList" class="view"></div>
   <div class="card">
@@ -2201,7 +2225,7 @@ $('#saveBtn').onclick=()=>{
   const r=postureCompute(cur);
   if(cur.id){const i=S.records.findIndex(x=>x.id===cur.id); if(i>=0)S.records[i]=JSON.parse(JSON.stringify(cur));}
   else {cur.id=uid(); cur.created=new Date().toISOString(); if(PEND&&PEND.k==='posture')cur.fieldId=PEND.cap; S.records.push(JSON.parse(JSON.stringify(cur)));}
-  linkPending('posture',cur.id);
+  linkPending('posture',cur.id); linkRemeasure('posture',cur);
   persist(); toast('Kaydedildi · REBA '+r.reba.txt+' · RULA '+r.rula.txt+' · OWAS '+r.owas.txt+'. Önerilerden önlem oluşturabilir veya yeni kare seçebilirsin.');
   $('#saveBtn').textContent='Değişiklikleri kaydet'; updateScores();
 };
@@ -2271,7 +2295,7 @@ $('#fSave').onclick=()=>{
   const m=FORMS[k].calc(fdraft[k]); if(m.v==null){toast('Kaydetmeden önce formu doldur.');return;}
   const rec={id:fedit[k]||uid(),type:k,task,taskId:tk.id,note:$('#fNote').value.trim(),created:new Date().toISOString(),data:{...fdraft[k]}};
   if(fedit[k]){const i=S.records.findIndex(x=>x.id===fedit[k]); if(i>=0){rec.created=S.records[i].created; S.records[i]=rec;}} else S.records.push(rec);
-  linkPending(k,rec.id,rec);
+  linkPending(k,rec.id,rec); linkRemeasure(k,rec);
   fedit[k]=rec.id; persist(); toast('Kaydedildi · '+FORMS[k].short+' '+m.txt+' ('+m.nm.toLowerCase()+'). Önerilerden önlem oluşturabilirsin; yeni kayıt için “Yeni / temizle”.');
   renderForm();
 };
@@ -2684,12 +2708,103 @@ function beforeAfter(tkId){
 const dateTR=d=>d?new Date(d+(d.length===10?'T12:00:00':'')).toLocaleDateString('tr-TR'):'—';
 function deltaHTML(a,b){const better=b.lv<a.lv, worse=b.lv>a.lv;
   return `<span class="badge" style="background:${LV[a.lv]}">${esc(a.n)} ${a.txt}</span> → <span class="badge" style="background:${LV[b.lv]}">${esc(b.n)} ${b.txt}</span> <b style="color:${better?LV[1]:worse?LV[4]:'var(--muted)'}">${better?'iyileşti':worse?'kötüleşti':'aynı seviye'}</b>`;}
-function afterOf(a){
+// Önleme bağlanmamış eski yol: aynı görevde aynı yöntemin önlemden sonraki ölçümü
+function legacyAfter(a){
   if(!a.before||!a.tk)return null;
   const rs=recsOfTask(a.tk).filter(r=>r.type===a.before.type&&r.created>a.created&&r.id!==a.rec);
   if(!rs.length)return null;
   if(a.before.type==='posture')return rs.map(snap).filter(Boolean).reduce((x,y)=>!x||y.lv>x.lv||(y.lv===x.lv&&y.v>x.v)?y:x,null);
   return snap(rs.sort((x,y)=>x.created.localeCompare(y.created)).at(-1));
+}
+
+/* ---------- önce–sonra bağı: önlem → sahada yeniden ölçüm ---------- */
+// Tahmini senaryo (a.exp) ölçüm değildir. "Sahada yeniden ölçülen iyileşme" yalnız önleme bağlanmış sonraki
+// kayıttan gelir: aynı istasyon › görev ve aynı yöntem; koşullar, fotoğraflar ve yeniden ölçüm tarihi a.ver içinde.
+// a.ver = {after: kayıt id, date: 'yyyy-aa-gg', cond: {worker,load,pace,env,view}, note, phB, phA (küçük resim)}
+const VCOND=[['worker','Aynı çalışan ya da benzer boy ve deneyim'],['load','Aynı yük, ürün ve ekipman'],['pace','Aynı iş hızı ve adet'],['env','Aynı vardiya dönemi ve ortam'],['view','Aynı çekim açısı ve mesafe']];
+let REM=null; // “Yeniden ölç” ile açılan bekleyen bağ: {a: önlem, ty: yöntem, tk: görev}
+const vconds=ty=>VCOND.filter(c=>c[0]!=='view'||ty==='posture');
+function postureDay(tk,rec){const d=rec.created.slice(0,10); return recsOfTask(tk).filter(r=>r.type==='posture'&&r.created.slice(0,10)===d).map(snap).filter(Boolean).reduce((x,y)=>!x||y.lv>x.lv||(y.lv===x.lv&&y.v>x.v)?y:x,null);}
+function verOf(a){
+  const v=a.ver||{}, rec=v.after?S.records.find(r=>r.id===v.after):null;
+  if(rec&&a.before&&rec.type===a.before.type&&rec.taskId===a.tk){
+    const s=rec.type==='posture'?postureDay(a.tk,rec):snap(rec);
+    const miss=vconds(rec.type).filter(c=>!(v.cond||{})[c[0]]).map(c=>c[1]);
+    if(!v.phB||!v.phA)miss.push('Önce ve sonra fotoğrafı');
+    if(!v.date)miss.push('Yeniden ölçüm tarihi');
+    return {s,rec,linked:true,date:v.date||'',ok:!miss.length,miss,note:v.note||''};
+  }
+  const s=legacyAfter(a); return s?{s,linked:false,date:'',ok:false,miss:[],note:''}:null;
+}
+function afterOf(a){const m=verOf(a); return m?m.s:null;}
+// Raporlarda ve kartta ayrı etiketler: tahmin ile sahadaki ölçüm karışmasın
+const EST_L='Tahmini senaryo (ölçüm değil)';
+function measLabel(a){
+  const m=verOf(a); if(!m||!m.s)return 'Sahada henüz yeniden ölçülmedi';
+  if(!m.linked)return 'Sonraki ölçüm önleme bağlanmadı';
+  const up=a.before&&m.s.lv<a.before.lv, down=a.before&&m.s.lv>a.before.lv;
+  if(!m.ok)return 'Sahada yeniden ölçüldü · karşılaştırma koşulları eksik';
+  return up?'Sahada yeniden ölçülen iyileşme':down?'Sahada yeniden ölçüldü · kötüleşti':'Sahada yeniden ölçüldü · seviye değişmedi';
+}
+const fieldVerified=a=>{const m=verOf(a); return !!(m&&m.linked&&m.ok&&m.s&&a.before&&m.s.lv<a.before.lv);};
+function condText(a){const m=verOf(a), v=a.ver||{}; if(!m||!m.linked)return '';
+  const ok=vconds(m.rec.type).filter(c=>(v.cond||{})[c[0]]).map(c=>c[1]);
+  return [ok.length?'Aynı tutulan: '+ok.join('; '):'',m.miss.length?'Eksik: '+m.miss.join('; '):'',v.note?'Not: '+v.note:''].filter(Boolean).join(' · ');}
+function linkRemeasure(ty,rec){
+  if(!REM||REM.ty!==ty||rec.taskId!==REM.tk)return; const a=S.actions.find(x=>x.id===REM.a); REM=null;
+  if(!a||rec.id===a.rec)return;
+  const b=S.records.find(r=>r.id===a.rec), v={...(a.ver||{})};
+  v.after=rec.id; v.date=v.date||rec.created.slice(0,10);
+  if(!v.phA&&rec.thumb)v.phA=rec.thumb; if(!v.phB&&b&&b.thumb)v.phB=b.thumb;
+  a.ver=v; setTimeout(()=>toast('Yeniden ölçüm önleme bağlandı. Önlemler sayfasında karşılaştırma koşullarını işaretle.'),1800);
+}
+function taskThumbs(tk){
+  const out=recsOfTask(tk).filter(r=>r.thumb).sort((x,y)=>x.created.localeCompare(y.created)).map(r=>({th:r.thumb,l:dateTR(r.created.slice(0,10))+' · '+typeName(r.type)}));
+  S.field.filter(c=>c.taskId===tk).forEach(c=>c.photos.forEach(p=>out.push({th:p.th,l:'Saha kaydı · '+dateTR(c.created.slice(0,10))})));
+  return out.slice(-24);
+}
+function openVerDlg(aId){
+  const a=S.actions.find(x=>x.id===aId); if(!a||!a.before){toast('Bu önlemde karşılaştırılacak önceki ölçüm yok.');return;}
+  const ty=a.before.type, v=clone(a.ver||{}); v.cond=v.cond||{};
+  let cands=recsOfTask(a.tk).filter(r=>r.type===ty&&r.id!==a.rec&&r.created>a.created).sort((x,y)=>y.created.localeCompare(x.created));
+  if(ty==='posture'){const seen=new Set(); cands=cands.filter(r=>{const d=r.created.slice(0,10); if(seen.has(d))return false; seen.add(d); return true;});}
+  if(!v.after&&cands.length)v.after=cands[0].id;
+  const b=S.records.find(r=>r.id===a.rec); if(!v.phB&&b&&b.thumb)v.phB=b.thumb;
+  const thumbs=taskThumbs(a.tk);
+  const draw=()=>{
+    const sel=S.records.find(r=>r.id===v.after), res=sel?(ty==='posture'?postureDay(a.tk,sel):snap(sel)):null;
+    if(sel&&!v.date)v.date=sel.created.slice(0,10);
+    const ph=(k,t)=>`<div class="vph"><b>${t}</b>${v[k]?`<img src="${v[k]}" alt="${t}">`:'<div class="vnone">Fotoğraf seçilmedi</div>'}
+      <div class="vpick">${thumbs.map((x,i)=>`<button type="button" class="vth${v[k]===x.th?' on':''}" data-vp="${k}.${i}" title="${esc(x.l)}" aria-label="${esc(t+': '+x.l)}"><img src="${x.th}" alt=""></button>`).join('')}</div>
+      <label class="small vup">Fotoğraf yükle<input type="file" accept="image/*" data-vu="${k}" hidden></label></div>`;
+    $('#editBody').innerHTML=`<div class="row" style="justify-content:space-between;align-items:flex-start"><h2 style="margin:0">Önce–sonra bağı</h2><button class="ghost" data-dx aria-label="Kapat">✕</button></div>
+    <p class="about" style="margin:6px 0 0">${esc(a.title)} · Yeniden ölçüm, önlemden önceki ölçümle aynı istasyon, görev ve yöntemle yapılmalı. Koşullar ve fotoğraflar raporda “sahada yeniden ölçülen iyileşme”nin dayanağıdır.</p>
+    <div class="vgrid">
+      <div class="vok">✓ İstasyon › görev: <b>${esc(tkLabel(a.tk))}</b></div>
+      <div class="vok">✓ Yöntem: <b>${esc(typeName(ty))}</b></div>
+      <div>Önce (ölçüm): <span class="badge" style="background:${LV[a.before.lv]}">${esc(a.before.n)} ${a.before.txt}</span></div>
+      ${a.exp?`<div class="muted">${EST_L}: <span class="badge" style="background:${LV[a.exp.lv]}">${esc(a.exp.n)} ${a.exp.txt}</span></div>`:''}
+    </div>
+    <div class="dfields">
+      <label class="full">Sahada yeniden ölçüm kaydı<select data-vf="after">${cands.length?cands.map(r=>{const s=ty==='posture'?postureDay(a.tk,r):snap(r); return `<option value="${r.id}"${r.id===v.after?' selected':''}>${dateTR(r.created.slice(0,10))} · ${s?esc(s.n)+' '+s.txt:'—'}${ty==='posture'?' (günün en kötü karesi)':''}</option>`;}).join(''):'<option value="">Önlemden sonra kayıt yok — önce “Yeniden ölç”</option>'}</select></label>
+      <label>Yeniden ölçüm tarihi<input type="date" data-vf="date" value="${esc(v.date||'')}"></label>
+      <div>${res?`Sonra: <span class="badge" style="background:${LV[res.lv]}">${esc(res.n)} ${res.txt}</span>`:''}</div>
+      <fieldset class="full vconds"><legend>Karşılaştırma koşulları (önceki ölçümle aynı tutulanları işaretle)</legend>${vconds(ty).map(([k,l])=>`<label class="chkl"><input type="checkbox" data-vc="${k}" ${v.cond[k]?'checked':''}> ${l}</label>`).join('')}</fieldset>
+      <label class="full">Değişen koşullar / not<textarea data-vf="note" rows="2" placeholder="ör. yük aynı, ama çalışan değişti">${esc(v.note||'')}</textarea></label>
+    </div>
+    <div class="vphs">${ph('phB','Önce fotoğrafı')}${ph('phA','Sonra fotoğrafı')}</div>
+    <div class="row" style="justify-content:space-between;margin-top:16px">${a.ver?'<button class="ghost danger" data-vdel>Bağı kaldır</button>':'<span></span>'}<div class="row"><button class="ghost" data-dx>Vazgeç</button><button class="primary" data-vsave${cands.length?'':' disabled'}>Kaydet</button></div></div>`;
+    const R=$('#editBody'), keep=()=>{R.querySelectorAll('[data-vf]').forEach(e=>{v[e.dataset.vf]=e.value;}); R.querySelectorAll('[data-vc]').forEach(e=>{v.cond[e.dataset.vc]=e.checked;});};
+    R.querySelectorAll('[data-dx]').forEach(x=>x.onclick=()=>{$('#editDlg').hidden=true;});
+    R.querySelector('[data-vf="after"]').onchange=e=>{keep(); const r=S.records.find(x=>x.id===e.target.value); if(r){v.date=r.created.slice(0,10); if(r.thumb)v.phA=r.thumb;} draw();};
+    R.querySelectorAll('[data-vp]').forEach(x=>x.onclick=()=>{keep(); const [k,i]=x.dataset.vp.split('.'); v[k]=thumbs[+i].th; draw();});
+    R.querySelectorAll('[data-vu]').forEach(x=>x.onchange=async e=>{const f=e.target.files[0]; if(!f)return; keep(); try{v[x.dataset.vu]=await thumbOf(await fileToJpeg(f),320); draw();}catch(err){toast('Fotoğraf açılamadı.');}});
+    const del=R.querySelector('[data-vdel]'); if(del)del.onclick=e=>{const btn=e.currentTarget; if(btn.dataset.sure){delete a.ver; persist(); refreshViews(); $('#editDlg').hidden=true;} else {btn.dataset.sure=1; btn.textContent='Bağ kaldırılsın mı? Tekrar bas';}};
+    R.querySelector('[data-vsave]').onclick=()=>{keep(); if(!v.after){toast('Önce yeniden ölçüm kaydını seç.');return;}
+      a.ver={after:v.after,date:v.date||'',cond:v.cond,note:(v.note||'').trim(),phB:v.phB||'',phA:v.phA||''};
+      persist(); refreshViews(); $('#editDlg').hidden=true; toast(fieldVerified(a)?'Bağ kaydedildi: sahada yeniden ölçülen iyileşme.':'Bağ kaydedildi · '+measLabel(a).toLowerCase()+'.');};
+  };
+  draw(); $('#editDlg').hidden=false;
 }
 
 /* ---------- senaryo dene: mevcut durumu sabitle, değerleri değiştir, karşılaştır, önleme dönüştür ---------- */
@@ -2796,6 +2911,7 @@ function remeasure(aId){
   const t=tkOf(a.tk); if(t){S.ctx.st=t.st; S.ctx.tk=t.id;}
   const src=S.records.find(r=>r.id===a.rec), ty=(a.before&&a.before.type)||(src&&src.type);
   if(!ty){go('guide');return;}
+  REM={a:a.id,ty,tk:a.tk};
   if(ty==='posture'){go('posture'); toast('Aynı görevi önlem sonrası yeniden kaydet; seçili görev hazır.');}
   else {delete SC['f:'+ty]; fdraft[ty]={...defaults(ty),...JSON.parse(JSON.stringify(a.sdata||(src?src.data:{})))}; fedit[ty]=null; go('tasks',ty); toast(a.sdata?'Senaryodaki değerlerle açıldı; sahadaki gerçek değerleri kontrol et ve kaydet.':'Önceki değerlerle açıldı; değişen değerleri güncelle ve kaydet.');}
 }
@@ -2804,24 +2920,38 @@ function actionCard(a){
   const after=afterOf(a), ctl=(CTRL.find(c=>c[0]===a.ctrl)||[,''])[1], stt=(ASTAT.find(s=>s[0]===a.status)||[,''])[1];
   return `<div class="acard${a.status==='done'?' done':''}${overdue(a)?' late':''}">
     <div class="row" style="justify-content:space-between;align-items:flex-start"><div><b>${esc(a.title)}</b><div class="muted">${esc(tkLabel(a.tk))}</div></div>
-      <select data-ast="${a.id}" class="stsel">${ASTAT.map(([v,l])=>`<option value="${v}"${a.status===v?' selected':''}>${l}</option>`).join('')}</select></div>
+      <select data-ast="${a.id}" class="stsel" aria-label="Önlem durumu">${ASTAT.map(([v,l])=>`<option value="${v}"${a.status===v?' selected':''}>${l}</option>`).join('')}</select></div>
     ${a.detail?`<div style="font-size:13.5px;margin-top:4px">${esc(a.detail)}</div>`:''}
     <div class="row" style="gap:6px;margin-top:6px;font-size:13px"><span class="lvl" style="background:#475569">${esc(ctl)}</span>${a.owner?`<span>Sorumlu: <b>${esc(a.owner)}</b></span>`:''}${+a.cost?`<span>Maliyet: <b>${Math.round(+a.cost).toLocaleString('tr-TR')}</b></span>`:''}${a.due?`<span style="color:${overdue(a)?LV[4]:'inherit'}">Termin: <b>${dateTR(a.due)}</b>${overdue(a)?' · gecikmiş':''}</span>`:''}${a.done?`<span>Tamamlandı: ${dateTR(a.done)}</span>`:''}</div>
-    ${a.before?`<div style="margin-top:8px;font-size:13px">${after?deltaHTML(a.before,after):`Önce: <span class="badge" style="background:${LV[a.before.lv]}">${esc(a.before.n)} ${a.before.txt}</span> <span class="muted">· sonrası henüz ölçülmedi</span>`}${a.exp?`<div class="muted" style="font-size:12.5px;margin-top:3px">Senaryoda beklenen: <span class="badge" style="background:${LV[a.exp.lv]}">${esc(a.exp.n)} ${a.exp.txt}</span>${after?(after.lv<=a.exp.lv?' · <b style="color:'+LV[1]+'">beklenene ulaşıldı</b>':' · <b style="color:'+LV[3]+'">beklenenin gerisinde</b>'):''}</div>`:''}</div>`:''}
-    <div class="acts row" style="margin-top:8px;gap:6px"><button class="small" data-aedit="${a.id}">Düzenle</button>${a.before?`<button class="small" data-arem="${a.id}">Yeniden ölç</button>`:''}</div></div>`;
+    ${a.before?baBlock(a):''}
+    <div class="acts row" style="margin-top:8px;gap:6px"><button class="small" data-aedit="${a.id}">Düzenle</button>${a.before?`<button class="small" data-arem="${a.id}">Yeniden ölç</button><button class="small" data-aver="${a.id}">${a.ver?'Önce–sonra bağını düzenle':'Ölçümü bağla'}</button>`:''}</div></div>`;
+}
+// Önlem kartında üç ayrı satır: önceki ölçüm, tahmini senaryo, sahadaki yeniden ölçüm
+function baBlock(a){
+  const m=verOf(a), after=m&&m.s, lab=measLabel(a), good=fieldVerified(a);
+  const b=`<span class="badge" style="background:${LV[a.before.lv]}">${esc(a.before.n)} ${a.before.txt}</span>`;
+  return `<div class="ba2">
+    <div><span class="bal">Önce (ölçüm)</span>${b}</div>
+    ${a.exp?`<div><span class="bal est">${EST_L}</span><span class="badge" style="background:${LV[a.exp.lv]}">${esc(a.exp.n)} ${a.exp.txt}</span></div>`:''}
+    <div><span class="bal${good?' okm':''}">${esc(lab)}${m&&m.date?' · '+dateTR(m.date):''}</span>${after?`${deltaHTML(a.before,after)}${a.exp&&m.linked?(after.lv<=a.exp.lv?' · <b style="color:'+LV[1]+'">tahmine ulaşıldı</b>':' · <b style="color:'+LV[3]+'">tahminin gerisinde</b>'):''}`:'<span class="muted">—</span>'}</div>
+    ${m&&m.linked&&m.miss.length?`<div class="vmiss">Eksik: ${esc(m.miss.join('; '))}</div>`:''}
+    ${m&&!m.linked?'<div class="vmiss">Bu sonuç önleme bağlı değil; “Ölçümü bağla” ile aynı koşulları ve fotoğrafları doğrula.</div>':''}
+    ${a.ver&&(a.ver.phB||a.ver.phA)?`<div class="vpair">${a.ver.phB?`<figure><img src="${a.ver.phB}" alt="Önce fotoğrafı"><figcaption>Önce</figcaption></figure>`:''}${a.ver.phA?`<figure><img src="${a.ver.phA}" alt="Sonra fotoğrafı"><figcaption>Sonra${m&&m.date?' · '+dateTR(m.date):''}</figcaption></figure>`:''}</div>`:''}
+  </div>`;
 }
 function bindActions(root){
   root.querySelectorAll('[data-ast]').forEach(s=>s.onchange=()=>{const a=S.actions.find(x=>x.id===s.dataset.ast); if(s.value==='done'&&a.status!=='done')a.done=todayISO(); if(s.value!=='done')a.done=''; a.status=s.value; persist(); refreshViews();});
   root.querySelectorAll('[data-aedit]').forEach(b=>b.onclick=()=>openActionDlg(b.dataset.aedit));
   root.querySelectorAll('[data-arem]').forEach(b=>b.onclick=()=>remeasure(b.dataset.arem));
+  root.querySelectorAll('[data-aver]').forEach(b=>b.onclick=()=>openVerDlg(b.dataset.aver));
 }
 function renderActions(){
   const site=curSite(), all=S.actions.filter(a=>{const s=stOf(a.st); return s&&s.site===site;});
   const fs=$('#acSt').value, ft=$('#acStatus').value;
   $('#acSt').innerHTML='<option value="">Tüm istasyonlar</option>'+S.stations.filter(s=>s.site===site).map(s=>`<option value="${s.id}"${fs===s.id?' selected':''}>${esc(s.name)}</option>`).join('');
   const open=all.filter(a=>a.status==='plan'||a.status==='prog'), late=all.filter(overdue), done=all.filter(a=>a.status==='done');
-  const verified=all.filter(a=>{const af=afterOf(a); return af&&a.before&&af.lv<a.before.lv;});
-  $('#acStats').innerHTML=`<div class="stat"><b>${all.length}</b><span>önlem</span></div><div class="stat"><b>${open.length}</b><span>açık</span></div><div class="stat"><b style="color:${late.length?LV[4]:'inherit'}">${late.length}</b><span>gecikmiş</span></div><div class="stat"><b>${done.length}</b><span>tamamlandı</span></div><div class="stat"><b style="color:${LV[1]}">${verified.length}</b><span>ölçümle doğrulanan iyileşme</span></div>`;
+  const verified=all.filter(fieldVerified);
+  $('#acStats').innerHTML=`<div class="stat"><b>${all.length}</b><span>önlem</span></div><div class="stat"><b>${open.length}</b><span>açık</span></div><div class="stat"><b style="color:${late.length?LV[4]:'inherit'}">${late.length}</b><span>gecikmiş</span></div><div class="stat"><b>${done.length}</b><span>tamamlandı</span></div><div class="stat"><b style="color:${LV[1]}">${verified.length}</b><span>sahada yeniden ölçülen iyileşme</span></div>`;
   const rows=all.filter(a=>(!fs||a.st===fs)&&(!ft||(ft==='open'?(a.status==='plan'||a.status==='prog'):ft==='late'?overdue(a):a.status===ft)))
     .sort((x,y)=>(overdue(y)-overdue(x))||((x.status==='done')-(y.status==='done'))||(x.due||'9').localeCompare(y.due||'9'));
   $('#acList').innerHTML=rows.length?rows.map(actionCard).join(''):`<div class="card empty">${all.length?'Filtreye uyan önlem yok.':'Henüz önlem yok. Bir analizin “Ne yapılabilir?” listesindeki “+ Önlem” düğmesiyle veya buradan önlem ekleyebilirsin.'}</div>`;
@@ -2845,7 +2975,7 @@ function renderStations(){
   const cols=MAP_COLS.filter(c=>c in AREA_N&&(['pos','mmh','rep','off'].includes(c)||recs.some(r=>AREA_OF[r.type]===c)));
   $('#riskMap').innerHTML=sts.length?`<div class="tblwrap"><table class="rmap"><thead><tr><th>İstasyon</th>${cols.map(c=>`<th>${AREA_N[c]}</th>`).join('')}<th>Şikâyet</th><th>Çalışan</th><th>Açık önlem</th></tr></thead><tbody>${sts.map(s=>{
       const rs=recsOfStation(s.id), w=areaWorst(rs), nr=nmqRate(rs), ao=S.actions.filter(a=>a.st===s.id&&(a.status==='plan'||a.status==='prog')).length;
-      return `<tr><td><button class="linkbtn" data-goto="${s.id}">${esc(s.name)}</button>${s.dept?`<div class="muted" style="font-size:12px">${esc(s.dept)}</div>`:''}</td>${cols.map(c=>{const x=w[c]; return x?`<td style="background:${LV[x.m.lv]};color:#fff"><b>${LVT[x.m.lv]}</b><div style="font-size:12.5px;opacity:.9">${esc(x.n)} ${x.m.txt}</div></td>`:'<td class="muted">—</td>';}).join('')}
+      return `<tr><td><button class="linkbtn" data-goto="${s.id}">${esc(s.name)}</button>${s.dept?`<div class="muted" style="font-size:12px">${esc(s.dept)}</div>`:''}</td>${cols.map(c=>{const x=w[c]; return x?`<td style="background:${LV[x.m.lv]};color:#fff"><b>${LVT[x.m.lv]}</b><div style="font-size:12.5px">${esc(x.n)} ${x.m.txt}</div></td>`:'<td class="muted">—</td>';}).join('')}
         <td>${nr?`<b style="color:${nr.p>=.5?LV[3]:nr.p>0?LV[2]:LV[1]}">%${Math.round(nr.p*100)}</b><div class="muted" style="font-size:12.5px">${nr.any}/${nr.n} kişi</div>`:'<span class="muted">—</span>'}</td><td>${s.workers||'—'}</td><td>${ao||'—'}</td></tr>`;}).join('')}</tbody></table></div><p class="muted" style="margin:6px 0 0">Her hücre o alandaki güncel en kötü sonucu gösterir (her görevde her yöntemin son ölçümü; duruşta son günün kareleri). Şikâyet: Nordik anketinde son 12 ayda en az bir bölgede şikâyet bildirenlerin oranı.</p>`
     :'<div class="empty">Henüz istasyon yok. “+ İstasyon” ile başla ya da bir analizi kaydederken yeni istasyon oluştur.</div>';
   $('#stList').innerHTML=sts.map(s=>stationCard(s)).join('');
@@ -3152,10 +3282,12 @@ function addRoiSheet(wb,siteId){
 function addActionsSheet(wb,siteId,stIds){
   const acts=S.actions.filter(a=>{const s=stOf(a.st); return s&&s.site===siteId&&(!stIds||stIds.includes(a.st));}); if(!acts.length)return;
   const ws=wb.addWorksheet('Önlem planı',{views:[{state:'frozen',ySplit:1}]});
-  const cols=[['No',5],['Önlem',34],['Açıklama',40],['İstasyon › görev',30],['Önlem türü',22],['Sorumlu',18],['Termin',12],['Durum',14],['Tamamlanma',12],['Önce',16],['Senaryoda beklenen',16],['Sonra',16],['Sonuç',14],['Tahmini maliyet',14]];
+  const cols=[['No',5],['Önlem',34],['Açıklama',40],['İstasyon › görev',30],['Önlem türü',22],['Sorumlu',18],['Termin',12],['Durum',14],['Tamamlanma',12],['Önce (ölçüm)',16],[EST_L,18],['Sahada yeniden ölçüm',16],['Yeniden ölçüm tarihi',12],['Ölçüm türü',30],['Karşılaştırma koşulları',40],['Sonuç',14],['Tahmini maliyet',14]];
   ws.columns=cols.map(([h,w])=>({header:h,width:w})); styleHeader(ws.getRow(1));
-  acts.forEach((a,i)=>{const af=afterOf(a); const row=ws.addRow([i+1,a.title,a.detail||'',tkLabel(a.tk),(CTRL.find(c=>c[0]===a.ctrl)||[,''])[1],a.owner||'',a.due?new Date(a.due+'T12:00:00'):null,(ASTAT.find(x=>x[0]===a.status)||[,''])[1],a.done?new Date(a.done+'T12:00:00'):null,a.before?`${a.before.n} ${a.before.txt}`:'',a.exp?`${a.exp.n} ${a.exp.txt}`:'',af?`${af.n} ${af.txt}`:'',af&&a.before?(af.lv<a.before.lv?'İyileşti':af.lv>a.before.lv?'Kötüleşti':'Aynı seviye'):'',+a.cost||'']);
-    row.getCell(7).numFmt='dd.mm.yyyy'; row.getCell(9).numFmt='dd.mm.yyyy'; row.alignment={wrapText:true,vertical:'top'}; if(overdue(a)){row.getCell(7).font={bold:true,color:{argb:'FFDC2626'}};}});
+  acts.forEach((a,i)=>{const af=afterOf(a), vm=verOf(a); const row=ws.addRow([i+1,a.title,a.detail||'',tkLabel(a.tk),(CTRL.find(c=>c[0]===a.ctrl)||[,''])[1],a.owner||'',a.due?new Date(a.due+'T12:00:00'):null,(ASTAT.find(x=>x[0]===a.status)||[,''])[1],a.done?new Date(a.done+'T12:00:00'):null,a.before?`${a.before.n} ${a.before.txt}`:'',a.exp?`${a.exp.n} ${a.exp.txt}`:'',af?`${af.n} ${af.txt}`:'',vm&&vm.date?new Date(vm.date+'T12:00:00'):null,a.before?measLabel(a):'',condText(a),af&&a.before?(af.lv<a.before.lv?'İyileşti':af.lv>a.before.lv?'Kötüleşti':'Aynı seviye'):'',+a.cost||'']);
+    row.getCell(7).numFmt='dd.mm.yyyy'; row.getCell(9).numFmt='dd.mm.yyyy'; row.getCell(13).numFmt='dd.mm.yyyy';
+    if(fieldVerified(a))row.getCell(14).font={bold:true,color:{argb:'FF15803D'}}; if(a.exp)row.getCell(11).font={italic:true,color:{argb:'FF57534E'}}; row.alignment={wrapText:true,vertical:'top'}; if(overdue(a)){row.getCell(7).font={bold:true,color:{argb:'FFDC2626'}};}});
+  ws.addRow([]); ws.addRow(['“'+EST_L+'” senaryo değerlerinden hesaplanan beklentidir. “Sahada yeniden ölçülen iyileşme” yalnız önleme bağlanmış, aynı istasyon, görev ve yöntemle yapılmış; koşulları, önce–sonra fotoğrafı ve tarihi kaydedilmiş ölçümde yazılır.']);
 }
 
 /* ---------- PDF ---------- */
@@ -3176,7 +3308,7 @@ function pdfReport(stIds){
     const cell=(t,o={})=>({text:t==null?'':String(t),...o});
     const lvCell=(lv,t)=>({text:t,fillColor:hexOf(lv),color:'#ffffff',bold:true});
     const tbl=(widths,head,body,o={})=>({table:{headerRows:1,widths,body:[head.map(h=>({text:h,style:'th'})),...body]},layout:{hLineColor:'#e2e5e0',vLineColor:'#e2e5e0',fillColor:(i)=>i===0?'#0f6b5f':null,paddingTop:()=>3,paddingBottom:()=>3},fontSize:8.5,margin:[0,2,0,8],...o});
-    const open=acts.filter(a=>a.status==='plan'||a.status==='prog'), late=acts.filter(overdue), ver=acts.filter(a=>{const f=afterOf(a); return f&&a.before&&f.lv<a.before.lv;});
+    const open=acts.filter(a=>a.status==='plan'||a.status==='prog'), late=acts.filter(overdue), ver=acts.filter(fieldVerified), est=acts.filter(a=>a.exp&&!fieldVerified(a));
     const clsMap={}; rows.forEach(r=>{clsMap[r.cls[1]]=(clsMap[r.cls[1]]||0)+1;}); const clsN=Object.entries(clsMap).map(([l,n])=>[n,l.toLowerCase()]);
     const content=[]; let secN=0; const N=()=>(++secN)+'. ';
     content.push({text:'Ergonomi Risk Değerlendirme Raporu',style:'title'},{text:site.name+(site.addr?' · '+site.addr:''),style:'sub'},
@@ -3184,7 +3316,7 @@ function pdfReport(stIds){
       {text:[{text:'Kapsam: ',bold:true},`${sts.length} istasyon, ${sts.reduce((a,s)=>a+S.tasks.filter(t=>t.st===s.id).length,0)} görev, ${recs.length} kayıt. Yöntemler: ${types.map(typeName).join(', ')}.`],fontSize:10,margin:[0,4,0,0]});
     content.push(H(N()+'Yönetici özeti'),
       {ul:[...(rows.length?[`${rows.length} risk satırı değerlendirildi: ${clsN.map(([n,l])=>`${n} ${l}`).join(', ')}.`]:[]),
-        `${acts.length} önlem: ${open.length} açık${late.length?` (${late.length} gecikmiş)`:''}, ${acts.filter(a=>a.status==='done').length} tamamlandı; ${ver.length} önlemde iyileşme yeniden ölçümle doğrulandı.`,
+        `${acts.length} önlem: ${open.length} açık${late.length?` (${late.length} gecikmiş)`:''}, ${acts.filter(a=>a.status==='done').length} tamamlandı; ${ver.length} önlemde sahada yeniden ölçülen iyileşme var.${est.length?` ${est.length} önlemdeki beklenti yalnız tahmini senaryodur, ölçüm sayılmadı.`:''}`,
         ...(()=>{const n=sts.flatMap(s=>recsOfStation(s.id)).filter(r=>r.type==='nmq'); if(!n.length)return []; const any=n.filter(r=>Object.values((r.data&&r.data.g)||{}).some(x=>x&&(x.y12||x.d7||x.blk))).length; return [`Nordik anketi: ${n.length} çalışandan ${any} kişi son 12 ayda en az bir bölgede şikâyet bildirdi.`];})()],fontSize:10});
     if(rows.length)content.push({text:'En yüksek riskler',bold:true,margin:[0,8,0,2],fontSize:10},tbl([16,'*','*',70,40,70],['#','İstasyon','Tehlike','Mevcut durum','Risk','Sınıf'],rows.slice(0,5).map((r,i)=>[cell(i+1),cell(r.s.name),cell(r.hazard),lvCell(r.x.m.lv,`${r.x.n} ${r.x.m.txt}`),cell(fmtN(r.R),{bold:true}),lvCell(r.cls[0],r.cls[1])])));
     // risk haritası
@@ -3230,7 +3362,12 @@ function pdfReport(stIds){
       } }
     // önlem planı
     if(acts.length){content.push(H(N()+'Önlem planı'),
-      tbl([14,'*',75,55,50,46,44,72],['#','Önlem','İstasyon › görev','Tür','Sorumlu','Termin','Durum','Önce › sonra'],acts.map((a,i)=>{const af=afterOf(a); return [cell(i+1),cell(a.title+(a.detail?'\n'+a.detail:''),{fontSize:8}),cell(tkLabel(a.tk)),cell((CTRL.find(c=>c[0]===a.ctrl)||[,''])[1]),cell(a.owner||'—'),cell(a.due?dateTR(a.due):'—',overdue(a)?{color:'#dc2626',bold:true}:{}),cell((ASTAT.find(x=>x[0]===a.status)||[,''])[1]),cell(a.before?`${a.before.n} ${a.before.txt}${a.exp?` › beklenen ${a.exp.txt}`:''}${af?` › ${af.n} ${af.txt}`:' › ölçülmedi'}`:'—')];})));}
+      tbl([14,'*',75,55,50,46,44,72],['#','Önlem','İstasyon › görev','Tür','Sorumlu','Termin','Durum','Önce › sonra'],acts.map((a,i)=>{const af=afterOf(a); return [cell(i+1),cell(a.title+(a.detail?'\n'+a.detail:''),{fontSize:8}),cell(tkLabel(a.tk)),cell((CTRL.find(c=>c[0]===a.ctrl)||[,''])[1]),cell(a.owner||'—'),cell(a.due?dateTR(a.due):'—',overdue(a)?{color:'#dc2626',bold:true}:{}),cell((ASTAT.find(x=>x[0]===a.status)||[,''])[1]),cell(a.before?`Önce: ${a.before.n} ${a.before.txt}${a.exp?`\n${EST_L}: ${a.exp.n} ${a.exp.txt}`:''}\n${measLabel(a)}${af?`: ${af.n} ${af.txt}`:''}${verOf(a)&&verOf(a).date?` (${dateTR(verOf(a).date)})`:''}`:'—',{fontSize:8,...(fieldVerified(a)?{color:'#15803d',bold:true}:{})})];})),
+      {text:`“${EST_L}” senaryo değerlerinden hesaplanan beklentidir. “Sahada yeniden ölçülen iyileşme” yalnız önleme bağlanmış; aynı istasyon, görev ve yöntemle yapılmış, koşulları, fotoğrafı ve tarihi kaydedilmiş ölçümde yazılır.`,fontSize:8,color:'#57534e',margin:[0,4,0,0]});
+      const pairs=acts.filter(a=>a.ver&&(a.ver.phB||a.ver.phA));
+      if(pairs.length){content.push({text:'Önce–sonra fotoğrafları',bold:true,fontSize:10,margin:[0,10,0,4]});
+        pairs.forEach(a=>{const vm=verOf(a); content.push({text:`${a.title} · ${tkLabel(a.tk)} · ${measLabel(a)}${vm&&vm.date?' · '+dateTR(vm.date):''}`,fontSize:9,bold:true,margin:[0,6,0,2]},
+          {columns:[a.ver.phB?{width:170,stack:[{image:a.ver.phB,width:160},{text:'Önce: '+a.before.n+' '+a.before.txt,fontSize:8}]}:{width:170,text:''},a.ver.phA?{width:170,stack:[{image:a.ver.phA,width:160},{text:'Sonra'+(vm&&vm.s?': '+vm.s.n+' '+vm.s.txt:''),fontSize:8}]}:{width:170,text:''},{width:'*',text:condText(a),fontSize:8,color:'#57534e'}],columnGap:10,unbreakable:true});});}}
     // maliyet ve geri ödeme
     { const C=roiCalc(site.id); if(C.has){const f=v=>roiFmt(v,C.R), v=k=>C.R[k]===''||C.R[k]==null?'—':String(C.R[k]);
       content.push(H(N()+'Maliyet ve geri ödeme'),
@@ -3526,8 +3663,10 @@ const HELP=[
  {id:'actions',t:'Önlem takibi ve yeniden ölçüm',b:`<ol>
   <li>Kaydedilmiş bir analizin önerisindeki “+ Önlem” ile önlem aç; başlık ve açıklama öneriden gelir, mevcut sonuç “önce” olarak saklanır.</li>
   <li>Önlem türünü (ortadan kaldırma, teknik, idari, KKD, eğitim), sorumluyu ve termini gir. Termini geçen açık önlem kırmızı görünür.</li>
-  <li>Önlem uygulanınca önlem kartında “Yeniden ölç”e bas: form eski girdilerle açılır, değişen koşulları düzeltip kaydet.</li>
-  <li>Kart önce → sonra farkını ve “iyileşti / aynı / kötüleşti” sonucunu gösterir. Risk haritası her zaman en son ölçümü kullanır.</li></ol>`},
+  <li>Önlem uygulanınca önlem kartında “Yeniden ölç”e bas: form eski girdilerle açılır, değişen koşulları düzeltip kaydet. Kaydettiğin ölçüm önleme otomatik bağlanır.</li>
+  <li>“Ölçümü bağla” penceresinde yeniden ölçümün önceki ölçümle aynı istasyon, görev ve yöntemle yapıldığı gösterilir. Aynı tutulan koşulları (çalışan, yük, iş hızı, vardiya, çekim açısı) işaretle, önce ve sonra fotoğrafını seç, yeniden ölçüm tarihini gir.</li>
+  <li>Kart ve raporlar üç şeyi ayrı yazar: <b>önce (ölçüm)</b>, <b>tahmini senaryo (ölçüm değil)</b> ve <b>sahada yeniden ölçüm</b>. “Sahada yeniden ölçülen iyileşme” yalnız bağlı, koşulları ve fotoğrafları tamam olan ölçümde ve risk düzeyi düştüyse yazılır. Bağlanmamış sonraki ölçüm “önleme bağlanmadı” diye görünür.</li>
+  <li>Risk haritası her zaman en son ölçümü kullanır.</li></ol>`},
  {id:'scan',t:'Videoyu otomatik tara',b:`<p>Duruş analizinde bir video açınca oynatıcının altındaki “Videoyu tara”, videonun başından sonuna seçtiğin aralıkla (ör. 2 saniyede bir) kare alır, her karede noktaları otomatik bulur ve REBA, RULA, OWAS sonuçlarıyla seçili göreve kaydeder.</p>
 <ul>
   <li><b>Neden:</b> Tek kare tek bir anı gösterir. Düzenli aralıklarla alınan kareler işin tamamını temsil eder (OWAS’ın örnekleme yaklaşımı). İstasyonlar sayfasında görevin zaman grafiği ve vardiyadaki yüksek riskli süre payı bu karelerden hesaplanır.</li>

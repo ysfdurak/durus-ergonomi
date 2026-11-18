@@ -30,10 +30,11 @@ function isUiText(raw) {
 export function findSegments(src) {
   const segs = [];
   const doc = parse(src, { sourceCodeLocationInfo: true });
-  let script = null;
+  // Sayfada birden fazla <script> olabilir (ör. en sondaki service worker kaydı); hepsi taranır.
+  const scripts = [];
   (function walk(node, inSkip) {
     const tag = node.tagName;
-    if (tag === 'script') { const loc = node.childNodes[0]?.sourceCodeLocation; if (loc) script = { start: loc.startOffset, end: loc.endOffset }; return; }
+    if (tag === 'script') { const loc = node.childNodes[0]?.sourceCodeLocation; if (loc) scripts.push({ start: loc.startOffset, end: loc.endOffset }); return; }
     if (tag === 'style') return;
     if (node.attrs && node.sourceCodeLocation?.attrs) {
       const isMetaText = tag === 'meta' && node.attrs.some(a => (a.name === 'name' && a.value === 'description') || (a.name === 'property' && /^og:(title|description)$/.test(a.value)));
@@ -56,7 +57,7 @@ export function findSegments(src) {
     if (node.content) walk(node.content, inSkip); // <template>
   })(doc, false);
 
-  if (script) {
+  for (const script of scripts) {
     const js = src.slice(script.start, script.end);
     for (const t of acorn.tokenizer(js, { ecmaVersion: 'latest', allowHashBang: true })) {
       const lab = t.type.label;

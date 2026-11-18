@@ -69,11 +69,34 @@ Bilerek alınmayanlar: çok kullanıcılı bulut veritabanı ve kullanıcı giri
 
 **Rotasyon algoritması:** İki görev arasındaki ceza, ikisinde de yüksek (3+) olan her bölge için büyük, diğer bölgelerdeki ortak yük için küçüktür. Sıra döngüsel kabul edilir. 8 göreve kadar tüm sıralar denenir; daha fazlasında her adımda en düşük cezalı görev seçilir.
 
+### Önce–sonra bağı (Kasım 2026)
+
+**Ne var?** Önlem kartı ve raporlar üç değeri ayrı yazar: **önce (ölçüm)**, **tahmini senaryo (ölçüm değil)** ve **sahada yeniden ölçüm**. Tahmini senaryo “Senaryo dene” ekranındaki değerlerden hesaplanır; sahada bir şey ölçülmemiştir. “Sahada yeniden ölçülen iyileşme” etiketi yalnız şu koşulların hepsi tutunca çıkar:
+
+1. Sonraki kayıt önleme **bağlı** (`a.ver.after`) ve önceki ölçümle aynı **istasyon › görev** ve aynı **yöntem**de (kod bunu kendisi denetler; farklıysa bağ sayılmaz).
+2. Karşılaştırma **koşulları** işaretli: aynı çalışan ya da benzer boy/deneyim, aynı yük-ürün-ekipman, aynı iş hızı-adet, aynı vardiya dönemi-ortam; duruş analizinde ayrıca aynı çekim açısı-mesafe.
+3. **Önce ve sonra fotoğrafı** seçili ve **yeniden ölçüm tarihi** girili.
+4. Risk düzeyi önceki ölçümden **düşük**.
+
+Eksik varsa kart “karşılaştırma koşulları eksik” yazar ve eksikleri sayar. Bağlanmamış sonraki ölçüm (eski kayıtlar) “önleme bağlanmadı” diye görünür; iyileşme sayısına girmez.
+
+**Akış:** Önlem kartında “Yeniden ölç” → kayıt kaydedilince `linkRemeasure` onu önleme bağlar (tarih = kayıt günü, fotoğraf = varsa kaydın küçük resmi). “Ölçümü bağla / bağı düzenle” penceresi (`openVerDlg`) kaydı, tarihi, koşulları, notu ve fotoğrafları düzenler. Fotoğraf görevdeki duruş karelerinden, saha kayıtlarından seçilir ya da yüklenir; 320 piksellik küçük resim olarak önlemde saklanır (JSON yedeğe girer).
+
+| Ad | Ne işe yarar |
+|---|---|
+| `a.ver` | `{after, date, cond:{worker,load,pace,env,view}, note, phB, phA}` |
+| `verOf(a)` | Bağlı ölçümün sonucu, eksik koşullar; bağ yoksa eski yol (`legacyAfter`) |
+| `measLabel(a)`, `EST_L` | Kart, Excel ve PDF'teki ölçüm türü etiketi |
+| `fieldVerified(a)` | “Sahada yeniden ölçülen iyileşme” sayılır mı |
+| `baBlock(a)` | Karttaki üç satır ve fotoğraf çifti |
+
+Excel “Önlem planı” sayfasında yeni sütunlar: Önce (ölçüm), Tahmini senaryo (ölçüm değil), Sahada yeniden ölçüm, Yeniden ölçüm tarihi, Ölçüm türü, Karşılaştırma koşulları. PDF önlem planı aynı etiketleri kullanır ve “Önce–sonra fotoğrafları” bölümünü ekler.
+
 ## 3. İki dil nasıl çalışıyor?
 
 Uygulama Türkçe yazılır; İngilizce sürüm otomatik üretilir. Kodu iki kez yazmazsın.
 
-1. `segments.mjs` kaynaktaki görünen metinleri bulur: HTML metinleri, `title/placeholder/aria-label/alt` öznitelikleri ve JavaScript içindeki metin dizeleri. Kod gibi görünen dizeleri (`'Escape'`, `'image/jpeg'`) atlar.
+1. `segments.mjs` kaynaktaki görünen metinleri bulur: HTML metinleri, `title/placeholder/aria-label/alt` öznitelikleri ve JavaScript içindeki metin dizeleri. Kod gibi görünen dizeleri (`'Escape'`, `'image/jpeg'`) atlar. Sayfadaki **bütün** `<script>` blokları taranır. (Kasım 2026 düzeltmesi: önceden yalnız son blok taranıyordu; sayfanın sonuna service worker betiği eklenince ana betiğin metinleri İngilizce sürümde Türkçe kalmış, sayaç yine de 0 göstermişti.)
 2. `en.json` bu metinlerin çevirilerini tutar. Anahtar Türkçe metnin kendisidir. Değeri boş bırakılan ya da hiç yazılmayan metin İngilizce sürümde Türkçe kalır (kod parçaları bilerek böyle).
 3. `build.mjs` her metni çevirisiyle değiştirir ve ayrıca İngilizce sürümde:
    - ondalık ayırıcıyı virgülden noktaya çevirir (`0,78` → `0.78`),
@@ -94,7 +117,7 @@ node i18n/extract.mjs            # yeni metinleri en.json'a boş olarak ekler, s
 node i18n/build.mjs              # index.html ve en/index.html üretilir
 ```
 
-`build.mjs` sonunda “çevrilmemiş Türkçe metin” listesi verir; yalnız `&L&8Duruş · ` (Excel sayfa başlığı, marka adı) kalması normaldir.
+`build.mjs` sonunda “çevrilmemiş Türkçe metin” listesi verir; 0 olmalı. Marka adı gibi aynen kalacak metinler (`&L&8Duruş · `) sözlüğe kendisiyle aynı değerle yazılır.
 
 ## 4. Web yayını
 
