@@ -107,7 +107,8 @@ async function baslat() {
     let p = decodeURIComponent(new URL(req.url).pathname);
     if (p.endsWith('/')) p += 'index.html';
     const dosya = path.normalize(path.join(WEB, p));
-    if (!dosya.startsWith(WEB) || !fs.existsSync(dosya)) return new Response('Bulunamadı', { status: 404 });
+    // WEB + ayırıcı: yalnızca "web" ile başlayan kardeş klasörlerin (ör. web-yedek) dışarı açılmasını da önler.
+    if ((dosya !== WEB && !dosya.startsWith(WEB + path.sep)) || !fs.existsSync(dosya)) return new Response('Bulunamadı', { status: 404 });
     if (dosya.endsWith('.wasm')) return new Response(fs.readFileSync(dosya), { headers: { 'content-type': 'application/wasm' } });
     return net.fetch(pathToFileURL(dosya).toString());
   });
