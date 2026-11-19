@@ -1823,8 +1823,13 @@ function bindItemActions(root){
   root.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openRecord(b.dataset.open));
   root.querySelectorAll('[data-seek]').forEach(b=>b.onclick=()=>{const r=S.records.find(x=>x.id===b.dataset.seek); if(!vid.src){toast('First reload the video on the Posture analysis page.');return;} go('posture'); vid.pause(); vid.currentTime=r.time; setTimeout(()=>$('#player').scrollIntoView({behavior:'smooth'}),50);});
   root.querySelectorAll('[data-xl]').forEach(b=>b.onclick=()=>{const r=S.records.find(x=>x.id===b.dataset.xl); if(r)exportRecord(r);});
-  root.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{ if(b.dataset.sure){S.records=S.records.filter(x=>x.id!==b.dataset.del); persist(); go(view);} else {b.dataset.sure=1; b.textContent='Are you sure?';}});
+  root.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{ if(b.dataset.sure){dropRecord(b.dataset.del); persist(); go(view);} else {b.dataset.sure=1; b.textContent='Are you sure?';}});
 }
+// Kayıt silinince: önlemdeki yeniden ölçüm bağı kalkar; önceki/sonraki fotoğraf bu kaydın küçük resmiyse o kopya da silinir.
+function dropRecord(id){const r=S.records.find(x=>x.id===id); S.records=S.records.filter(x=>x.id!==id);
+  (S.actions||[]).forEach(a=>{const v=a.ver; if(!v)return; if(v.after===id){delete v.after; delete v.phA;}
+    if(r&&r.thumb){if(v.phB===r.thumb)delete v.phB; if(v.phA===r.thumb)delete v.phA;}});
+  (S.field||[]).forEach(c=>{if(c.recs)c.recs=c.recs.filter(x=>x!==id);});}
 function statsHTML(recs){
   const all=recs.flatMap(r=>results(r).map(([,m])=>m)).filter(m=>m.v!=null);
   const hi=recs.filter(r=>results(r).some(([,m])=>m.lv>=3)).length;
@@ -2391,9 +2396,16 @@ $('#ioLoad').onclick=()=>{
     ensureStructure(); persist(); refreshViews(); $('#ioBox').hidden=true; toast(k+' records imported.');}
   catch(e){toast('Couldn’t read the JSON. Make sure you pasted text copied from Duruş.');}
 };
-$('#wipeBtn').onclick=e=>{const b=e.currentTarget; if(!S.records.length)return;
-  if(b.dataset.sure){S.records=[]; persist(); refreshViews(); b.dataset.sure=''; b.textContent='Delete all';}
-  else {b.dataset.sure=1; b.textContent='Delete all records? Press again'; setTimeout(()=>{b.dataset.sure=''; b.textContent='Delete all';},4000);}};
+// Ortak cihaz için: bu tarayıcıdaki bütün Duruş verisi silinir (kayıtlar, saha kayıtları ve tam boy fotoğrafları,
+// önlemler ve önce-sonra fotoğrafları, işyeri/istasyon/görev tanımları). Geri alınamaz; önce yedek önerilir.
+async function wipeAll(){
+  try{localStorage.removeItem(LS); localStorage.removeItem('durus_v1');}catch(e){}
+  await new Promise(res=>{const t=setTimeout(res,3000); try{const r=indexedDB.deleteDatabase('durus_media'); r.onsuccess=r.onerror=()=>{clearTimeout(t); res();};}catch(e){clearTimeout(t); res();}});
+  S={records:[],fps:30,ptab:'reba',ftab:'niosh',chartM:{}}; ensureStructure(); persist();
+}
+$('#wipeBtn').onclick=async e=>{const b=e.currentTarget;
+  if(b.dataset.sure){b.dataset.sure=''; await wipeAll(); b.textContent='Delete all'; refreshViews(); toast('All Duruş data on this device was deleted: records, field photos, actions and definitions.');}
+  else {b.dataset.sure=1; b.textContent='Delete records, field photos, actions and definitions? Press again'; setTimeout(()=>{b.dataset.sure=''; b.textContent='Delete all';},5000);}};
 
 /* =====================================================================
    13) EXCEL DIŞA AKTARMA
@@ -2661,7 +2673,7 @@ function openStationDlg(id,cb){
      if(s)Object.assign(s,v,{name:v.name.trim()});
      else {const n={id:uid(),site:curSite(),...v,name:v.name.trim(),created:new Date().toISOString()}; S.stations.push(n); S.tasks.push({id:uid(),st:n.id,name:'Main task',min:'',desc:''}); id=n.id;}
      relabel(); persist(); cb&&cb(id); refreshViews();},
-   onDelete:s?()=>{const n=recsOfStation(s.id).length; if(n){toast(`This workstation has ${n} records; delete the records first.`);return false;}
+   onDelete:s?()=>{const n=recsOfStation(s.id).length, tks=new Set(S.tasks.filter(t=>t.st===s.id).map(t=>t.id)), nf=(S.field||[]).filter(c=>tks.has(c.taskId)).length; if(n||nf){toast(`This workstation has ${n} analysis records and ${nf} field records; delete them first.`);return false;}
      S.stations=S.stations.filter(x=>x.id!==s.id); S.tasks=S.tasks.filter(t=>t.st!==s.id); S.actions=S.actions.filter(a=>a.st!==s.id); if(S.ctx.st===s.id)S.ctx={site:S.ctx.site}; persist(); refreshViews();}:null});
 }
 function openTaskDlg(id,stId,cb){
@@ -2673,7 +2685,7 @@ function openTaskDlg(id,stId,cb){
    onSave:v=>{if(!v.name.trim()){toast('Enter the task name.');return false;}
      if(t)Object.assign(t,v,{name:v.name.trim()}); else {const n={id:uid(),st:st.id,...v,name:v.name.trim()}; S.tasks.push(n); id=n.id;}
      relabel(); persist(); cb&&cb(id); refreshViews();},
-   onDelete:t?()=>{const n=recsOfTask(t.id).length; if(n){toast(`This task has ${n} records; delete the records first.`);return false;}
+   onDelete:t?()=>{const n=recsOfTask(t.id).length, nf=(S.field||[]).filter(c=>c.taskId===t.id).length; if(n||nf){toast(`This task has ${n} analysis records and ${nf} field records; delete them first.`);return false;}
      if(S.tasks.filter(x=>x.st===t.st).length<=1){toast('A workstation must keep at least one task.');return false;}
      S.tasks=S.tasks.filter(x=>x.id!==t.id); S.actions.forEach(a=>{if(a.tk===t.id)a.tk='';}); if(S.ctx.tk===t.id)S.ctx.tk=''; persist(); refreshViews();}:null});
 }
@@ -3543,7 +3555,7 @@ function thumbOf(src,w=240){return new Promise(res=>{const im=new Image(); im.on
    17) SAHA KAYDI: önce topla, sonra analiz et
    ===================================================================== */
 // Tam boy fotoğraflar IndexedDB'de; localStorage'da yalnız küçük resim ve bilgiler
-const MDB=(()=>{let p=null; const open=()=>p||(p=new Promise((res,rej)=>{try{const r=indexedDB.open('durus_media',1); r.onupgradeneeded=()=>r.result.createObjectStore('m'); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error);}catch(e){rej(e);}}));
+const MDB=(()=>{let p=null; const open=()=>p||(p=new Promise((res,rej)=>{try{const r=indexedDB.open('durus_media',1); r.onupgradeneeded=()=>r.result.createObjectStore('m'); r.onsuccess=()=>{const db=r.result; db.onversionchange=()=>{db.close(); p=null;}; res(db);}; r.onerror=()=>rej(r.error);}catch(e){rej(e);}}));
   const tx=(mode,fn)=>open().then(db=>new Promise((res,rej)=>{const t=db.transaction('m',mode), q=fn(t.objectStore('m')); t.oncomplete=()=>res(q&&q.result); t.onerror=()=>rej(t.error);}));
   return {put:(k,v)=>tx('readwrite',s=>s.put(v,k)),get:k=>tx('readonly',s=>s.get(k)),del:k=>tx('readwrite',s=>s.delete(k))};})();
 async function storePhoto(src,meta={}){const p={id:uid(),th:await thumbOf(src),...meta}; try{await MDB.put(p.id,src);}catch(e){p.src=src;} return p;}
@@ -3571,7 +3583,7 @@ function renderFieldList(){
     const ms=[...new Set(c.tags.flatMap(t=>TAGK[t]?TAGK[t][2]:[]))]; if(!ms.length&&c.photos.length)ms.push('posture');
     const recs=c.recs.map(id=>S.records.find(r=>r.id===id)).filter(Boolean);
     return `<div class="fcap${c.done?' done':''}"><div class="row" style="justify-content:space-between;align-items:flex-start"><div><b>${esc(c.taskId?tkLabel(c.taskId):'No task selected')}</b><div class="muted" style="font-size:12.5px">${new Date(c.created).toLocaleString('en-GB',{dateStyle:'short',timeStyle:'short'})}${c.vname?' · video: '+esc(c.vname):''}</div></div>
-      <div class="row" style="gap:6px"><button class="small" data-sfed="${c.id}">Edit</button><button class="small${c.done?'':' primary'}" data-sfdone="${c.id}">${c.done?'Reopen':'Completed'}</button></div></div>
+      <div class="row" style="gap:6px"><button class="small ghost danger" data-sfdel="${c.id}">Delete</button><button class="small" data-sfed="${c.id}">Edit</button><button class="small${c.done?'':' primary'}" data-sfdone="${c.id}">${c.done?'Reopen':'Completed'}</button></div></div>
       ${c.photos.length?`<div class="fths">${c.photos.map((p,i)=>`<div class="fth"><img src="${p.th}" alt="">${p.t!=null?`<small>t = ${fmt(p.t)}</small>`:''}<div class="row" style="gap:4px;margin-top:4px"><button class="small" data-sfpos="${c.id}.${i}">Posture</button><button class="small" data-sfmz="${c.id}.${i}" aria-label="Measure distance">📏</button></div></div>`).join('')}</div>`:''}
       <div class="fmeta">${c.tags.map(t=>`<span class="pill">${TAGK[t]?TAGK[t][1]:t}</span>`).join(' ')}${c.kg?` <span>Load <b>${n1(+c.kg)} kg</b></span>`:''}${c.n?` <span><b>${c.n}</b> times/shift</span>`:''}${c.min?` <span><b>${c.min}</b> min/shift</span>`:''}</div>
       ${c.note?`<div style="font-size:13.5px;margin-top:4px;white-space:pre-wrap">${esc(c.note)}</div>`:''}
@@ -3581,6 +3593,9 @@ function renderFieldList(){
   const R=$('#sList'), cap=id=>S.field.find(c=>c.id===id);
   R.querySelectorAll('[data-sfdone]').forEach(b=>b.onclick=()=>{const c=cap(b.dataset.sfdone); c.done=!c.done; persist(); renderFieldList();});
   R.querySelectorAll('[data-sfed]').forEach(b=>b.onclick=()=>editCapture(cap(b.dataset.sfed)));
+  R.querySelectorAll('[data-sfdel]').forEach(b=>b.onclick=()=>{const c=cap(b.dataset.sfdel); if(!c)return;
+    if(!b.dataset.sure){b.dataset.sure=1; b.textContent='Delete with its photos?'; setTimeout(()=>{if(b.isConnected){b.dataset.sure=''; b.textContent='Delete';}},4000); return;}
+    if(SF.editing===c.id)$('#sCancelEd').click(); c.photos.forEach(p=>MDB.del(p.id).catch(()=>{})); S.field=S.field.filter(x=>x.id!==c.id); persist(); renderFieldList(); toast('Field record and its photos deleted. Linked analysis records stay separate.');});
   R.querySelectorAll('[data-sfpos]').forEach(b=>b.onclick=()=>{const [id,i]=b.dataset.sfpos.split('.'); startFromCapture(cap(id),'posture',+i);});
   R.querySelectorAll('[data-sfmz]').forEach(b=>b.onclick=async()=>{const [id,i]=b.dataset.sfmz.split('.'), c=cap(id), p=c.photos[+i];
     openMeasure({img:await getPhoto(p),cal:c.cal&&c.cal[i],onCal:v=>{c.cal=c.cal||{}; c.cal[i]=v; persist();}});});
@@ -3769,6 +3784,7 @@ const HELP=[
   <li>On the first PDF/Excel the library is loaded once from the internet; without a connection the download won’t work.</li></ul>`},
  {id:'data',t:'Where is the data, and how do I back it up?',b:`<ul>
   <li>All records are stored in the browser on this device; nothing is sent to a server. If you clear browser data, the records are deleted too.</li>
+  <li><b>Shared device:</b> When you finish, Stations → Export / import → “Delete all” removes every analysis record, field record and full-size photo, action and definition on this device. Delete a single field record with its photos using “Delete” on the Field page.</li>
   <li><b>Backup:</b> “Download backup” on the Start or Workstations page downloads all records to a .json file. On another device, choose this file with Workstations → “Import” (the same record is never added twice). “Copy JSON” puts the same backup on the clipboard.</li>
   <li>Full-size field photos are not included in the backup, only thumbnails.</li>
   <li>If storage fills up, the app keeps thumbnails instead of full frames and warns you. You can clean up old records after exporting them to Excel.</li>

@@ -98,6 +98,19 @@ Excel “Önlem planı” sayfasında yeni sütunlar: Önce (ölçüm), Tahmini 
 
 **Aynı gün yeniden ölçüm:** Duruşta bir günün sonucu o gün o görevdeki karelerin en kötüsüdür (`postureDay`). Önlemin önceki ölçümü bu gruptan çıkarılır (`postureDay(tk, rec, a.rec)`); böylece önlem aynı gün uygulanıp yeniden ölçülürse sonucu önceki kare belirlemez. Kasım 2026'dan önce bu durumda iyileşme “aynı seviye” görünüyordu.
 
+### Silme ve ortak cihaz (19 Kasım 2026)
+
+Ortak cihazda bir çalışmanın fotoğrafları ve kayıtları birlikte silinmeli. Kontrolde dört açık bulundu ve kapatıldı:
+
+| Durum | Önce | Şimdi (kod) |
+|---|---|---|
+| Saha kaydını silmek | Yalnız düzenlerken tek tek fotoğraf kaldırılabiliyordu | Kartta “Sil” (iki basış): kayıt ve IndexedDB'deki tam boy fotoğraflar (`MDB.del`) silinir |
+| İstasyon / görev silmek | Analiz kaydı yoksa siliniyordu; o görevin saha kayıtları ve fotoğrafları görünmez hâlde kalıyordu | Saha kaydı da sayılır; varsa silme engellenir ve sayısı söylenir |
+| Analiz kaydı silmek | Önlemdeki yeniden ölçüm bağı ve önce/sonra fotoğraf kopyası kalıyordu | `dropRecord`: bağ ve aynı küçük resmin kopyaları silinir |
+| “Tümünü sil” | Yalnız analiz kayıtlarını siliyordu | `wipeAll`: localStorage (`durus_v3`, `durus_v1`), IndexedDB `durus_media`, önlemler, saha kayıtları ve tanımlar. MDB bağlantısı `onversionchange` ile kapanır; yoksa silme sayfa kapanana kadar bekliyordu |
+
+Sentetik kayıtla tarayıcıda denendi (kayıt, saha fotoğrafı, önlem fotoğrafı, tümünü sil). Kılavuz › Veriler bölümüne ortak cihaz notu eklendi.
+
 ## 3. İki dil nasıl çalışıyor?
 
 Uygulama Türkçe yazılır; İngilizce sürüm otomatik üretilir. Kodu iki kez yazmazsın.

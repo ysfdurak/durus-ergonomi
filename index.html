@@ -1823,8 +1823,13 @@ function bindItemActions(root){
   root.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>openRecord(b.dataset.open));
   root.querySelectorAll('[data-seek]').forEach(b=>b.onclick=()=>{const r=S.records.find(x=>x.id===b.dataset.seek); if(!vid.src){toast('Önce videoyu Duruş analizi sayfasında yeniden yükle.');return;} go('posture'); vid.pause(); vid.currentTime=r.time; setTimeout(()=>$('#player').scrollIntoView({behavior:'smooth'}),50);});
   root.querySelectorAll('[data-xl]').forEach(b=>b.onclick=()=>{const r=S.records.find(x=>x.id===b.dataset.xl); if(r)exportRecord(r);});
-  root.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{ if(b.dataset.sure){S.records=S.records.filter(x=>x.id!==b.dataset.del); persist(); go(view);} else {b.dataset.sure=1; b.textContent='Emin misin?';}});
+  root.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{ if(b.dataset.sure){dropRecord(b.dataset.del); persist(); go(view);} else {b.dataset.sure=1; b.textContent='Emin misin?';}});
 }
+// Kayıt silinince: önlemdeki yeniden ölçüm bağı kalkar; önceki/sonraki fotoğraf bu kaydın küçük resmiyse o kopya da silinir.
+function dropRecord(id){const r=S.records.find(x=>x.id===id); S.records=S.records.filter(x=>x.id!==id);
+  (S.actions||[]).forEach(a=>{const v=a.ver; if(!v)return; if(v.after===id){delete v.after; delete v.phA;}
+    if(r&&r.thumb){if(v.phB===r.thumb)delete v.phB; if(v.phA===r.thumb)delete v.phA;}});
+  (S.field||[]).forEach(c=>{if(c.recs)c.recs=c.recs.filter(x=>x!==id);});}
 function statsHTML(recs){
   const all=recs.flatMap(r=>results(r).map(([,m])=>m)).filter(m=>m.v!=null);
   const hi=recs.filter(r=>results(r).some(([,m])=>m.lv>=3)).length;
@@ -2391,9 +2396,16 @@ $('#ioLoad').onclick=()=>{
     ensureStructure(); persist(); refreshViews(); $('#ioBox').hidden=true; toast(k+' kayıt içe aktarıldı.');}
   catch(e){toast('JSON okunamadı. Duruş’tan kopyalanan metni yapıştırdığından emin ol.');}
 };
-$('#wipeBtn').onclick=e=>{const b=e.currentTarget; if(!S.records.length)return;
-  if(b.dataset.sure){S.records=[]; persist(); refreshViews(); b.dataset.sure=''; b.textContent='Tümünü sil';}
-  else {b.dataset.sure=1; b.textContent='Tüm kayıtlar silinsin mi? Tekrar bas'; setTimeout(()=>{b.dataset.sure=''; b.textContent='Tümünü sil';},4000);}};
+// Ortak cihaz için: bu tarayıcıdaki bütün Duruş verisi silinir (kayıtlar, saha kayıtları ve tam boy fotoğrafları,
+// önlemler ve önce-sonra fotoğrafları, işyeri/istasyon/görev tanımları). Geri alınamaz; önce yedek önerilir.
+async function wipeAll(){
+  try{localStorage.removeItem(LS); localStorage.removeItem('durus_v1');}catch(e){}
+  await new Promise(res=>{const t=setTimeout(res,3000); try{const r=indexedDB.deleteDatabase('durus_media'); r.onsuccess=r.onerror=()=>{clearTimeout(t); res();};}catch(e){clearTimeout(t); res();}});
+  S={records:[],fps:30,ptab:'reba',ftab:'niosh',chartM:{}}; ensureStructure(); persist();
+}
+$('#wipeBtn').onclick=async e=>{const b=e.currentTarget;
+  if(b.dataset.sure){b.dataset.sure=''; await wipeAll(); b.textContent='Tümünü sil'; refreshViews(); toast('Bu cihazdaki bütün Duruş verileri silindi: kayıtlar, saha fotoğrafları, önlemler ve tanımlar.');}
+  else {b.dataset.sure=1; b.textContent='Kayıtlar, saha fotoğrafları, önlemler ve tanımlar silinsin mi? Tekrar bas'; setTimeout(()=>{b.dataset.sure=''; b.textContent='Tümünü sil';},5000);}};
 
 /* =====================================================================
    13) EXCEL DIŞA AKTARMA
@@ -2661,7 +2673,7 @@ function openStationDlg(id,cb){
      if(s)Object.assign(s,v,{name:v.name.trim()});
      else {const n={id:uid(),site:curSite(),...v,name:v.name.trim(),created:new Date().toISOString()}; S.stations.push(n); S.tasks.push({id:uid(),st:n.id,name:'Ana görev',min:'',desc:''}); id=n.id;}
      relabel(); persist(); cb&&cb(id); refreshViews();},
-   onDelete:s?()=>{const n=recsOfStation(s.id).length; if(n){toast(`Bu istasyonda ${n} kayıt var; önce kayıtları sil.`);return false;}
+   onDelete:s?()=>{const n=recsOfStation(s.id).length, tks=new Set(S.tasks.filter(t=>t.st===s.id).map(t=>t.id)), nf=(S.field||[]).filter(c=>tks.has(c.taskId)).length; if(n||nf){toast(`Bu istasyonda ${n} analiz kaydı ve ${nf} saha kaydı var; önce onları sil.`);return false;}
      S.stations=S.stations.filter(x=>x.id!==s.id); S.tasks=S.tasks.filter(t=>t.st!==s.id); S.actions=S.actions.filter(a=>a.st!==s.id); if(S.ctx.st===s.id)S.ctx={site:S.ctx.site}; persist(); refreshViews();}:null});
 }
 function openTaskDlg(id,stId,cb){
@@ -2673,7 +2685,7 @@ function openTaskDlg(id,stId,cb){
    onSave:v=>{if(!v.name.trim()){toast('Görev adını yaz.');return false;}
      if(t)Object.assign(t,v,{name:v.name.trim()}); else {const n={id:uid(),st:st.id,...v,name:v.name.trim()}; S.tasks.push(n); id=n.id;}
      relabel(); persist(); cb&&cb(id); refreshViews();},
-   onDelete:t?()=>{const n=recsOfTask(t.id).length; if(n){toast(`Bu görevde ${n} kayıt var; önce kayıtları sil.`);return false;}
+   onDelete:t?()=>{const n=recsOfTask(t.id).length, nf=(S.field||[]).filter(c=>c.taskId===t.id).length; if(n||nf){toast(`Bu görevde ${n} analiz kaydı ve ${nf} saha kaydı var; önce onları sil.`);return false;}
      if(S.tasks.filter(x=>x.st===t.st).length<=1){toast('İstasyonda en az bir görev kalmalı.');return false;}
      S.tasks=S.tasks.filter(x=>x.id!==t.id); S.actions.forEach(a=>{if(a.tk===t.id)a.tk='';}); if(S.ctx.tk===t.id)S.ctx.tk=''; persist(); refreshViews();}:null});
 }
@@ -3543,7 +3555,7 @@ function thumbOf(src,w=240){return new Promise(res=>{const im=new Image(); im.on
    17) SAHA KAYDI: önce topla, sonra analiz et
    ===================================================================== */
 // Tam boy fotoğraflar IndexedDB'de; localStorage'da yalnız küçük resim ve bilgiler
-const MDB=(()=>{let p=null; const open=()=>p||(p=new Promise((res,rej)=>{try{const r=indexedDB.open('durus_media',1); r.onupgradeneeded=()=>r.result.createObjectStore('m'); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error);}catch(e){rej(e);}}));
+const MDB=(()=>{let p=null; const open=()=>p||(p=new Promise((res,rej)=>{try{const r=indexedDB.open('durus_media',1); r.onupgradeneeded=()=>r.result.createObjectStore('m'); r.onsuccess=()=>{const db=r.result; db.onversionchange=()=>{db.close(); p=null;}; res(db);}; r.onerror=()=>rej(r.error);}catch(e){rej(e);}}));
   const tx=(mode,fn)=>open().then(db=>new Promise((res,rej)=>{const t=db.transaction('m',mode), q=fn(t.objectStore('m')); t.oncomplete=()=>res(q&&q.result); t.onerror=()=>rej(t.error);}));
   return {put:(k,v)=>tx('readwrite',s=>s.put(v,k)),get:k=>tx('readonly',s=>s.get(k)),del:k=>tx('readwrite',s=>s.delete(k))};})();
 async function storePhoto(src,meta={}){const p={id:uid(),th:await thumbOf(src),...meta}; try{await MDB.put(p.id,src);}catch(e){p.src=src;} return p;}
@@ -3571,7 +3583,7 @@ function renderFieldList(){
     const ms=[...new Set(c.tags.flatMap(t=>TAGK[t]?TAGK[t][2]:[]))]; if(!ms.length&&c.photos.length)ms.push('posture');
     const recs=c.recs.map(id=>S.records.find(r=>r.id===id)).filter(Boolean);
     return `<div class="fcap${c.done?' done':''}"><div class="row" style="justify-content:space-between;align-items:flex-start"><div><b>${esc(c.taskId?tkLabel(c.taskId):'Görev seçilmedi')}</b><div class="muted" style="font-size:12.5px">${new Date(c.created).toLocaleString('tr-TR',{dateStyle:'short',timeStyle:'short'})}${c.vname?' · video: '+esc(c.vname):''}</div></div>
-      <div class="row" style="gap:6px"><button class="small" data-sfed="${c.id}">Düzenle</button><button class="small${c.done?'':' primary'}" data-sfdone="${c.id}">${c.done?'Yeniden aç':'Tamamlandı'}</button></div></div>
+      <div class="row" style="gap:6px"><button class="small ghost danger" data-sfdel="${c.id}">Sil</button><button class="small" data-sfed="${c.id}">Düzenle</button><button class="small${c.done?'':' primary'}" data-sfdone="${c.id}">${c.done?'Yeniden aç':'Tamamlandı'}</button></div></div>
       ${c.photos.length?`<div class="fths">${c.photos.map((p,i)=>`<div class="fth"><img src="${p.th}" alt="">${p.t!=null?`<small>t = ${fmt(p.t)}</small>`:''}<div class="row" style="gap:4px;margin-top:4px"><button class="small" data-sfpos="${c.id}.${i}">Duruş</button><button class="small" data-sfmz="${c.id}.${i}" aria-label="Mesafe ölç">📏</button></div></div>`).join('')}</div>`:''}
       <div class="fmeta">${c.tags.map(t=>`<span class="pill">${TAGK[t]?TAGK[t][1]:t}</span>`).join(' ')}${c.kg?` <span>Yük <b>${n1(+c.kg)} kg</b></span>`:''}${c.n?` <span><b>${c.n}</b> kez/vardiya</span>`:''}${c.min?` <span><b>${c.min}</b> dk/vardiya</span>`:''}</div>
       ${c.note?`<div style="font-size:13.5px;margin-top:4px;white-space:pre-wrap">${esc(c.note)}</div>`:''}
@@ -3581,6 +3593,9 @@ function renderFieldList(){
   const R=$('#sList'), cap=id=>S.field.find(c=>c.id===id);
   R.querySelectorAll('[data-sfdone]').forEach(b=>b.onclick=()=>{const c=cap(b.dataset.sfdone); c.done=!c.done; persist(); renderFieldList();});
   R.querySelectorAll('[data-sfed]').forEach(b=>b.onclick=()=>editCapture(cap(b.dataset.sfed)));
+  R.querySelectorAll('[data-sfdel]').forEach(b=>b.onclick=()=>{const c=cap(b.dataset.sfdel); if(!c)return;
+    if(!b.dataset.sure){b.dataset.sure=1; b.textContent='Fotoğraflarıyla silinsin mi?'; setTimeout(()=>{if(b.isConnected){b.dataset.sure=''; b.textContent='Sil';}},4000); return;}
+    if(SF.editing===c.id)$('#sCancelEd').click(); c.photos.forEach(p=>MDB.del(p.id).catch(()=>{})); S.field=S.field.filter(x=>x.id!==c.id); persist(); renderFieldList(); toast('Saha kaydı ve fotoğrafları silindi. Bağlı analiz kayıtları ayrı durur.');});
   R.querySelectorAll('[data-sfpos]').forEach(b=>b.onclick=()=>{const [id,i]=b.dataset.sfpos.split('.'); startFromCapture(cap(id),'posture',+i);});
   R.querySelectorAll('[data-sfmz]').forEach(b=>b.onclick=async()=>{const [id,i]=b.dataset.sfmz.split('.'), c=cap(id), p=c.photos[+i];
     openMeasure({img:await getPhoto(p),cal:c.cal&&c.cal[i],onCal:v=>{c.cal=c.cal||{}; c.cal[i]=v; persist();}});});
@@ -3769,6 +3784,7 @@ const HELP=[
   <li>İlk PDF/Excel’de kütüphane internetten bir kez yüklenir; bağlantı yoksa indirme çalışmaz.</li></ul>`},
  {id:'data',t:'Veriler nerede, nasıl yedeklenir?',b:`<ul>
   <li>Tüm kayıtlar bu cihazdaki tarayıcıda saklanır; sunucuya gönderilmez. Tarayıcı verilerini silersen kayıtlar da silinir.</li>
+  <li><b>Ortak cihaz:</b> İşin bitince İstasyonlar → Dışa / içe aktar → “Tümünü sil” bu cihazdaki bütün analiz kayıtlarını, saha kayıtlarını ve tam boy fotoğraflarını, önlemleri ve tanımları siler. Tek bir saha kaydını fotoğraflarıyla Saha sayfasındaki “Sil” ile silebilirsin.</li>
   <li><b>Yedek:</b> Başlangıç ya da İstasyonlar sayfasındaki “Yedeği indir” tüm kayıtları bir .json dosyasına indirir. Başka cihazda İstasyonlar → “İçe aktar” ile bu dosyayı seç (aynı kayıt iki kez eklenmez). “JSON kopyala” da aynı yedeği panoya alır.</li>
   <li>Saha fotoğraflarının tam boyları yedeğe girmez, yalnız küçük resimleri girer.</li>
   <li>Bellek dolarsa uygulama tam kareleri bırakıp küçük resimleri saklar ve uyarır. Eski kayıtları Excel’e aldıktan sonra temizleyebilirsin.</li>
