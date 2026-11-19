@@ -95,7 +95,7 @@ jobs:
             echo "::error::$ETIKET etiketi zaten var. Etiketten yayımlamak için etiketi yeniden gönder ya da yeni bir sürüm numarası kullan."
             exit 1
           fi
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: Durus-Windows-${{ needs.derle.outputs.surum }}-${{ github.sha }}
           path: dist
