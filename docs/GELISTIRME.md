@@ -92,6 +92,10 @@ Eksik varsa kart “karşılaştırma koşulları eksik” yazar ve eksikleri sa
 
 Excel “Önlem planı” sayfasında yeni sütunlar: Önce (ölçüm), Tahmini senaryo (ölçüm değil), Sahada yeniden ölçüm, Yeniden ölçüm tarihi, Ölçüm türü, Karşılaştırma koşulları. PDF önlem planı aynı etiketleri kullanır ve “Önce–sonra fotoğrafları” bölümünü ekler.
 
+### Değerlendirme zinciri (Kasım 2026)
+
+Önlem kartında açılır “Değerlendirme zinciri”: **gözlenen** (önceki ölçüm ve tarihi) → **değerlendirme gerekçesi** (puanın hesabı, `primary(rec).m.bd`) → **önerilen iş düzenlemesi** (önlem başlığı ve ayrıntısı) → **yeniden değerlendirme** (bağlı sonraki ölçüm, iyileşme ve yeni hesap). Bağlı ölçüm varsa iki kayıt arasındaki girdi farkları “Sonucu değiştiren girdiler” başlığıyla listelenir: duruşta `postureDiff`, formlarda `formDiff` (Senaryo dene'deki fonksiyonların aynısı). Kod: `chainBlock(a)`.
+
 ## 3. İki dil nasıl çalışıyor?
 
 Uygulama Türkçe yazılır; İngilizce sürüm otomatik üretilir. Kodu iki kez yazmazsın.
