@@ -2736,11 +2736,13 @@ function legacyAfter(a){
 const VCOND=[['worker','Same worker, or similar height and experience'],['load','Same load, product and equipment'],['pace','Same work pace and output'],['env','Same shift period and environment'],['view','Same camera angle and distance']];
 let REM=null; // “Yeniden ölç” ile açılan bekleyen bağ: {a: önlem, ty: yöntem, tk: görev}
 const vconds=ty=>VCOND.filter(c=>c[0]!=='view'||ty==='posture');
-function postureDay(tk,rec){const d=rec.created.slice(0,10); return recsOfTask(tk).filter(r=>r.type==='posture'&&r.created.slice(0,10)===d).map(snap).filter(Boolean).reduce((x,y)=>!x||y.lv>x.lv||(y.lv===x.lv&&y.v>x.v)?y:x,null);}
+// Aynı gün aynı görevde birden çok duruş karesi varsa en kötüsü alınır. Önlemin önceki ölçümü (skip) bu gruba girmez:
+// yeniden ölçüm önceki ölçümle aynı gün yapılsa bile sonucu önceki kare belirlemesin.
+function postureDay(tk,rec,skip){const d=rec.created.slice(0,10); return recsOfTask(tk).filter(r=>r.type==='posture'&&r.created.slice(0,10)===d&&(!skip||r.id!==skip||r.id===rec.id)).map(snap).filter(Boolean).reduce((x,y)=>!x||y.lv>x.lv||(y.lv===x.lv&&y.v>x.v)?y:x,null);}
 function verOf(a){
   const v=a.ver||{}, rec=v.after?S.records.find(r=>r.id===v.after):null;
   if(rec&&a.before&&rec.type===a.before.type&&rec.taskId===a.tk){
-    const s=rec.type==='posture'?postureDay(a.tk,rec):snap(rec);
+    const s=rec.type==='posture'?postureDay(a.tk,rec,a.rec):snap(rec);
     const miss=vconds(rec.type).filter(c=>!(v.cond||{})[c[0]]).map(c=>c[1]);
     if(!v.phB||!v.phA)miss.push('Before and after photo');
     if(!v.date)miss.push('Re-measurement date');
@@ -2784,7 +2786,7 @@ function openVerDlg(aId){
   const b=S.records.find(r=>r.id===a.rec); if(!v.phB&&b&&b.thumb)v.phB=b.thumb;
   const thumbs=taskThumbs(a.tk);
   const draw=()=>{
-    const sel=S.records.find(r=>r.id===v.after), res=sel?(ty==='posture'?postureDay(a.tk,sel):snap(sel)):null;
+    const sel=S.records.find(r=>r.id===v.after), res=sel?(ty==='posture'?postureDay(a.tk,sel,a.rec):snap(sel)):null;
     if(sel&&!v.date)v.date=sel.created.slice(0,10);
     const ph=(k,t)=>`<div class="vph"><b>${t}</b>${v[k]?`<img src="${v[k]}" alt="${t}">`:'<div class="vnone">No photo selected</div>'}
       <div class="vpick">${thumbs.map((x,i)=>`<button type="button" class="vth${v[k]===x.th?' on':''}" data-vp="${k}.${i}" title="${esc(x.l)}" aria-label="${esc(t+': '+x.l)}"><img src="${x.th}" alt=""></button>`).join('')}</div>
@@ -2798,7 +2800,7 @@ function openVerDlg(aId){
       ${a.exp?`<div class="muted">${EST_L}: <span class="badge" style="background:${LV[a.exp.lv]}">${esc(a.exp.n)} ${a.exp.txt}</span></div>`:''}
     </div>
     <div class="dfields">
-      <label class="full">On-site re-measurement record<select data-vf="after">${cands.length?cands.map(r=>{const s=ty==='posture'?postureDay(a.tk,r):snap(r); return `<option value="${r.id}"${r.id===v.after?' selected':''}>${dateTR(r.created.slice(0,10))} · ${s?esc(s.n)+' '+s.txt:'—'}${ty==='posture'?' (worst frame of the day)':''}</option>`;}).join(''):'<option value="">No record after the action — use “Re-measure” first</option>'}</select></label>
+      <label class="full">On-site re-measurement record<select data-vf="after">${cands.length?cands.map(r=>{const s=ty==='posture'?postureDay(a.tk,r,a.rec):snap(r); return `<option value="${r.id}"${r.id===v.after?' selected':''}>${dateTR(r.created.slice(0,10))} · ${s?esc(s.n)+' '+s.txt:'—'}${ty==='posture'?' (worst frame of the day)':''}</option>`;}).join(''):'<option value="">No record after the action — use “Re-measure” first</option>'}</select></label>
       <label>Re-measurement date<input type="date" data-vf="date" value="${esc(v.date||'')}"></label>
       <div>${res?`Sonra: <span class="badge" style="background:${LV[res.lv]}">${esc(res.n)} ${res.txt}</span>`:''}</div>
       <fieldset class="full vconds"><legend>Comparison conditions (tick what was kept the same as the earlier measurement)</legend>${vconds(ty).map(([k,l])=>`<label class="chkl"><input type="checkbox" data-vc="${k}" ${v.cond[k]?'checked':''}> ${l}</label>`).join('')}</fieldset>
@@ -2946,13 +2948,14 @@ function chainBlock(a){
   const pb=rb?primary(rb):null, pa=ra?primary(ra):null;
   const why=p=>p?(p.m.bd?`<div class="chbd">${p.m.bd}</div>`:esc(p.m.nm||p.m.txt||'')):'';
   let ch=[];
-  try{ if(rb&&ra) ch=rb.type==='posture'?postureDiff(rb,ra):FORMS[rb.type]?formDiff(rb.type,rb.data||{},ra.data||{}):[]; }catch(e){ ch=[]; }
+  let chErr=false;
+  try{ if(rb&&ra) ch=rb.type==='posture'?postureDiff(rb,ra):FORMS[rb.type]?formDiff(rb.type,rb.data||{},ra.data||{}):[]; }catch(e){ ch=[]; chErr=true; }
   const badge=x=>x?`<span class="badge" style="background:${LV[x.lv]}">${esc(x.n)} ${x.txt}</span>`:'';
   return `<details class="chain"${after?' open':''}><summary>Assessment chain</summary><ol class="chol">
     <li><b>Observed</b><span>${badge(a.before)}${rb&&rb.created?' · '+dateTR(rb.created.slice(0,10)):''}</span></li>
     <li><b>Why it scored this way</b>${why(pb)||'<span class="muted">The earlier record was not found.</span>'}</li>
     <li><b>Proposed work change</b><span>${esc(a.title||'')}${a.detail?` <span class="muted">· ${esc(a.detail)}</span>`:''}</span></li>
-    <li><b>Re-assessment</b>${after?`<span>${badge(after)} ${deltaHTML(a.before,after)}</span>${ra?(ch.length?`<div class="chdiff"><b>Inputs that changed the result</b><ul>${ch.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:'<span class="muted">No input differs between the two records.</span>')+(pa?'<div class="chnew">New calculation</div>'+why(pa):''):'<span class="muted">This result is not linked to the action; use “Link measurement” to see the input differences.</span>'}`:'<span class="muted">Not re-measured yet. When you measure the same task with “Re-measure”, the inputs that changed the result are listed here.</span>'}</li>
+    <li><b>Re-assessment</b>${after?`<span>${badge(after)} ${deltaHTML(a.before,after)}</span>${ra?(ch.length?`<div class="chdiff"><b>Inputs that changed the result</b><ul>${ch.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:(chErr?'<span class="muted">Input differences could not be calculated.</span>':'<span class="muted">No input differs between the two records.</span>'))+(pa?'<div class="chnew">New calculation</div>'+why(pa):''):'<span class="muted">This result is not linked to the action; use “Link measurement” to see the input differences.</span>'}`:'<span class="muted">Not re-measured yet. When you measure the same task with “Re-measure”, the inputs that changed the result are listed here.</span>'}</li>
   </ol></details>`;
 }
 // Önlem kartında üç ayrı satır: önceki ölçüm, tahmini senaryo, sahadaki yeniden ölçüm
@@ -2963,7 +2966,7 @@ function baBlock(a){
     <div><span class="bal">Before (measured)</span>${b}</div>
     ${a.exp?`<div><span class="bal est">${EST_L}</span><span class="badge" style="background:${LV[a.exp.lv]}">${esc(a.exp.n)} ${a.exp.txt}</span></div>`:''}
     <div><span class="bal${good?' okm':''}">${esc(lab)}${m&&m.date?' · '+dateTR(m.date):''}</span>${after?`${deltaHTML(a.before,after)}${a.exp&&m.linked?(after.lv<=a.exp.lv?' · <b style="color:'+LV[1]+'">estimate reached</b>':' · <b style="color:'+LV[3]+'">tahminin gerisinde</b>'):''}`:'<span class="muted">—</span>'}</div>
-    ${m&&m.linked&&m.miss.length?`<div class="vmiss">Eksik: ${esc(m.miss.join('; '))}</div>`:''}
+    ${m&&m.linked&&m.miss.length?`<div class="vmiss">Missing: ${esc(m.miss.join('; '))}</div>`:''}
     ${m&&!m.linked?'<div class="vmiss">This result is not linked to the action; use “Link measurement” to confirm the same conditions and the photos.</div>':''}
     ${a.ver&&(a.ver.phB||a.ver.phA)?`<div class="vpair">${a.ver.phB?`<figure><img src="${a.ver.phB}" alt="Before photo"><figcaption>Before</figcaption></figure>`:''}${a.ver.phA?`<figure><img src="${a.ver.phA}" alt="After photo"><figcaption>After${m&&m.date?' · '+dateTR(m.date):''}</figcaption></figure>`:''}</div>`:''}
   </div>`;

@@ -2736,11 +2736,13 @@ function legacyAfter(a){
 const VCOND=[['worker','Aynı çalışan ya da benzer boy ve deneyim'],['load','Aynı yük, ürün ve ekipman'],['pace','Aynı iş hızı ve adet'],['env','Aynı vardiya dönemi ve ortam'],['view','Aynı çekim açısı ve mesafe']];
 let REM=null; // “Yeniden ölç” ile açılan bekleyen bağ: {a: önlem, ty: yöntem, tk: görev}
 const vconds=ty=>VCOND.filter(c=>c[0]!=='view'||ty==='posture');
-function postureDay(tk,rec){const d=rec.created.slice(0,10); return recsOfTask(tk).filter(r=>r.type==='posture'&&r.created.slice(0,10)===d).map(snap).filter(Boolean).reduce((x,y)=>!x||y.lv>x.lv||(y.lv===x.lv&&y.v>x.v)?y:x,null);}
+// Aynı gün aynı görevde birden çok duruş karesi varsa en kötüsü alınır. Önlemin önceki ölçümü (skip) bu gruba girmez:
+// yeniden ölçüm önceki ölçümle aynı gün yapılsa bile sonucu önceki kare belirlemesin.
+function postureDay(tk,rec,skip){const d=rec.created.slice(0,10); return recsOfTask(tk).filter(r=>r.type==='posture'&&r.created.slice(0,10)===d&&(!skip||r.id!==skip||r.id===rec.id)).map(snap).filter(Boolean).reduce((x,y)=>!x||y.lv>x.lv||(y.lv===x.lv&&y.v>x.v)?y:x,null);}
 function verOf(a){
   const v=a.ver||{}, rec=v.after?S.records.find(r=>r.id===v.after):null;
   if(rec&&a.before&&rec.type===a.before.type&&rec.taskId===a.tk){
-    const s=rec.type==='posture'?postureDay(a.tk,rec):snap(rec);
+    const s=rec.type==='posture'?postureDay(a.tk,rec,a.rec):snap(rec);
     const miss=vconds(rec.type).filter(c=>!(v.cond||{})[c[0]]).map(c=>c[1]);
     if(!v.phB||!v.phA)miss.push('Önce ve sonra fotoğrafı');
     if(!v.date)miss.push('Yeniden ölçüm tarihi');
@@ -2784,7 +2786,7 @@ function openVerDlg(aId){
   const b=S.records.find(r=>r.id===a.rec); if(!v.phB&&b&&b.thumb)v.phB=b.thumb;
   const thumbs=taskThumbs(a.tk);
   const draw=()=>{
-    const sel=S.records.find(r=>r.id===v.after), res=sel?(ty==='posture'?postureDay(a.tk,sel):snap(sel)):null;
+    const sel=S.records.find(r=>r.id===v.after), res=sel?(ty==='posture'?postureDay(a.tk,sel,a.rec):snap(sel)):null;
     if(sel&&!v.date)v.date=sel.created.slice(0,10);
     const ph=(k,t)=>`<div class="vph"><b>${t}</b>${v[k]?`<img src="${v[k]}" alt="${t}">`:'<div class="vnone">Fotoğraf seçilmedi</div>'}
       <div class="vpick">${thumbs.map((x,i)=>`<button type="button" class="vth${v[k]===x.th?' on':''}" data-vp="${k}.${i}" title="${esc(x.l)}" aria-label="${esc(t+': '+x.l)}"><img src="${x.th}" alt=""></button>`).join('')}</div>
@@ -2798,7 +2800,7 @@ function openVerDlg(aId){
       ${a.exp?`<div class="muted">${EST_L}: <span class="badge" style="background:${LV[a.exp.lv]}">${esc(a.exp.n)} ${a.exp.txt}</span></div>`:''}
     </div>
     <div class="dfields">
-      <label class="full">Sahada yeniden ölçüm kaydı<select data-vf="after">${cands.length?cands.map(r=>{const s=ty==='posture'?postureDay(a.tk,r):snap(r); return `<option value="${r.id}"${r.id===v.after?' selected':''}>${dateTR(r.created.slice(0,10))} · ${s?esc(s.n)+' '+s.txt:'—'}${ty==='posture'?' (günün en kötü karesi)':''}</option>`;}).join(''):'<option value="">Önlemden sonra kayıt yok — önce “Yeniden ölç”</option>'}</select></label>
+      <label class="full">Sahada yeniden ölçüm kaydı<select data-vf="after">${cands.length?cands.map(r=>{const s=ty==='posture'?postureDay(a.tk,r,a.rec):snap(r); return `<option value="${r.id}"${r.id===v.after?' selected':''}>${dateTR(r.created.slice(0,10))} · ${s?esc(s.n)+' '+s.txt:'—'}${ty==='posture'?' (günün en kötü karesi)':''}</option>`;}).join(''):'<option value="">Önlemden sonra kayıt yok — önce “Yeniden ölç”</option>'}</select></label>
       <label>Yeniden ölçüm tarihi<input type="date" data-vf="date" value="${esc(v.date||'')}"></label>
       <div>${res?`Sonra: <span class="badge" style="background:${LV[res.lv]}">${esc(res.n)} ${res.txt}</span>`:''}</div>
       <fieldset class="full vconds"><legend>Karşılaştırma koşulları (önceki ölçümle aynı tutulanları işaretle)</legend>${vconds(ty).map(([k,l])=>`<label class="chkl"><input type="checkbox" data-vc="${k}" ${v.cond[k]?'checked':''}> ${l}</label>`).join('')}</fieldset>
@@ -2946,13 +2948,14 @@ function chainBlock(a){
   const pb=rb?primary(rb):null, pa=ra?primary(ra):null;
   const why=p=>p?(p.m.bd?`<div class="chbd">${p.m.bd}</div>`:esc(p.m.nm||p.m.txt||'')):'';
   let ch=[];
-  try{ if(rb&&ra) ch=rb.type==='posture'?postureDiff(rb,ra):FORMS[rb.type]?formDiff(rb.type,rb.data||{},ra.data||{}):[]; }catch(e){ ch=[]; }
+  let chErr=false;
+  try{ if(rb&&ra) ch=rb.type==='posture'?postureDiff(rb,ra):FORMS[rb.type]?formDiff(rb.type,rb.data||{},ra.data||{}):[]; }catch(e){ ch=[]; chErr=true; }
   const badge=x=>x?`<span class="badge" style="background:${LV[x.lv]}">${esc(x.n)} ${x.txt}</span>`:'';
   return `<details class="chain"${after?' open':''}><summary>Değerlendirme zinciri</summary><ol class="chol">
     <li><b>Gözlenen</b><span>${badge(a.before)}${rb&&rb.created?' · '+dateTR(rb.created.slice(0,10)):''}</span></li>
     <li><b>Değerlendirme gerekçesi</b>${why(pb)||'<span class="muted">Önceki kayıt bulunamadı.</span>'}</li>
     <li><b>Önerilen iş düzenlemesi</b><span>${esc(a.title||'')}${a.detail?` <span class="muted">· ${esc(a.detail)}</span>`:''}</span></li>
-    <li><b>Yeniden değerlendirme</b>${after?`<span>${badge(after)} ${deltaHTML(a.before,after)}</span>${ra?(ch.length?`<div class="chdiff"><b>Sonucu değiştiren girdiler</b><ul>${ch.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:'<span class="muted">İki kayıt arasında girdi farkı yok.</span>')+(pa?'<div class="chnew">Yeni hesap</div>'+why(pa):''):'<span class="muted">Bu sonuç önleme bağlı değil; girdi farkları için “Ölçümü bağla”.</span>'}`:'<span class="muted">Henüz yeniden ölçülmedi. “Yeniden ölç” ile aynı görevi ölçünce, sonucu değiştiren girdiler burada listelenir.</span>'}</li>
+    <li><b>Yeniden değerlendirme</b>${after?`<span>${badge(after)} ${deltaHTML(a.before,after)}</span>${ra?(ch.length?`<div class="chdiff"><b>Sonucu değiştiren girdiler</b><ul>${ch.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:(chErr?'<span class="muted">Girdi farkları hesaplanamadı.</span>':'<span class="muted">İki kayıt arasında girdi farkı yok.</span>'))+(pa?'<div class="chnew">Yeni hesap</div>'+why(pa):''):'<span class="muted">Bu sonuç önleme bağlı değil; girdi farkları için “Ölçümü bağla”.</span>'}`:'<span class="muted">Henüz yeniden ölçülmedi. “Yeniden ölç” ile aynı görevi ölçünce, sonucu değiştiren girdiler burada listelenir.</span>'}</li>
   </ol></details>`;
 }
 // Önlem kartında üç ayrı satır: önceki ölçüm, tahmini senaryo, sahadaki yeniden ölçüm

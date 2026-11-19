@@ -94,7 +94,9 @@ Excel “Önlem planı” sayfasında yeni sütunlar: Önce (ölçüm), Tahmini 
 
 ### Değerlendirme zinciri (Kasım 2026)
 
-Önlem kartında açılır “Değerlendirme zinciri”: **gözlenen** (önceki ölçüm ve tarihi) → **değerlendirme gerekçesi** (puanın hesabı, `primary(rec).m.bd`) → **önerilen iş düzenlemesi** (önlem başlığı ve ayrıntısı) → **yeniden değerlendirme** (bağlı sonraki ölçüm, iyileşme ve yeni hesap). Bağlı ölçüm varsa iki kayıt arasındaki girdi farkları “Sonucu değiştiren girdiler” başlığıyla listelenir: duruşta `postureDiff`, formlarda `formDiff` (Senaryo dene'deki fonksiyonların aynısı). Kod: `chainBlock(a)`.
+Önlem kartında açılır “Değerlendirme zinciri”: **gözlenen** (önceki ölçüm ve tarihi) → **değerlendirme gerekçesi** (puanın hesabı, `primary(rec).m.bd`) → **önerilen iş düzenlemesi** (önlem başlığı ve ayrıntısı) → **yeniden değerlendirme** (bağlı sonraki ölçüm, iyileşme ve yeni hesap). Bağlı ölçüm varsa iki kayıt arasındaki girdi farkları “Sonucu değiştiren girdiler” başlığıyla listelenir: duruşta `postureDiff`, formlarda `formDiff` (Senaryo dene'deki fonksiyonların aynısı). Kod: `chainBlock(a)`. Fark hesaplanamazsa “Girdi farkları hesaplanamadı” yazar; “fark yok” demez.
+
+**Aynı gün yeniden ölçüm:** Duruşta bir günün sonucu o gün o görevdeki karelerin en kötüsüdür (`postureDay`). Önlemin önceki ölçümü bu gruptan çıkarılır (`postureDay(tk, rec, a.rec)`); böylece önlem aynı gün uygulanıp yeniden ölçülürse sonucu önceki kare belirlemez. Kasım 2026'dan önce bu durumda iyileşme “aynı seviye” görünüyordu.
 
 ## 3. İki dil nasıl çalışıyor?
 
