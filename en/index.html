@@ -364,6 +364,11 @@ select{border:1px solid var(--line);border-radius:10px;padding:7px 9px;backgroun
 #fMini.on{display:flex}
 .pwarn{display:flex;flex-direction:column;gap:6px;margin-top:8px}
 .pwarn div{font-size:13px;background:#fff8e6;border:1px solid #f3e1b0;border-radius:10px;padding:7px 10px}
+.corr{margin-top:8px;font-size:13.5px;background:#eef6ff;border:1px solid #c7dcf5;border-radius:10px;padding:9px 11px}
+.corr ul{margin:4px 0 6px;padding-left:18px}.corr li.up b{color:#b42318}.corr li.down b{color:#14713f}
+.corr-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}.corr-cols small{font-weight:600;color:#475467}
+@media (max-width:560px){.corr-cols{grid-template-columns:1fr}}
+.corr .row{display:flex;gap:8px;margin-top:6px}
 .edge{display:inline-block;margin-left:6px;font-size:12px;font-weight:700;color:#92400e;background:#fef3c7;border-radius:6px;padding:1px 6px;vertical-align:middle}
 .unseen{font-size:13px;background:var(--acc2);border-radius:10px;padding:8px 10px;margin:0 0 8px}
 details.which{margin-top:8px;font-size:13.5px;border:1px solid var(--line);border-radius:10px;padding:6px 10px}
@@ -508,6 +513,7 @@ select.need{border-color:#dc2626;box-shadow:0 0 0 3px #dc262633}
       <div class="row" style="justify-content:center">
         <button class="primary" id="pickBtn">Choose a video or photo</button>
         <button id="sampleBtn">Try with a sample frame</button>
+        <button id="ambBtn" title="A frame where the hand is hidden behind a box: correct the point and see which angle and score change">Ambiguous point example</button>
         <button id="noImgBtn">No image: enter angles by hand</button>
       </div>
       <span class="muted">Drag and drop works too. The file stays on your device and is never uploaded.</span>
@@ -571,6 +577,7 @@ select.need{border-color:#dc2626;box-shadow:0 0 0 3px #dc262633}
         <canvas id="cv"></canvas>
         <div class="chips" id="chips"></div>
         <div class="muted" style="margin-top:6px">Drag a point to correct it. To re-place a specific point, select it below first.</div>
+        <div class="corr" id="corrDiff" role="status" aria-live="polite" hidden></div>
       </div>
       <div>
         <div class="strip" id="strip"></div>
@@ -2077,7 +2084,7 @@ async function scanVideo(){
 }
 $('#scanBtn').onclick=scanVideo;
 $('#noImgBtn').onclick=()=>startAnalysis(null,null,'no image');
-$('#sampleBtn').onclick=()=>{
+function ornekKare(belirsiz){
   const c=document.createElement('canvas'); c.width=960; c.height=640; const x=c.getContext('2d');
   const g=x.createLinearGradient(0,0,0,640); g.addColorStop(0,'#d9dee3'); g.addColorStop(1,'#b8c0c6'); x.fillStyle=g; x.fillRect(0,0,960,640);
   x.fillStyle='#8a7b66'; x.fillRect(0,560,960,80); x.fillStyle='#b0855a'; x.fillRect(640,470,130,90); x.strokeStyle='#7a5a3a'; x.lineWidth=3; x.strokeRect(640,470,130,90);
@@ -2086,8 +2093,19 @@ $('#sampleBtn').onclick=()=>{
   x.lineWidth=34; [['an','kn'],['kn','hip'],['hip','sh']].forEach(([a,b])=>{x.beginPath();x.moveTo(...P[a]);x.lineTo(...P[b]);x.stroke();});
   x.lineWidth=24; [['sh','el'],['el','wr'],['wr','hd']].forEach(([a,b])=>{x.beginPath();x.moveTo(...P[a]);x.lineTo(...P[b]);x.stroke();});
   x.fillStyle='#33414d'; x.beginPath(); x.arc(632,212,34,0,7); x.fill(); x.fillRect(410,545,70,18);
-  x.fillStyle='#55626c'; x.font='600 20px IBM Plex Sans, sans-serif'; x.fillText('Sample frame: worker reaching for a box',24,40);
-  startAnalysis(c.toDataURL('image/jpeg',.85),null,'sample');
+  // Belirsiz örnek: önde ikinci bir koli eli kapatıyor; bilek görünüyor, el (parmak kökü) yalnız tahmin edilebilir.
+  if(belirsiz){x.fillStyle='#c39563'; x.fillRect(640,472,160,88); x.strokeStyle='#7a5a3a'; x.lineWidth=3; x.strokeRect(640,472,160,88); x.strokeStyle='#9c7448'; x.lineWidth=2; x.beginPath(); x.moveTo(640,500); x.lineTo(800,500); x.stroke();}
+  x.fillStyle='#55626c'; x.font='600 20px IBM Plex Sans, sans-serif'; x.fillText(belirsiz?'Sample frame: hand behind the box':'Sample frame: worker reaching for a box',24,40);
+  return c.toDataURL('image/jpeg',.85);
+}
+$('#sampleBtn').onclick=()=>startAnalysis(ornekKare(false),null,'sample');
+// Tek karede belirsiz işaretleme: noktalar hazır, el noktası kolinin kenarına (görünen son yere) kondu. Kullanıcı eli
+// kolinin içinde tahmin ettiği yere sürükleyince #corrDiff hangi açının ve hangi puanın değiştiğini gösterir (dış inceleme, Kasım 2026).
+$('#ambBtn').onclick=()=>{
+  startAnalysis(ornekKare(true),null,'ambiguous sample');
+  cur.facing=1;
+  cur.points={ear:{x:628,y:214},sh:{x:560,y:260},el:{x:610,y:370},wr:{x:650,y:460},hd:{x:662,y:472},hip:{x:400,y:360},kn:{x:470,y:455},an:{x:430,y:555}};
+  setTimeout(()=>{updateAll(); toast('The hand is behind the box: the point was placed at the last visible spot. Drag the hand point to where you estimate it is inside the box and see which angle and score change.');},80);
 };
 
 const cv=$('#cv'), ctx=cv.getContext('2d'), buf=document.createElement('canvas'), bctx=buf.getContext('2d');
@@ -2100,7 +2118,7 @@ function startAnalysis(img,time,src){
 }
 function openCur(){
   delete SC.p;
-  activeKey=null; drag=null; $('#workCard').hidden=false;
+  activeKey=null; drag=null; $('#workCard').hidden=false; $('#corrDiff').hidden=true; corrLast=null;
   $('#workTime').textContent=cur.time!=null?('t = '+fmt(cur.time)):(cur.src||'photo');
   renderAllCtx(); $('#pNote').value=cur.note||''; $('#pSide').value=cur.side||'';
   $$('[data-adj]').forEach(el=>{const v=cur.adj[el.dataset.adj]; if(el.type==='checkbox')el.checked=!!v; else el.value=v;});
@@ -2166,10 +2184,33 @@ let raf=0; const reqDraw=()=>{if(!raf)raf=requestAnimationFrame(()=>{raf=0;draw(
 cv.addEventListener('pointerdown',e=>{
   if(!cur||!imgEl)return; const p=toCanvas(e);
   drag=activeKey||nearest(p)||nextMissing(); if(!drag)return;
+  // Var olan nokta taşınıyorsa düzeltme sayılır: önceki yer ve önceki sonuç saklanır, bırakınca fark gösterilir.
+  corr=cur.points[drag]?{k:drag,pt:{...cur.points[drag]},r:postureCompute(cur)}:null;
   cur.points[drag]=p; dragPos=p; cv.setPointerCapture(e.pointerId); e.preventDefault(); reqDraw(); updateScores();
 });
 cv.addEventListener('pointermove',e=>{if(!drag)return; const p=toCanvas(e); cur.points[drag]=p; dragPos=p; reqDraw(); updateScores();});
-const endDrag=()=>{if(!drag)return; drag=null; dragPos=null; activeKey=null; updateAll();};
+const endDrag=()=>{if(!drag)return; const k=drag; drag=null; dragPos=null; activeKey=null; updateAll(); if(corr&&corr.k===k)corrShow(corr,postureCompute(cur)); corr=null;};
+// Düzeltme farkı: taşınan nokta, değişen açılar (1°'den büyük) ve değişen puanlar; "Geri al" noktayı eski yerine koyar.
+let corr=null, corrLast=null;
+function corrDiff(c,after){
+  const a=[], sc=[];
+  ANG.forEach(d=>{const x=c.r.a[d.k], y=after.a[d.k]; if(x==null&&y==null)return; if(x==null||y==null||Math.abs(x-y)>=1)a.push({n:d.n,x,y,ov:cur.ov[d.k]!=null});});
+  ['reba','rula','owas'].forEach(k=>{const x=c.r[k], y=after[k]; if(x.txt!==y.txt)sc.push({m:k.toUpperCase(),x:x.txt,y:y.txt,nx:x.nm,ny:y.nm,up:y.lv>x.lv,down:y.lv<x.lv});});
+  return {k:c.k,a,sc,dist:Math.round(Math.hypot(cur.points[c.k].x-c.pt.x,cur.points[c.k].y-c.pt.y))};
+}
+function corrShow(c,after){
+  const d=corrDiff(c,after), el=$('#corrDiff'); corrLast=c;
+  const deg=v=>v==null?'—':Math.round(v)+'°';
+  const ang=d.a.length?'<ul>'+d.a.map(x=>'<li>'+esc(x.n)+': '+deg(x.x)+' → <b>'+deg(x.y)+'</b>'+(x.ov?' <span class="muted">(the manually entered value applies; not reflected in the score)</span>':'')+'</li>').join('')+'</ul>':'<div class="muted">Angles changed by less than 1°.</div>';
+  const sco=d.sc.length?'<ul>'+d.sc.map(x=>'<li class="'+(x.up?'up':x.down?'down':'')+'">'+x.m+': '+esc(x.x)+' → <b>'+esc(x.y)+'</b>'+(x.nx!==x.ny?' ('+esc(x.nx)+' → '+esc(x.ny)+')':'')+'</li>').join('')+'</ul>':'<div class="muted">REBA, RULA and OWAS scores did not change.</div>';
+  el.innerHTML='<b>'+esc(PC[d.k].n)+' point corrected</b> ('+d.dist+' px)'+
+    '<div class="corr-cols"><div><small>Changed angle</small>'+ang+'</div><div><small>Changed score</small>'+sco+'</div></div>'+
+    (d.sc.length?'<div class="muted">This point\'s position changes the result: zoom in, look at nearby frames or check the angle with a goniometer.</div>':'')+
+    '<div class="row"><button class="small" id="corrUndo">Undo</button><button class="small" id="corrClose">Close</button></div>';
+  el.hidden=false;
+  $('#corrUndo').onclick=()=>{if(!corrLast||!cur)return; cur.points[corrLast.k]={...corrLast.pt}; el.hidden=true; corrLast=null; updateAll();};
+  $('#corrClose').onclick=()=>{el.hidden=true;};
+}
 cv.addEventListener('pointerup',endDrag); cv.addEventListener('pointercancel',endDrag);
 
 function updateAll(){
