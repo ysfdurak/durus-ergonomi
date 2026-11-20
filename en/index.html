@@ -37,6 +37,10 @@ h1{margin:0;font-size:22px;letter-spacing:-.01em}
 header p{margin:0;color:var(--muted);font-size:13px}
 nav{display:flex;gap:4px;overflow-x:auto;margin-top:12px;padding-bottom:2px;scrollbar-width:none}
 nav::-webkit-scrollbar{display:none}
+/* Taşan sekme varsa o kenar soluklaşır: kaydırılabildiği belli olsun */
+nav.sag{-webkit-mask-image:linear-gradient(to right,#000 82%,transparent);mask-image:linear-gradient(to right,#000 82%,transparent)}
+nav.sol{-webkit-mask-image:linear-gradient(to left,#000 82%,transparent);mask-image:linear-gradient(to left,#000 82%,transparent)}
+nav.sol.sag{-webkit-mask-image:linear-gradient(to right,transparent,#000 18%,#000 82%,transparent);mask-image:linear-gradient(to right,transparent,#000 18%,#000 82%,transparent)}
 nav button{border:0;background:transparent;border-radius:10px;white-space:nowrap;color:var(--muted);font-weight:600;padding:8px 12px}
 nav button.on{background:var(--ink);color:#fff}
 main{max-width:1280px;margin:0 auto;padding:14px 12px 60px}
@@ -1796,11 +1800,15 @@ function updMini(){const m=document.getElementById('fMini'), fr=document.getElem
   m.innerHTML='<span><span class="n">'+(n?n.textContent:'')+'</span>'+(l?l.textContent:'')+'</span><span>Result ↑</span>';}
 const VIEWS=['home','guide','posture','tasks','field','stations','actions','help'];
 let view='home';
+// Sekme çubuğu taşıyorsa hangi kenarda devamı olduğunu soluklaştırarak göster.
+function navKenar(){const n=document.getElementById('nav'); if(!n)return; n.classList.toggle('sol',n.scrollLeft>2); n.classList.toggle('sag',n.scrollLeft+n.clientWidth<n.scrollWidth-2);}
+addEventListener('load',()=>{const n=document.getElementById('nav'); if(n){n.addEventListener('scroll',navKenar,{passive:true}); navKenar();} addEventListener('resize',navKenar);});
 function go(v,opt){
   if(v==='wizard'||v==='library')v='guide'; if(v==='records')v='stations'; if(!VIEWS.includes(v))v='home'; view=v;
   $$('[data-view]').forEach(s=>s.hidden=s.dataset.view!==v);
   $$('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.go===v));
   const nb=$('#nav button.on'); if(nb){const n=$('#nav'); n.scrollTo({left:nb.offsetLeft-n.clientWidth/2+nb.offsetWidth/2,behavior:'smooth'});}
+  navKenar();
   updMini();
   if(location.hash.slice(1)!==v){try{history.replaceState(null,'','#'+v);}catch(e){location.hash=v;}}
   if(v==='home')renderHome(); if(v==='guide')renderGuide(); if(v==='stations')renderStations(); if(v==='actions')renderActions(); if(v==='field')renderField(); if(v==='help')renderHelp(); if(v==='posture'||v==='tasks')renderAllCtx();
