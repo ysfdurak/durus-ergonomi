@@ -3477,7 +3477,8 @@ function pdfReport(stIds){
       defaultStyle:{font:'Roboto',fontSize:10,lineHeight:1.15},
       styles:{title:{fontSize:20,bold:true,color:'#1b1f1d'},sub:{fontSize:11,color:'#67706b'},h1:{fontSize:14,bold:true,color:'#0f6b5f'},h2:{fontSize:11.5,bold:true},th:{bold:true,color:'#ffffff',fontSize:8.5}},content};
     const name=`Durus_${stIds&&stIds.length===1?slug(sts[0].name):slug(site.name)}_rapor_${today()}.pdf`;
-    const buf=await new Promise(res=>pm.createPdf(doc).getBuffer(b=>res(b)));
+    // pdfmake 0.3+ getBuffer() Promise döndürür; 0.2 geri çağırma ister. İkisi de desteklenir.
+    const buf=await new Promise((res,rej)=>{const r=pm.createPdf(doc).getBuffer(b=>res(b)); if(r&&typeof r.then==='function') r.then(res,rej);});
     if(!DL){toast('Bu görünümde dosya indirme kullanılamıyor.');return;}
     try{await DL.save({filename:name,data:new Blob([buf])}); toast('PDF rapor hazır: '+name);}
     catch(e){const c=e&&e.code; toast(c==='declined'?'İndirme iptal edildi.':'PDF indirilemedi ('+(c||'hata')+').');}
