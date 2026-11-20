@@ -1811,13 +1811,13 @@ function startMethod(k){const g=LIBK[k].go; if(g[0]==='tasks')go('tasks',g[1]); 
    ===================================================================== */
 function itemCard(rec,actions=true){
   const rs=results(rec);
-  const badges=rs.filter(([,m])=>m.v!=null).map(([n,m])=>`<span class="badge" style="background:${LV[m.lv]}">${esc(n)} ${m.txt}</span>`).join('');
-  const img=rec.thumb?`<img src="${rec.thumb}" alt="">`:'';
+  const badges=rs.filter(([,m])=>m.v!=null).map(([n,m])=>`<span class="badge" style="background:${esc(LV[m.lv])}">${esc(n)} ${m.txt}</span>`).join('');
+  const img=rec.thumb?`<img src="${esc(rec.thumb)}" alt="">`:'';
   const when=rec.type==='posture'&&rec.time!=null?'t = '+fmt(rec.time):new Date(rec.created).toLocaleDateString('tr-TR');
   return `<div class="item">${img}<div class="meta"><div class="row" style="justify-content:space-between"><b style="font-size:14px">${esc(typeName(rec.type))}</b><span class="mono muted" style="font-size:12px">${when}</span></div>
     <div class="badges">${badges||'<span class="muted">Sonuç yok</span>'}</div>
     <div style="font-size:13px">${esc(rec.note)||'<span class="muted">Not yok</span>'}${rec.side?` <span class="muted">· ${rec.side==='sag'?'sağ taraf':'sol taraf'}</span>`:''}</div>
-    ${actions?`<div class="acts"><button data-open="${rec.id}">Aç</button>${rec.type==='posture'&&rec.time!=null?`<button data-seek="${rec.id}">Videoda git</button>`:''}<button class="xl" data-xl="${rec.id}">Excel</button><button class="danger" data-del="${rec.id}">Sil</button></div>`:`<div class="acts"><button data-open="${rec.id}">Aç</button></div>`}
+    ${actions?`<div class="acts"><button data-open="${esc(rec.id)}">Aç</button>${rec.type==='posture'&&rec.time!=null?`<button data-seek="${esc(rec.id)}">Videoda git</button>`:''}<button class="xl" data-xl="${esc(rec.id)}">Excel</button><button class="danger" data-del="${esc(rec.id)}">Sil</button></div>`:`<div class="acts"><button data-open="${esc(rec.id)}">Aç</button></div>`}
   </div></div>`;
 }
 function bindItemActions(root){
@@ -1834,7 +1834,7 @@ function dropRecord(id){const r=S.records.find(x=>x.id===id); S.records=S.record
 function statsHTML(recs){
   const all=recs.flatMap(r=>results(r).map(([,m])=>m)).filter(m=>m.v!=null);
   const hi=recs.filter(r=>results(r).some(([,m])=>m.lv>=3)).length;
-  return `<div class="stats"><div class="stat"><b>${recs.length}</b><span>kayıt</span></div><div class="stat"><b>${new Set(recs.map(r=>r.task)).size}</b><span>görev / istasyon</span></div><div class="stat"><b style="color:${hi?LV[3]:LV[1]}">${hi}</b><span>önlem gereken kayıt</span></div><div class="stat"><b>${new Set(recs.map(r=>r.type)).size}</b><span>kullanılan yöntem türü</span></div></div>`;
+  return `<div class="stats"><div class="stat"><b>${recs.length}</b><span>kayıt</span></div><div class="stat"><b>${new Set(recs.map(r=>r.task)).size}</b><span>görev / istasyon</span></div><div class="stat"><b style="color:${esc(hi?LV[3]:LV[1])}">${hi}</b><span>önlem gereken kayıt</span></div><div class="stat"><b>${new Set(recs.map(r=>r.type)).size}</b><span>kullanılan yöntem türü</span></div></div>`;
 }
 function renderHome(){
   const recs=[...S.records].sort((a,b)=>b.created.localeCompare(a.created));
@@ -1843,12 +1843,12 @@ function renderHome(){
   bindItemActions($('#homeRecent'));
   const desk=location.protocol==='app:', bk=S.lastBk?Math.floor((Date.now()-new Date(S.lastBk))/864e5):null, need=recs.length>=3&&(bk==null||bk>=14);
   const dn=$('#dataNote'); dn.classList.toggle('warn',need);
-  dn.innerHTML=`<span>🔒 <b>${desk?'Kayıtların yalnızca bu bilgisayarda saklanır':'Kayıtların yalnızca bu tarayıcıda saklanır'}</b>; hiçbir sunucuya gönderilmez. ${desk?'Bilgisayar değişirse ya da uygulama verisi silinirse kaybolur':'Tarayıcı verisi silinirse kaybolur'}, ara sıra yedek al.${recs.length?` <b>${bk==null?'Henüz yedek alınmadı.':bk===0?'Son yedek bugün alındı.':'Son yedek '+bk+' gün önce alındı.'}</b>`:''}</span><button class="small${need?' primary':''}" data-backup>Yedeği indir</button>`;
+  dn.innerHTML=`<span>🔒 <b>${desk?'Kayıtların yalnızca bu bilgisayarda saklanır':'Kayıtların yalnızca bu tarayıcıda saklanır'}</b>; hiçbir sunucuya gönderilmez. ${desk?'Bilgisayar değişirse ya da uygulama verisi silinirse kaybolur':'Tarayıcı verisi silinirse kaybolur'}, ara sıra yedek al.${recs.length?` <b>${bk==null?'Henüz yedek alınmadı.':bk===0?'Son yedek bugün alındı.':'Son yedek '+bk+' gün önce alındı.'}</b>`:''}</span><button class="small${esc(need?' primary':'')}" data-backup>Yedeği indir</button>`;
   const NX=[['bodyMap','Hangi vücut bölgesi zorlanıyor?','Görevlerin bölge profilini gör, aynı bölgeyi art arda zorlamayan iş rotasyonu planla.','İstasyonlar → Vücut bölgeleri'],
     ['scen','Bu önlem işe yarar mı?','Formda ya da duruş analizinde “Senaryo dene” ile değerleri değiştir, sonucu mevcut durumla karşılaştır.','Formlara git'],
     ['scan','Videonun tamamını taramak','Duruş analizinde “Videoyu tara” belirli aralıklarla kare alıp noktaları otomatik bulur; vardiyadaki riskli süre payını çıkarır.','Duruş analizine git'],
     ['roi','Yönetime ne sunarım?','Önlem planını, maliyet ve geri ödeme hesabını ve PDF raporu hazırla.','Önlemlere git']];
-  $('#homeNext').innerHTML=recs.length?`<div class="card"><h2>Değerlendirmeden sonra</h2><div class="actions nextgrid">${NX.map(([k,t,d,go])=>`<button class="action" data-next="${k}"><b>${t}</b><span>${d}</span><em>${go} →</em></button>`).join('')}</div></div>`:'';
+  $('#homeNext').innerHTML=recs.length?`<div class="card"><h2>Değerlendirmeden sonra</h2><div class="actions nextgrid">${NX.map(([k,t,d,go])=>`<button class="action" data-next="${esc(k)}"><b>${t}</b><span>${d}</span><em>${go} →</em></button>`).join('')}</div></div>`:'';
   $$('#homeNext [data-next]').forEach(b=>b.onclick=()=>{const k=b.dataset.next;
     if(k==='bodyMap'){go('stations'); setTimeout(()=>$('#bodyMap').scrollIntoView({behavior:'smooth',block:'start'}),60);}
     else if(k==='scen'){go('tasks'); setTimeout(()=>{const x=$('#fScenTop'); if(x)x.scrollIntoView({behavior:'smooth',block:'center'});},60);}
@@ -1888,7 +1888,7 @@ const META={
 };
 LIB.forEach(L=>Object.assign(L,META[L.k]||{}));
 const LVL_C={'Tarama':'#2563eb','Ayrıntılı':'#0f6b5f','Hesaplayıcı':'#7c3aed','Ölçüm':'#0e7490','Anket':'#b45309','Eski sürüm':'#64748b'};
-const lvlBadge=l=>`<span class="lvl" style="background:${LVL_C[l]||'#64748b'}">${l}</span>`;
+const lvlBadge=l=>`<span class="lvl" style="background:${esc(LVL_C[l]||'#64748b')}">${l}</span>`;
 
 const CORE=new Set(['reba','rula','owas','qec','niosh','cli','kim19','kimpp','lmm','ocra','rosa','nmq']);
 const visM=k=>CORE.has(k)||S.adv;
@@ -1926,27 +1926,27 @@ const AREAS=[
 S.guide=S.guide||{ans:{},path:{}};
 function walk(a){const path=S.guide.path[a.k]||[]; let n=a.tree; const steps=[]; for(const i of path){ if(!n||!n.o||!n.o[i])break; steps.push({n,i}); n=n.o[i][1]; } return {steps,cur:n};}
 function recHTML(r,ak){const L=LIBK[r.rec];
-  return `<div class="grec"><div class="row" style="justify-content:space-between;align-items:flex-start"><div><span class="muted" style="font-size:12px">Önerilen yöntem</span><div style="font-size:18px;font-weight:700">${L.n} ${lvlBadge(L.lvl)}</div><div style="margin-top:4px">${r.why}</div></div><div class="row"><button class="small" data-card="${L.k}">Yöntem kartı</button><button class="primary small" data-start="${L.k}">Başlat</button></div></div>
+  return `<div class="grec"><div class="row" style="justify-content:space-between;align-items:flex-start"><div><span class="muted" style="font-size:12px">Önerilen yöntem</span><div style="font-size:18px;font-weight:700">${L.n} ${lvlBadge(L.lvl)}</div><div style="margin-top:4px">${r.why}</div></div><div class="row"><button class="small" data-card="${esc(L.k)}">Yöntem kartı</button><button class="primary small" data-start="${esc(L.k)}">Başlat</button></div></div>
   <div class="muted" style="margin-top:6px">Gereken: ${L.tools} · Süre: ${L.time}</div>
   ${r.note?`<div class="gnote">${r.note}</div>`:''}
-  ${(()=>{const al=(r.alt||[]).filter(([k])=>visM(k)); return al.length?`<div class="galt"><b>Ne zaman başka yöntem?</b>${al.map(([k,w])=>`<div><button class="linkbtn" data-card="${k}">${LIBK[k].n}</button>${CORE.has(k)?'':' <span class="lvl" style="background:#64748b">İleri düzey</span>'} — ${w}</div>`).join('')}</div>`:'';})()}</div>`;}
+  ${(()=>{const al=(r.alt||[]).filter(([k])=>visM(k)); return al.length?`<div class="galt"><b>Ne zaman başka yöntem?</b>${al.map(([k,w])=>`<div><button class="linkbtn" data-card="${esc(k)}">${LIBK[k].n}</button>${CORE.has(k)?'':' <span class="lvl" style="background:#64748b">İleri düzey</span>'} — ${w}</div>`).join('')}</div>`:'';})()}</div>`;}
 function areaHTML(a,idx){
   const ans=S.guide.ans[a.k];
   let body='';
   if(a.multi&&!S.adv) return `<div class="garea off"><div class="ghd"><span class="gnum">${idx+1}</span><b>${a.n}</b></div><div class="muted" style="margin-top:4px">Gürültü, titreşim, ısı ve aydınlatma çoğunlukla akredite ölçüm raporlarıyla değerlendirilir. Hesaplayıcıları görmek için <button class="linkbtn" data-advon="1">ileri düzey yöntemleri aç</button>.</div></div>`;
   if(a.multi){
-    body=a.multi.map(([k,q,why])=>{const v=S.guide.ans['env_'+k]; return `<div class="envq"><div class="row" style="justify-content:space-between;flex-wrap:nowrap;gap:10px"><span>${q}</span>${ynBtns('env_'+k,v)}</div>${v==='yes'?`<div class="envrec">→ <b>${LIBK[k].n}</b> ${lvlBadge(LIBK[k].lvl)} · ${why} <button class="linkbtn" data-card="${k}">Kart</button> <button class="primary small" data-start="${k}">Başlat</button></div>`:''}</div>`;}).join('');
-    return `<div class="garea${a.multi.some(([k])=>S.guide.ans['env_'+k]==='yes')?' on':''}"><div class="ghd"><span class="gnum">${idx+1}</span><b>${a.n}</b></div>${body}</div>`;
+    body=a.multi.map(([k,q,why])=>{const v=S.guide.ans['env_'+k]; return `<div class="envq"><div class="row" style="justify-content:space-between;flex-wrap:nowrap;gap:10px"><span>${q}</span>${ynBtns('env_'+k,v)}</div>${v==='yes'?`<div class="envrec">→ <b>${LIBK[k].n}</b> ${lvlBadge(LIBK[k].lvl)} · ${why} <button class="linkbtn" data-card="${esc(k)}">Kart</button> <button class="primary small" data-start="${esc(k)}">Başlat</button></div>`:''}</div>`;}).join('');
+    return `<div class="garea${esc(a.multi.some(([k])=>S.guide.ans['env_'+k]==='yes')?' on':'')}"><div class="ghd"><span class="gnum">${idx+1}</span><b>${a.n}</b></div>${body}</div>`;
   }
   if(ans==='yes'){
     const {steps,cur}=walk(a);
-    body=steps.map(({n,i},d)=>`<div class="gstep done"><span class="muted">${n.q}</span> <button class="chipsel" data-gback="${a.k}" data-depth="${d}">${n.o[i][0]} ✎</button></div>`).join('');
-    if(cur&&cur.o) body+=`<div class="gstep"><b>${cur.q}</b><div class="gopts">${cur.o.map((o,i)=>`<button data-gpick="${a.k}" data-i="${i}">${o[0]}</button>`).join('')}</div></div>`;
+    body=steps.map(({n,i},d)=>`<div class="gstep done"><span class="muted">${n.q}</span> <button class="chipsel" data-gback="${esc(a.k)}" data-depth="${esc(d)}">${n.o[i][0]} ✎</button></div>`).join('');
+    if(cur&&cur.o) body+=`<div class="gstep"><b>${cur.q}</b><div class="gopts">${cur.o.map((o,i)=>`<button data-gpick="${esc(a.k)}" data-i="${esc(i)}">${o[0]}</button>`).join('')}</div></div>`;
     else if(cur&&cur.rec) body+=recHTML(cur,a.k);
   } else if(ans==='no') body='<div class="muted">Bu alan için değerlendirme gerekmiyor.</div>';
-  return `<div class="garea${ans==='yes'?' on':ans==='no'?' off':''}"><div class="ghd"><span class="gnum">${idx+1}</span><b>${a.n}</b></div><div class="row" style="justify-content:space-between;flex-wrap:nowrap;gap:10px;margin:6px 0 4px"><span>${a.q}</span>${ynBtns(a.k,ans)}</div>${body}</div>`;
+  return `<div class="garea${esc(ans==='yes'?' on':ans==='no'?' off':'')}"><div class="ghd"><span class="gnum">${idx+1}</span><b>${a.n}</b></div><div class="row" style="justify-content:space-between;flex-wrap:nowrap;gap:10px;margin:6px 0 4px"><span>${a.q}</span>${ynBtns(a.k,ans)}</div>${body}</div>`;
 }
-const ynBtns=(k,v)=>`<span class="yn2"><button data-gans="${k}" data-v="yes" class="${v==='yes'?'on':''}">Evet</button><button data-gans="${k}" data-v="no" class="${v==='no'?'on':''}">Hayır</button></span>`;
+const ynBtns=(k,v)=>`<span class="yn2"><button data-gans="${esc(k)}" data-v="yes" class="${esc(v==='yes'?'on':'')}">Evet</button><button data-gans="${esc(k)}" data-v="no" class="${esc(v==='no'?'on':'')}">Hayır</button></span>`;
 function planList(){
   const out=[];
   AREAS.forEach(a=>{
@@ -1958,10 +1958,10 @@ function planList(){
 function renderGuide(){
   $('#gAreas').innerHTML=AREAS.map(areaHTML).join('');
   const pl=planList(), answered=AREAS.filter(a=>a.multi?a.multi.some(([k])=>S.guide.ans['env_'+k]):S.guide.ans[a.k]).length;
-  $('#gPlan').innerHTML=pl.length?`<ol class="plan">${pl.map((p,i)=>`<li><div class="row" style="justify-content:space-between"><span><b>${LIBK[p.k].n}</b> <span class="muted">· ${p.area}</span> ${lvlBadge(LIBK[p.k].lvl)}</span><span class="row"><button class="small" data-card="${p.k}">Kart</button><button class="primary small" data-start="${p.k}">Başlat</button></span></div></li>`).join('')}</ol><p class="muted" style="margin:8px 0 0">Hepsini aynı görev adıyla kaydet; Kayıtlar sayfasında birlikte görünür ve tek Excel raporunda toplanır.</p>`
+  $('#gPlan').innerHTML=pl.length?`<ol class="plan">${pl.map((p,i)=>`<li><div class="row" style="justify-content:space-between"><span><b>${LIBK[p.k].n}</b> <span class="muted">· ${p.area}</span> ${lvlBadge(LIBK[p.k].lvl)}</span><span class="row"><button class="small" data-card="${esc(p.k)}">Kart</button><button class="primary small" data-start="${esc(p.k)}">Başlat</button></span></div></li>`).join('')}</ol><p class="muted" style="margin:8px 0 0">Hepsini aynı görev adıyla kaydet; Kayıtlar sayfasında birlikte görünür ve tek Excel raporunda toplanır.</p>`
     :`<div class="muted">${answered?'Evet dediğin alanlarda soruları tamamladıkça önerilen yöntemler burada listelenir.':'Yukarıdaki anahtar soruları yanıtladıkça değerlendirme planın burada oluşur.'}</div>`;
   $('#gTable').innerHTML=CATS.map(c=>{const ls=LIB.filter(L=>L.cat===c&&visM(L.k)).sort((x,y)=>(x.lvl==='Eski sürüm')-(y.lvl==='Eski sürüm')); if(!ls.length)return '';
-    return `<h3 class="libcat">${c}</h3><div class="tblwrap"><table class="cmp"><thead><tr><th>Yöntem</th><th>Düzey</th><th>Ne zaman</th><th>Gereken</th><th>Süre</th></tr></thead><tbody>${ls.map(L=>`<tr class="${L.lvl==='Eski sürüm'?'old':''}"><td><button class="linkbtn" data-card="${L.k}"><b>${L.n}</b></button></td><td>${lvlBadge(L.lvl)}</td><td>${L.when}</td><td>${L.tools}</td><td style="white-space:nowrap">${L.time}</td></tr>`).join('')}</tbody></table></div>`;}).join('');
+    return `<h3 class="libcat">${c}</h3><div class="tblwrap"><table class="cmp"><thead><tr><th>Yöntem</th><th>Düzey</th><th>Ne zaman</th><th>Gereken</th><th>Süre</th></tr></thead><tbody>${ls.map(L=>`<tr class="${esc(L.lvl==='Eski sürüm'?'old':'')}"><td><button class="linkbtn" data-card="${esc(L.k)}"><b>${L.n}</b></button></td><td>${lvlBadge(L.lvl)}</td><td>${L.when}</td><td>${L.tools}</td><td style="white-space:nowrap">${L.time}</td></tr>`).join('')}</tbody></table></div>`;}).join('');
   $('#gAdv').textContent=S.adv?'İleri düzey yöntemleri gizle':'İleri düzey yöntemleri de göster (12)';
   bindGuide($('[data-view="guide"]'));
 }
@@ -1984,10 +1984,10 @@ function openCard(k){
     <div><h3>Ne zaman kullanma</h3><p>${L.not}</p></div>
   </div>
   <h3>Nasıl uygulanır</h3><ol class="csteps">${(L.steps||[]).map(s=>`<li>${s}</li>`).join('')}</ol>
-  <h3>Sonucu okuma</h3><div class="scale">${L.scale.map(([t,l])=>`<span style="background:${LV[l]}">${t}</span>`).join('')}</div>
-  <h3>Benzerlerinden farkı</h3><p>${L.vs}</p>${(L.sim||[]).length?`<div class="row" style="gap:6px">${L.sim.map(s=>`<button class="small" data-card="${s}">${LIBK[s].n}</button>`).join('')}</div>`:''}
+  <h3>Sonucu okuma</h3><div class="scale">${L.scale.map(([t,l])=>`<span style="background:${esc(LV[l])}">${t}</span>`).join('')}</div>
+  <h3>Benzerlerinden farkı</h3><p>${L.vs}</p>${(L.sim||[]).length?`<div class="row" style="gap:6px">${L.sim.map(s=>`<button class="small" data-card="${esc(s)}">${LIBK[s].n}</button>`).join('')}</div>`:''}
   <h3>Sınırı</h3><p>${L.lim}</p>
-  <div class="row" style="justify-content:flex-end;margin-top:14px"><button class="primary" data-start="${L.k}">${L.n} ile başla</button></div>`;
+  <div class="row" style="justify-content:flex-end;margin-top:14px"><button class="primary" data-start="${esc(L.k)}">${L.n} ile başla</button></div>`;
   $('#cardDlg').hidden=false; $('#cardX').onclick=closeCard; $('#cardDlg').querySelector('.dlgin').scrollTop=0;
 }
 function closeCard(){$('#cardDlg').hidden=true;}
@@ -2049,7 +2049,7 @@ async function scanVideo(){
   const th=document.createElement('canvas'); th.width=160; th.height=Math.round(c.height*160/c.width); const tg=th.getContext('2d');
   const scanId=uid(), base=Date.now(), made=[]; let miss=0; scanStop=false; vid.pause();
   const btn=$('#scanBtn'), pr=$('#scanProg'); btn.disabled=true;
-  const show=i=>{pr.innerHTML=`<div class="sbar" style="margin-top:8px"><i style="width:${Math.round(i/times.length*100)}%;background:var(--acc)"></i></div><div class="row" style="justify-content:space-between;margin-top:4px;font-size:13px"><span>${i} / ${times.length} kare · ${made.length} kayıt${miss?` · ${miss} karede kişi bulunamadı`:''}</span><button class="small ghost" id="scanCancel">Durdur</button></div>`; $('#scanCancel').onclick=()=>{scanStop=true;};};
+  const show=i=>{pr.innerHTML=`<div class="sbar" style="margin-top:8px"><i style="width:${esc(Math.round(i/times.length*100))}%;background:var(--acc)"></i></div><div class="row" style="justify-content:space-between;margin-top:4px;font-size:13px"><span>${i} / ${times.length} kare · ${made.length} kayıt${miss?` · ${miss} karede kişi bulunamadı`:''}</span><button class="small ghost" id="scanCancel">Durdur</button></div>`; $('#scanCancel').onclick=()=>{scanStop=true;};};
   show(0);
   try{
     for(let i=0;i<times.length&&!scanStop;i++){
@@ -2226,7 +2226,7 @@ function resultHTML(m,miss){
   return '<div class="big"><span class="num">'+m.txt+'</span><div><div class="lvl">'+m.nm+'</div><div class="act">'+m.ac+'</div></div></div>'+
     (m.bd?'<div class="bd">'+m.bd+'</div>':'')+(miss&&miss.length?'<div class="warn">Eksik açı: '+miss.join(', ')+'. Nötr sayıldı; skor olduğundan düşük çıkabilir.</div>':'');
 }
-function tipsHTML(t,empty,src){return t.length?'<b>Ne yapılabilir?</b><ul>'+t.map(([h,x],i)=>'<li><b>'+esc(h)+':</b> '+esc(x)+(src?` <button class="small tipbtn" data-tipact="${i}" data-src="${src}">+ Önlem</button>`:'')+'</li>').join('')+'</ul>'+(src?'':'<div class="muted" style="font-size:12.5px">Kaydettikten sonra her öneriden önlem oluşturabilirsin.</div>'):'<b>Ne yapılabilir?</b><div class="muted" style="margin-top:4px">'+empty+'</div>';}
+function tipsHTML(t,empty,src){return t.length?'<b>Ne yapılabilir?</b><ul>'+t.map(([h,x],i)=>'<li><b>'+esc(h)+':</b> '+esc(x)+(src?` <button class="small tipbtn" data-tipact="${esc(i)}" data-src="${esc(src)}">+ Önlem</button>`:'')+'</li>').join('')+'</ul>'+(src?'':'<div class="muted" style="font-size:12.5px">Kaydettikten sonra her öneriden önlem oluşturabilirsin.</div>'):'<b>Ne yapılabilir?</b><div class="muted" style="margin-top:4px">'+empty+'</div>';}
 function updateScores(){
   if(!cur)return; const r=postureCompute(cur);
   ANG.forEach(d=>{const inp=$('[data-ang="'+d.k+'"]'), au=r.au[d.k]; inp.placeholder=au!=null?Math.round(au)+'°':'—'; inp.classList.toggle('ov',cur.ov[d.k]!=null);
@@ -2289,7 +2289,7 @@ const defaults=k=>JSON.parse(JSON.stringify(Object.fromEntries(FORMS[k].fields.f
 const fdraft={}, fedit={};
 Object.keys(FORMS).forEach(k=>{fdraft[k]=defaults(k); fedit[k]=null;});
 function buildFtabs(){
-  const chip=k=>{const F=FORMS[k], old=LIBK[k]&&LIBK[k].lvl==='Eski sürüm'; return `<button data-ftab="${k}" class="${old?'old':''}">${F.n.replace(/ \((2001)\)$/,'')}${old?'<small>eski</small>':''}</button>`;};
+  const chip=k=>{const F=FORMS[k], old=LIBK[k]&&LIBK[k].lvl==='Eski sürüm'; return `<button data-ftab="${esc(k)}" class="${esc(old?'old':'')}">${F.n.replace(/ \((2001)\)$/,'')}${old?'<small>eski</small>':''}</button>`;};
   const advKs=Object.keys(FORMS).filter(k=>!CORE.has(k));
   const oldLast=(a,b)=>(LIBK[a]&&LIBK[a].lvl==='Eski sürüm')-(LIBK[b]&&LIBK[b].lvl==='Eski sürüm');
   const core=`<div class="fgroup"><span>Duruş (video)</span><div class="fchips"><button data-go="posture">REBA · RULA · OWAS → Duruş analizi</button></div></div>`+FG.map(g=>{const ORD=['qec','niosh','kim19','kimpp','lmm','ocra','rosa','nmq'], ks=Object.keys(FORMS).filter(k=>FORMS[k].g===g&&CORE.has(k)&&k!=='cli').sort((x,y)=>ORD.indexOf(x)-ORD.indexOf(y)); return ks.length?`<div class="fgroup"><span>${g}</span><div class="fchips">${ks.map(chip).join('')}</div></div>`:'';}).join('');
@@ -2304,23 +2304,23 @@ function fieldHTML(f,d){
   if(f.sec)return `<div class="fsec">${f.sec}</div>`;
   if(f.show&&!f.show(d))return '';
   const help=f.h?`<div class="help">${f.h}</div>`:'';
-  if(f.t==='num')return `<div class="fld"><label class="lab"><span>${f.l}</span><span><input type="number" min="${f.min??0}" step="${f.step||'any'}" data-ff="${f.id}" value="${esc(d[f.id])}" inputmode="decimal"><span class="unit">${f.u||''}</span>${f.u==='cm'?`<button class="small mzf" data-fmz="${f.id}" title="Görüntüden ölç" aria-label="${esc(f.l)}: görüntüden ölç">📏</button>`:''}</span></label>${help}</div>`;
-  if(f.t==='sel')return `<div class="fld"><div class="lab">${f.l}</div><select data-ff="${f.id}">${f.o.map(([v,l])=>`<option value="${v}"${String(d[f.id])===v?' selected':''}>${l}</option>`).join('')}</select>${help}</div>`;
-  if(f.t==='chk')return `<div class="fld"><label class="lab" style="justify-content:flex-start;gap:10px;font-weight:500;cursor:pointer"><input type="checkbox" data-fc="${f.id}" ${d[f.id]?'checked':''} style="width:18px;height:18px;accent-color:var(--acc);flex:none">${f.l}</label>${help}</div>`;
-  if(f.t==='yn')return `<div class="fld"><div class="lab"><span style="font-weight:500">${f.l}</span><span class="yn" data-yn="${f.id}">${[['1','Evet'],['0','Hayır'],['-','—']].map(([v,l])=>`<button data-v="${v}" class="${d[f.id]===v?'on':''}" title="${v==='-'?'Uygulanmaz':l}">${l}</button>`).join('')}</span></div></div>`;
+  if(f.t==='num')return `<div class="fld"><label class="lab"><span>${f.l}</span><span><input type="number" min="${esc(f.min??0)}" step="${esc(f.step||'any')}" data-ff="${esc(f.id)}" value="${esc(d[f.id])}" inputmode="decimal"><span class="unit">${f.u||''}</span>${f.u==='cm'?`<button class="small mzf" data-fmz="${esc(f.id)}" title="Görüntüden ölç" aria-label="${esc(f.l)}: görüntüden ölç">📏</button>`:''}</span></label>${help}</div>`;
+  if(f.t==='sel')return `<div class="fld"><div class="lab">${f.l}</div><select data-ff="${esc(f.id)}">${f.o.map(([v,l])=>`<option value="${esc(v)}"${String(d[f.id])===v?' selected':''}>${l}</option>`).join('')}</select>${help}</div>`;
+  if(f.t==='chk')return `<div class="fld"><label class="lab" style="justify-content:flex-start;gap:10px;font-weight:500;cursor:pointer"><input type="checkbox" data-fc="${esc(f.id)}" ${d[f.id]?'checked':''} style="width:18px;height:18px;accent-color:var(--acc);flex:none">${f.l}</label>${help}</div>`;
+  if(f.t==='yn')return `<div class="fld"><div class="lab"><span style="font-weight:500">${f.l}</span><span class="yn" data-yn="${esc(f.id)}">${[['1','Evet'],['0','Hayır'],['-','—']].map(([v,l])=>`<button data-v="${esc(v)}" class="${esc(d[f.id]===v?'on':'')}" title="${esc(v==='-'?'Uygulanmaz':l)}">${l}</button>`).join('')}</span></div></div>`;
   if(f.t==='rows'){const rows=d[f.id]||[];
-    return `<div class="fld"><div class="lab">${f.l}</div>${help}<div class="rows">${rows.map((r,i)=>`<div class="rowc"><div class="rowh"><b>${f.rl||'Satır'} ${i+1}</b>${rows.length>(f.min||1)?`<button class="small ghost danger" data-rdel="${f.id}.${i}">Kaldır</button>`:''}</div><div class="rgrid">${f.cols.map(c=>c.t==='sel'
-      ?`<label>${c.l}<select data-rf="${f.id}.${i}.${c.id}">${c.o.map(([v,l])=>`<option value="${v}"${String(r[c.id])===v?' selected':''}>${l}</option>`).join('')}</select></label>`
-      :`<label><span>${c.l}${c.u?` <span class="unit">${c.u}</span>`:''}</span><input type="number" min="0" step="${c.step||'any'}" inputmode="decimal" data-rf="${f.id}.${i}.${c.id}" value="${esc(r[c.id])}"></label>`).join('')}</div></div>`).join('')}</div>${rows.length<(f.max||8)?`<button class="small" data-radd="${f.id}" style="margin-top:8px">+ ${f.rl||'Satır'} ekle</button>`:''}</div>`;}
+    return `<div class="fld"><div class="lab">${f.l}</div>${help}<div class="rows">${rows.map((r,i)=>`<div class="rowc"><div class="rowh"><b>${f.rl||'Satır'} ${i+1}</b>${rows.length>(f.min||1)?`<button class="small ghost danger" data-rdel="${esc(f.id)}.${i}">Kaldır</button>`:''}</div><div class="rgrid">${f.cols.map(c=>c.t==='sel'
+      ?`<label>${c.l}<select data-rf="${esc(f.id)}.${i}.${c.id}">${c.o.map(([v,l])=>`<option value="${esc(v)}"${String(r[c.id])===v?' selected':''}>${l}</option>`).join('')}</select></label>`
+      :`<label><span>${c.l}${c.u?` <span class="unit">${c.u}</span>`:''}</span><input type="number" min="0" step="${esc(c.step||'any')}" inputmode="decimal" data-rf="${esc(f.id)}.${i}.${c.id}" value="${esc(r[c.id])}"></label>`).join('')}</div></div>`).join('')}</div>${rows.length<(f.max||8)?`<button class="small" data-radd="${esc(f.id)}" style="margin-top:8px">+ ${f.rl||'Satır'} ekle</button>`:''}</div>`;}
   if(f.t==='grid'){const g=d[f.id]||{};
-    return `<div class="fld" style="overflow-x:auto"><table class="grid"><thead><tr><th></th>${f.cols.map(([,l])=>`<th>${l}</th>`).join('')}</tr></thead><tbody>${f.rows.map(([r,l])=>`<tr><td>${l}</td>${f.cols.map(([c])=>`<td><input type="checkbox" data-gf="${f.id}.${r}.${c}" ${g[r]&&g[r][c]?'checked':''} aria-label="${l}"></td>`).join('')}</tr>`).join('')}</tbody></table>${help}</div>`;}
+    return `<div class="fld" style="overflow-x:auto"><table class="grid"><thead><tr><th></th>${f.cols.map(([,l])=>`<th>${l}</th>`).join('')}</tr></thead><tbody>${f.rows.map(([r,l])=>`<tr><td>${l}</td>${f.cols.map(([c])=>`<td><input type="checkbox" data-gf="${esc(f.id)}.${r}.${c}" ${g[r]&&g[r][c]?'checked':''} aria-label="${esc(l)}"></td>`).join('')}</tr>`).join('')}</tbody></table>${help}</div>`;}
   return '';
 }
 function renderForm(){
   const k=S.ftab, F=FORMS[k], d=fdraft[k];
   $$('#ftabs button[data-ftab]').forEach(b=>b.classList.toggle('on',b.dataset.ftab===k||(k==='cli'&&b.dataset.ftab==='niosh')));
   $('#fIntro').textContent=F.intro;
-  { const L=LIBK[k]; $('#fMeta').innerHTML=(k==='niosh'||k==='cli'?`<div class="seg" style="margin-bottom:4px"><button data-mode="niosh" class="${k==='niosh'?'on':''}">Tek tip kaldırma</button><button data-mode="cli" class="${k==='cli'?'on':''}">Farklı yükler / yükseklikler (çok görevli)</button></div><div style="width:100%"></div>`:'')+(L?`${lvlBadge(L.lvl)} <span class="muted">${L.time} · ${L.tools}</span> <button class="small" data-card="${k}">Yöntem kartı</button>`+(L.lvl==='Eski sürüm'?`<div class="gnote" style="width:100%">Eski sürüm: yeni değerlendirmelerde ${L.sim.map(x=>LIBK[x].n).join(', ')} önerilir.</div>`:'')+(L.sim&&L.sim.length?`<div class="muted" style="width:100%">Benzerleri: ${L.sim.map(x=>`<button class="linkbtn" data-card="${x}">${LIBK[x].n}</button>`).join(' · ')}</div>`:''):''); $$('#fMeta [data-mode]').forEach(b=>b.onclick=()=>setFtab(b.dataset.mode)); }
+  { const L=LIBK[k]; $('#fMeta').innerHTML=(k==='niosh'||k==='cli'?`<div class="seg" style="margin-bottom:4px"><button data-mode="niosh" class="${esc(k==='niosh'?'on':'')}">Tek tip kaldırma</button><button data-mode="cli" class="${esc(k==='cli'?'on':'')}">Farklı yükler / yükseklikler (çok görevli)</button></div><div style="width:100%"></div>`:'')+(L?`${lvlBadge(L.lvl)} <span class="muted">${L.time} · ${L.tools}</span> <button class="small" data-card="${esc(k)}">Yöntem kartı</button>`+(L.lvl==='Eski sürüm'?`<div class="gnote" style="width:100%">Eski sürüm: yeni değerlendirmelerde ${L.sim.map(x=>LIBK[x].n).join(', ')} önerilir.</div>`:'')+(L.sim&&L.sim.length?`<div class="muted" style="width:100%">Benzerleri: ${L.sim.map(x=>`<button class="linkbtn" data-card="${esc(x)}">${LIBK[x].n}</button>`).join(' · ')}</div>`:''):''); $$('#fMeta [data-mode]').forEach(b=>b.onclick=()=>setFtab(b.dataset.mode)); }
   $('#fFields').innerHTML=F.fields.map(f=>fieldHTML(f,d)).join('');
   $$('[data-ff]').forEach(el=>el.addEventListener(el.tagName==='SELECT'?'change':'input',()=>{
     d[el.dataset.ff]=el.value; const f=F.fields.find(x=>x.id===el.dataset.ff); if(f.re)renderForm(); else updateForm();}));
@@ -2370,7 +2370,7 @@ function nmqSummary(rs){
   const n=rs.filter(r=>r.type==='nmq'); if(!n.length)return '';
   const N=n.length, has=(r,k,c)=>r.data&&r.data.g&&r.data.g[k]&&r.data.g[k][c];
   const rows=REG.map(([k,l])=>({l,y:n.filter(r=>has(r,k,'y12')||has(r,k,'d7')||has(r,k,'blk')).length,s:n.filter(r=>has(r,k,'d7')).length})).filter(x=>x.y).sort((a,b)=>b.y-a.y);
-  return `<div class="nmqsum"><b>Nordik anketi özeti</b> <span class="muted">· ${N} çalışan · son 12 ayda şikâyet bildirenler</span>${rows.length?rows.map(x=>`<div class="nbar"><span>${x.l}</span><div class="bar"><i style="width:${x.y/N*100}%"></i></div><span class="mono">${x.y}/${N}${x.s?` · 7 gün: ${x.s}`:''}</span></div>`).join(''):'<div class="muted" style="margin-top:4px">Şikâyet bildirilmedi.</div>'}</div>`;
+  return `<div class="nmqsum"><b>Nordik anketi özeti</b> <span class="muted">· ${N} çalışan · son 12 ayda şikâyet bildirenler</span>${rows.length?rows.map(x=>`<div class="nbar"><span>${x.l}</span><div class="bar"><i style="width:${esc(x.y/N*100)}%"></i></div><span class="mono">${x.y}/${N}${x.s?` · 7 gün: ${x.s}`:''}</span></div>`).join(''):'<div class="muted" style="margin-top:4px">Şikâyet bildirilmedi.</div>'}</div>`;
 }
 function renderChart(el,recs,M){
   const pts=recs.map(r=>{const m=postureCompute(r)[M]; return {t:r.time,s:m.v,txt:m.txt,lv:m.lv,id:r.id};}).sort((a,b)=>a.t-b.t);
@@ -2379,12 +2379,12 @@ function renderChart(el,recs,M){
     owas:{lo:1,hi:4,ticks:[1,2,3,4],bands:[[.5,1.5,1],[1.5,2.5,2],[2.5,3.5,3],[3.5,4.5,4]]}}[M];
   const W=640,H=200,l=34,r=12,t=10,bt=26, t0=pts[0].t, t1=pts[pts.length-1].t, sp=(t1-t0)||1, pad=.5;
   const X=v=>l+(v-t0)/sp*(W-l-r), Y=v=>t+(cfg.hi+pad-v)/(cfg.hi-cfg.lo+2*pad)*(H-t-bt);
-  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Zamana göre ${M.toUpperCase()}">`;
-  cfg.bands.forEach(([a,b,lv])=>{s+=`<rect x="${l}" y="${Y(b)}" width="${W-l-r}" height="${Y(a)-Y(b)}" fill="${LV[lv]}" opacity=".09"/>`;});
-  cfg.ticks.forEach(v=>{s+=`<text x="${l-8}" y="${Y(v)+4}" font-size="11" text-anchor="end" fill="#596159">${v}</text><line x1="${l}" x2="${W-r}" y1="${Y(v)}" y2="${Y(v)}" stroke="#e2e5e0"/>`;});
-  s+=`<text x="${l}" y="${H-6}" font-size="11" fill="#596159">${fmt(t0)}</text><text x="${W-r}" y="${H-6}" font-size="11" text-anchor="end" fill="#596159">${fmt(t1)}</text><text x="${W/2}" y="${H-6}" font-size="11" text-anchor="middle" fill="#596159">video zamanı</text>`;
-  s+=`<polyline fill="none" stroke="#1b1f1d" stroke-width="1.6" points="${pts.map(p=>X(p.t)+','+Y(p.s)).join(' ')}"/>`;
-  pts.forEach(p=>{s+=`<circle cx="${X(p.t)}" cy="${Y(p.s)}" r="6" fill="${LV[p.lv]}" stroke="#fff" stroke-width="2" style="cursor:pointer" data-cid="${p.id}"><title>${fmt(p.t)} · ${p.txt}</title></circle>`;});
+  let s=`<svg viewBox="0 0 ${esc(W)} ${H}" role="img" aria-label="Zamana göre ${esc(M.toUpperCase())}">`;
+  cfg.bands.forEach(([a,b,lv])=>{s+=`<rect x="${esc(l)}" y="${esc(Y(b))}" width="${esc(W-l-r)}" height="${esc(Y(a)-Y(b))}" fill="${esc(LV[lv])}" opacity=".09"/>`;});
+  cfg.ticks.forEach(v=>{s+=`<text x="${esc(l-8)}" y="${esc(Y(v)+4)}" font-size="11" text-anchor="end" fill="#596159">${v}</text><line x1="${esc(l)}" x2="${esc(W-r)}" y1="${esc(Y(v))}" y2="${esc(Y(v))}" stroke="#e2e5e0"/>`;});
+  s+=`<text x="${esc(l)}" y="${esc(H-6)}" font-size="11" fill="#596159">${fmt(t0)}</text><text x="${esc(W-r)}" y="${esc(H-6)}" font-size="11" text-anchor="end" fill="#596159">${fmt(t1)}</text><text x="${esc(W/2)}" y="${esc(H-6)}" font-size="11" text-anchor="middle" fill="#596159">video zamanı</text>`;
+  s+=`<polyline fill="none" stroke="#1b1f1d" stroke-width="1.6" points="${esc(pts.map(p=>X(p.t)+','+Y(p.s)).join(' '))}"/>`;
+  pts.forEach(p=>{s+=`<circle cx="${esc(X(p.t))}" cy="${esc(Y(p.s))}" r="6" fill="${esc(LV[p.lv])}" stroke="#fff" stroke-width="2" style="cursor:pointer" data-cid="${esc(p.id)}"><title>${fmt(p.t)} · ${p.txt}</title></circle>`;});
   el.innerHTML=s+'</svg>';
   el.querySelectorAll('[data-cid]').forEach(c=>c.addEventListener('click',()=>openRecord(c.dataset.cid)));
 }
@@ -2668,10 +2668,10 @@ function snap(rec){const p=primary(rec); return p?{type:rec.type,n:p.n,txt:p.m.t
 function formDlg({title,fields,onSave,onDelete,saveLabel,note}){
   $('#editBody').innerHTML=`<div class="row" style="justify-content:space-between;align-items:flex-start"><h2 style="margin:0">${title}</h2><button class="ghost" data-dx aria-label="Kapat">✕</button></div>${note?`<p class="about" style="margin:6px 0 0">${note}</p>`:''}<div class="dfields">${fields.map(f=>{
     const v=f.v??'';
-    if(f.t==='sel')return `<label class="${f.full?'full':''}">${f.l}<select data-df="${f.id}">${f.o.map(([a,b])=>`<option value="${esc(a)}"${String(v)===String(a)?' selected':''}>${esc(b)}</option>`).join('')}</select></label>`;
-    if(f.t==='area')return `<label class="full">${f.l}<textarea data-df="${f.id}" rows="3">${esc(v)}</textarea></label>`;
-    if(f.t==='chk')return `<label class="chkl full"><input type="checkbox" data-df="${f.id}" ${v?'checked':''}> ${f.l}</label>`;
-    return `<label class="${f.full?'full':''}">${f.l}<input data-df="${f.id}" type="${f.t==='num'?'number':f.t==='date'?'date':'text'}" value="${esc(v)}"${f.ph?` placeholder="${esc(f.ph)}"`:''}${f.t==='num'?' min="0" step="any" inputmode="decimal"':''}></label>`;}).join('')}</div>
+    if(f.t==='sel')return `<label class="${esc(f.full?'full':'')}">${f.l}<select data-df="${esc(f.id)}">${f.o.map(([a,b])=>`<option value="${esc(a)}"${String(v)===String(a)?' selected':''}>${esc(b)}</option>`).join('')}</select></label>`;
+    if(f.t==='area')return `<label class="full">${f.l}<textarea data-df="${esc(f.id)}" rows="3">${esc(v)}</textarea></label>`;
+    if(f.t==='chk')return `<label class="chkl full"><input type="checkbox" data-df="${esc(f.id)}" ${v?'checked':''}> ${f.l}</label>`;
+    return `<label class="${esc(f.full?'full':'')}">${f.l}<input data-df="${esc(f.id)}" type="${esc(f.t==='num'?'number':f.t==='date'?'date':'text')}" value="${esc(v)}"${f.ph?` placeholder="${esc(f.ph)}"`:''}${f.t==='num'?' min="0" step="any" inputmode="decimal"':''}></label>`;}).join('')}</div>
   <div class="row" style="justify-content:space-between;margin-top:16px">${onDelete?'<button class="ghost danger" data-ddel>Sil</button>':'<span></span>'}<div class="row"><button class="ghost" data-dx>Vazgeç</button><button class="primary" data-dsave>${saveLabel||'Kaydet'}</button></div></div>`;
   $('#editDlg').hidden=false;
   const get=()=>Object.fromEntries($$('#editBody [data-df]').map(e=>[e.dataset.df,e.type==='checkbox'?e.checked:e.value]));
@@ -2728,8 +2728,8 @@ function openTaskDlg(id,stId,cb){
 /* ---------- kayıt ekranlarındaki istasyon / görev seçici ---------- */
 function renderCtx(el){
   const sts=S.stations.filter(s=>s.site===curSite()).sort((a,b)=>a.name.localeCompare(b.name,'tr')), c=S.ctx, tks=S.tasks.filter(t=>t.st===c.st);
-  el.innerHTML=`<label>İstasyon<select data-cx="st"><option value="">Seç…</option>${sts.map(s=>`<option value="${s.id}"${s.id===c.st?' selected':''}>${esc(s.name)}</option>`).join('')}<option value="__new">＋ Yeni istasyon…</option></select></label>
-    <label>Görev<select data-cx="tk"${c.st?'':' disabled'}><option value="">Seç…</option>${tks.map(t=>`<option value="${t.id}"${t.id===c.tk?' selected':''}>${esc(t.name)}${t.min?` · ${t.min} dk`:''}</option>`).join('')}${c.st?'<option value="__new">＋ Yeni görev…</option>':''}</select></label>`;
+  el.innerHTML=`<label>İstasyon<select data-cx="st"><option value="">Seç…</option>${sts.map(s=>`<option value="${esc(s.id)}"${s.id===c.st?' selected':''}>${esc(s.name)}</option>`).join('')}<option value="__new">＋ Yeni istasyon…</option></select></label>
+    <label>Görev<select data-cx="tk"${c.st?'':' disabled'}><option value="">Seç…</option>${tks.map(t=>`<option value="${esc(t.id)}"${t.id===c.tk?' selected':''}>${esc(t.name)}${t.min?` · ${t.min} dk`:''}</option>`).join('')}${c.st?'<option value="__new">＋ Yeni görev…</option>':''}</select></label>`;
   el.querySelector('[data-cx="st"]').onchange=e=>{const v=e.target.value;
     if(v==='__new'){e.target.value=c.st||''; openStationDlg(null,id=>{S.ctx.st=id; S.ctx.tk=(S.tasks.find(t=>t.st===id)||{}).id||''; persist(); renderAllCtx();}); return;}
     S.ctx.st=v; S.ctx.tk=v?((S.tasks.find(t=>t.st===v)||{}).id||''):''; persist(); renderAllCtx();};
@@ -2766,7 +2766,7 @@ function beforeAfter(tkId){
 }
 const dateTR=d=>d?new Date(d+(d.length===10?'T12:00:00':'')).toLocaleDateString('tr-TR'):'—';
 function deltaHTML(a,b){const better=b.lv<a.lv, worse=b.lv>a.lv;
-  return `<span class="badge" style="background:${LV[a.lv]}">${esc(a.n)} ${a.txt}</span> → <span class="badge" style="background:${LV[b.lv]}">${esc(b.n)} ${b.txt}</span> <b style="color:${better?LV[1]:worse?LV[4]:'var(--muted)'}">${better?'iyileşti':worse?'kötüleşti':'aynı seviye'}</b>`;}
+  return `<span class="badge" style="background:${esc(LV[a.lv])}">${esc(a.n)} ${a.txt}</span> → <span class="badge" style="background:${esc(LV[b.lv])}">${esc(b.n)} ${b.txt}</span> <b style="color:${esc(better?LV[1]:worse?LV[4]:'var(--muted)')}">${better?'iyileşti':worse?'kötüleşti':'aynı seviye'}</b>`;}
 // Önleme bağlanmamış eski yol: aynı görevde aynı yöntemin önlemden sonraki ölçümü
 function legacyAfter(a){
   if(!a.before||!a.tk)return null;
@@ -2835,22 +2835,22 @@ function openVerDlg(aId){
   const draw=()=>{
     const sel=S.records.find(r=>r.id===v.after), res=sel?(ty==='posture'?postureDay(a.tk,sel,a.rec):snap(sel)):null;
     if(sel&&!v.date)v.date=sel.created.slice(0,10);
-    const ph=(k,t)=>`<div class="vph"><b>${t}</b>${v[k]?`<img src="${v[k]}" alt="${t}">`:'<div class="vnone">Fotoğraf seçilmedi</div>'}
-      <div class="vpick">${thumbs.map((x,i)=>`<button type="button" class="vth${v[k]===x.th?' on':''}" data-vp="${k}.${i}" title="${esc(x.l)}" aria-label="${esc(t+': '+x.l)}"><img src="${x.th}" alt=""></button>`).join('')}</div>
-      <label class="small vup">Fotoğraf yükle<input type="file" accept="image/*" data-vu="${k}" hidden></label></div>`;
+    const ph=(k,t)=>`<div class="vph"><b>${t}</b>${v[k]?`<img src="${esc(v[k])}" alt="${esc(t)}">`:'<div class="vnone">Fotoğraf seçilmedi</div>'}
+      <div class="vpick">${thumbs.map((x,i)=>`<button type="button" class="vth${esc(v[k]===x.th?' on':'')}" data-vp="${esc(k)}.${i}" title="${esc(x.l)}" aria-label="${esc(t+': '+x.l)}"><img src="${esc(x.th)}" alt=""></button>`).join('')}</div>
+      <label class="small vup">Fotoğraf yükle<input type="file" accept="image/*" data-vu="${esc(k)}" hidden></label></div>`;
     $('#editBody').innerHTML=`<div class="row" style="justify-content:space-between;align-items:flex-start"><h2 style="margin:0">Önce–sonra bağı</h2><button class="ghost" data-dx aria-label="Kapat">✕</button></div>
     <p class="about" style="margin:6px 0 0">${esc(a.title)} · Yeniden ölçüm, önlemden önceki ölçümle aynı istasyon, görev ve yöntemle yapılmalı. Koşullar ve fotoğraflar raporda “sahada yeniden ölçülen iyileşme”nin dayanağıdır.</p>
     <div class="vgrid">
       <div class="vok">✓ İstasyon › görev: <b>${esc(tkLabel(a.tk))}</b></div>
       <div class="vok">✓ Yöntem: <b>${esc(typeName(ty))}</b></div>
-      <div>Önce (ölçüm): <span class="badge" style="background:${LV[a.before.lv]}">${esc(a.before.n)} ${a.before.txt}</span></div>
-      ${a.exp?`<div class="muted">${EST_L}: <span class="badge" style="background:${LV[a.exp.lv]}">${esc(a.exp.n)} ${a.exp.txt}</span></div>`:''}
+      <div>Önce (ölçüm): <span class="badge" style="background:${esc(LV[a.before.lv])}">${esc(a.before.n)} ${a.before.txt}</span></div>
+      ${a.exp?`<div class="muted">${EST_L}: <span class="badge" style="background:${esc(LV[a.exp.lv])}">${esc(a.exp.n)} ${a.exp.txt}</span></div>`:''}
     </div>
     <div class="dfields">
-      <label class="full">Sahada yeniden ölçüm kaydı<select data-vf="after">${cands.length?cands.map(r=>{const s=ty==='posture'?postureDay(a.tk,r,a.rec):snap(r); return `<option value="${r.id}"${r.id===v.after?' selected':''}>${dateTR(r.created.slice(0,10))} · ${s?esc(s.n)+' '+s.txt:'—'}${ty==='posture'?' (günün en kötü karesi)':''}</option>`;}).join(''):'<option value="">Önlemden sonra kayıt yok — önce “Yeniden ölç”</option>'}</select></label>
+      <label class="full">Sahada yeniden ölçüm kaydı<select data-vf="after">${cands.length?cands.map(r=>{const s=ty==='posture'?postureDay(a.tk,r,a.rec):snap(r); return `<option value="${esc(r.id)}"${r.id===v.after?' selected':''}>${dateTR(r.created.slice(0,10))} · ${s?esc(s.n)+' '+s.txt:'—'}${ty==='posture'?' (günün en kötü karesi)':''}</option>`;}).join(''):'<option value="">Önlemden sonra kayıt yok — önce “Yeniden ölç”</option>'}</select></label>
       <label>Yeniden ölçüm tarihi<input type="date" data-vf="date" value="${esc(v.date||'')}"></label>
-      <div>${res?`Sonra: <span class="badge" style="background:${LV[res.lv]}">${esc(res.n)} ${res.txt}</span>`:''}</div>
-      <fieldset class="full vconds"><legend>Karşılaştırma koşulları (önceki ölçümle aynı tutulanları işaretle)</legend>${vconds(ty).map(([k,l])=>`<label class="chkl"><input type="checkbox" data-vc="${k}" ${v.cond[k]?'checked':''}> ${l}</label>`).join('')}</fieldset>
+      <div>${res?`Sonra: <span class="badge" style="background:${esc(LV[res.lv])}">${esc(res.n)} ${res.txt}</span>`:''}</div>
+      <fieldset class="full vconds"><legend>Karşılaştırma koşulları (önceki ölçümle aynı tutulanları işaretle)</legend>${vconds(ty).map(([k,l])=>`<label class="chkl"><input type="checkbox" data-vc="${esc(k)}" ${v.cond[k]?'checked':''}> ${l}</label>`).join('')}</fieldset>
       <label class="full">Değişen koşullar / not<textarea data-vf="note" rows="2" placeholder="ör. yük aynı, ama çalışan değişti">${esc(v.note||'')}</textarea></label>
     </div>
     <div class="vphs">${ph('phB','Önce fotoğrafı')}${ph('phA','Sonra fotoğrafı')}</div>
@@ -2906,9 +2906,9 @@ function scenStart(kind){const ad=AD[kind](); if(kind==='posture'&&!cur)return;
   SC[ad.key]={base:ad.get(),list:[]}; renderScen(kind);
   toast(innerWidth<900?'Senaryo modu: değerleri değiştir; alttaki çubuk senaryo sonucunu gösterir, dokununca karşılaştırmaya gider.':'Senaryo modu: mevcut durum sabitlendi. Değerleri değiştir, sonucu karşılaştır.'); if(typeof updMini==='function')updMini();}
 function scenEnd(kind){const ad=AD[kind](), sc=SC[ad.key]; if(!sc)return; delete SC[ad.key]; ad.set(sc.base); renderScen(kind);}
-function resBadges(rs){return rs.map(([n,m])=>`<span class="badge" style="background:${LV[m.lv]}">${esc(n)} ${m.txt}</span>`).join(' ');}
+function resBadges(rs){return rs.map(([n,m])=>`<span class="badge" style="background:${esc(LV[m.lv])}">${esc(n)} ${m.txt}</span>`).join(' ');}
 function deltaTxt(rb,rs){ // yöntem bazında: düzey düştü mü
-  const parts=rs.map(([n,m],i)=>{const b=rb[i]&&rb[i][1]; if(!b||b.v==null||m.v==null)return null; const d=m.lv-b.lv; return d<0?`<b style="color:${LV[1]}">${esc(n)} ↓ ${LVT[b.lv]} → ${LVT[m.lv]}</b>`:d>0?`<b style="color:${LV[4]}">${esc(n)} ↑ ${LVT[b.lv]} → ${LVT[m.lv]}</b>`:(m.v<b.v?`<span style="color:${LV[1]}">${esc(n)}: puan düştü, düzey aynı</span>`:m.v>b.v?`<span style="color:${LV[3]}">${esc(n)}: puan arttı, düzey aynı</span>`:`<span class="muted">${esc(n)}: değişmedi</span>`);}).filter(Boolean);
+  const parts=rs.map(([n,m],i)=>{const b=rb[i]&&rb[i][1]; if(!b||b.v==null||m.v==null)return null; const d=m.lv-b.lv; return d<0?`<b style="color:${esc(LV[1])}">${esc(n)} ↓ ${LVT[b.lv]} → ${LVT[m.lv]}</b>`:d>0?`<b style="color:${esc(LV[4])}">${esc(n)} ↑ ${LVT[b.lv]} → ${LVT[m.lv]}</b>`:(m.v<b.v?`<span style="color:${esc(LV[1])}">${esc(n)}: puan düştü, düzey aynı</span>`:m.v>b.v?`<span style="color:${esc(LV[3])}">${esc(n)}: puan arttı, düzey aynı</span>`:`<span class="muted">${esc(n)}: değişmedi</span>`);}).filter(Boolean);
   return parts.join(' · ');}
 function scenJump(kind){const ad=AD[kind](); if(kind==='posture'&&!cur)return;
   // Telefonda formun altı uzak: senaryoyu başlatınca alanların başında kal, karşılaştırmaya alttaki çubukla git
@@ -2922,8 +2922,8 @@ function renderScen(kind){
   sb.disabled=!!sc; sb.title=sc?'Senaryo modunda kayıt yapılmaz; önce senaryodan çık.':'';
   if(!sc){el.innerHTML=`<button class="scenbtn" data-scgo>⇄ Senaryo dene <span>değerleri değiştirip sonucu mevcut durumla karşılaştır</span></button>`; el.querySelector('[data-scgo]').onclick=()=>scenStart(kind); return;}
   const now=ad.get(), rb=results(ad.rec(sc.base)), rn=results(ad.rec(now)), dn=ad.diff(sc.base,now);
-  const row=(name,st,rs,i)=>{const ch=ad.diff(sc.base,st); return `<div class="scrow${i==='now'?' scnow':''}"><div class="row" style="justify-content:space-between;align-items:center;gap:6px">${i==='now'?'<b>Bu senaryo <span class="muted" style="font-weight:400;font-size:12px">· ekrandaki değerler</span></b>':`<input class="scname" data-scn="${i}" value="${esc(name)}">`}
-    <div class="row" style="gap:4px">${i==='now'?`<button class="small" data-sckeep${dn.length?'':' disabled'}>Sakla</button>`:`<button class="small" data-scload="${i}">Yükle</button>`}<button class="small primary" data-scact="${i}"${ch.length?'':' disabled'}>+ Önlem</button>${i==='now'?'':`<button class="small ghost danger" data-scdel="${i}">Sil</button>`}</div></div>
+  const row=(name,st,rs,i)=>{const ch=ad.diff(sc.base,st); return `<div class="scrow${esc(i==='now'?' scnow':'')}"><div class="row" style="justify-content:space-between;align-items:center;gap:6px">${i==='now'?'<b>Bu senaryo <span class="muted" style="font-weight:400;font-size:12px">· ekrandaki değerler</span></b>':`<input class="scname" data-scn="${esc(i)}" value="${esc(name)}">`}
+    <div class="row" style="gap:4px">${i==='now'?`<button class="small" data-sckeep${dn.length?'':' disabled'}>Sakla</button>`:`<button class="small" data-scload="${esc(i)}">Yükle</button>`}<button class="small primary" data-scact="${esc(i)}"${ch.length?'':' disabled'}>+ Önlem</button>${i==='now'?'':`<button class="small ghost danger" data-scdel="${esc(i)}">Sil</button>`}</div></div>
     <div style="margin-top:6px">${resBadges(rs)} <span style="font-size:12.5px">${deltaTxt(rb,rs)}</span></div>
     <div class="scch">${ch.length?ch.slice(0,6).map(esc).join('<br>')+(ch.length>6?`<br><span class="muted">+${ch.length-6} değişiklik</span>`:''):'<span class="muted">Henüz değişiklik yok: yukarıdaki değerleri değiştir.</span>'}</div></div>`;};
   el.innerHTML=`<div class="scen"><div class="row" style="justify-content:space-between;align-items:center"><b>Senaryo karşılaştırma <button class="linkbtn hl" data-help="scen">Nasıl?</button></b><button class="small ghost" data-scx>Senaryodan çık</button></div>
@@ -2979,14 +2979,14 @@ function remeasure(aId){
 const overdue=a=>a.due&&a.status!=='done'&&a.status!=='cancel'&&a.due<todayISO();
 function actionCard(a){
   const after=afterOf(a), ctl=(CTRL.find(c=>c[0]===a.ctrl)||[,''])[1], stt=(ASTAT.find(s=>s[0]===a.status)||[,''])[1];
-  return `<div class="acard${a.status==='done'?' done':''}${overdue(a)?' late':''}">
+  return `<div class="acard${esc(a.status==='done'?' done':'')}${overdue(a)?' late':''}">
     <div class="row" style="justify-content:space-between;align-items:flex-start"><div><b>${esc(a.title)}</b><div class="muted">${esc(tkLabel(a.tk))}</div></div>
-      <select data-ast="${a.id}" class="stsel" aria-label="Önlem durumu">${ASTAT.map(([v,l])=>`<option value="${v}"${a.status===v?' selected':''}>${l}</option>`).join('')}</select></div>
+      <select data-ast="${esc(a.id)}" class="stsel" aria-label="Önlem durumu">${ASTAT.map(([v,l])=>`<option value="${esc(v)}"${a.status===v?' selected':''}>${l}</option>`).join('')}</select></div>
     ${a.detail?`<div style="font-size:13.5px;margin-top:4px">${esc(a.detail)}</div>`:''}
-    <div class="row" style="gap:6px;margin-top:6px;font-size:13px"><span class="lvl" style="background:#475569">${esc(ctl)}</span>${a.owner?`<span>Sorumlu: <b>${esc(a.owner)}</b></span>`:''}${+a.cost?`<span>Maliyet: <b>${Math.round(+a.cost).toLocaleString('tr-TR')}</b></span>`:''}${a.due?`<span style="color:${overdue(a)?LV[4]:'inherit'}">Termin: <b>${dateTR(a.due)}</b>${overdue(a)?' · gecikmiş':''}</span>`:''}${a.done?`<span>Tamamlandı: ${dateTR(a.done)}</span>`:''}</div>
+    <div class="row" style="gap:6px;margin-top:6px;font-size:13px"><span class="lvl" style="background:#475569">${esc(ctl)}</span>${a.owner?`<span>Sorumlu: <b>${esc(a.owner)}</b></span>`:''}${+a.cost?`<span>Maliyet: <b>${Math.round(+a.cost).toLocaleString('tr-TR')}</b></span>`:''}${a.due?`<span style="color:${esc(overdue(a)?LV[4]:'inherit')}">Termin: <b>${dateTR(a.due)}</b>${overdue(a)?' · gecikmiş':''}</span>`:''}${a.done?`<span>Tamamlandı: ${dateTR(a.done)}</span>`:''}</div>
     ${a.before?baBlock(a):''}
     ${a.before?chainBlock(a):''}
-    <div class="acts row" style="margin-top:8px;gap:6px"><button class="small" data-aedit="${a.id}">Düzenle</button>${a.before?`<button class="small" data-arem="${a.id}">Yeniden ölç</button><button class="small" data-aver="${a.id}">${a.ver?'Önce–sonra bağını düzenle':'Ölçümü bağla'}</button>`:''}</div></div>`;
+    <div class="acts row" style="margin-top:8px;gap:6px"><button class="small" data-aedit="${esc(a.id)}">Düzenle</button>${a.before?`<button class="small" data-arem="${esc(a.id)}">Yeniden ölç</button><button class="small" data-aver="${esc(a.id)}">${a.ver?'Önce–sonra bağını düzenle':'Ölçümü bağla'}</button>`:''}</div></div>`;
 }
 // Değerlendirme zinciri: gözlenen duruş → değerlendirme gerekçesi → önerilen iş düzenlemesi → yeniden değerlendirme.
 // Yeniden ölçüm bağlıysa iki kayıt arasındaki girdi farkları (açı, yük, form alanı) listelenir: sonucu hangi değişikliğin etkilediği görünür.
@@ -2997,7 +2997,7 @@ function chainBlock(a){
   let ch=[];
   let chErr=false;
   try{ if(rb&&ra) ch=rb.type==='posture'?postureDiff(rb,ra):FORMS[rb.type]?formDiff(rb.type,rb.data||{},ra.data||{}):[]; }catch(e){ ch=[]; chErr=true; }
-  const badge=x=>x?`<span class="badge" style="background:${LV[x.lv]}">${esc(x.n)} ${x.txt}</span>`:'';
+  const badge=x=>x?`<span class="badge" style="background:${esc(LV[x.lv])}">${esc(x.n)} ${x.txt}</span>`:'';
   return `<details class="chain"${after?' open':''}><summary>Değerlendirme zinciri</summary><ol class="chol">
     <li><b>Gözlenen</b><span>${badge(a.before)}${rb&&rb.created?' · '+dateTR(rb.created.slice(0,10)):''}</span></li>
     <li><b>Değerlendirme gerekçesi</b>${why(pb)||'<span class="muted">Önceki kayıt bulunamadı.</span>'}</li>
@@ -3008,14 +3008,14 @@ function chainBlock(a){
 // Önlem kartında üç ayrı satır: önceki ölçüm, tahmini senaryo, sahadaki yeniden ölçüm
 function baBlock(a){
   const m=verOf(a), after=m&&m.s, lab=measLabel(a), good=fieldVerified(a);
-  const b=`<span class="badge" style="background:${LV[a.before.lv]}">${esc(a.before.n)} ${a.before.txt}</span>`;
+  const b=`<span class="badge" style="background:${esc(LV[a.before.lv])}">${esc(a.before.n)} ${a.before.txt}</span>`;
   return `<div class="ba2">
     <div><span class="bal">Önce (ölçüm)</span>${b}</div>
-    ${a.exp?`<div><span class="bal est">${EST_L}</span><span class="badge" style="background:${LV[a.exp.lv]}">${esc(a.exp.n)} ${a.exp.txt}</span></div>`:''}
-    <div><span class="bal${good?' okm':''}">${esc(lab)}${m&&m.date?' · '+dateTR(m.date):''}</span>${after?`${deltaHTML(a.before,after)}${a.exp&&m.linked?(after.lv<=a.exp.lv?' · <b style="color:'+LV[1]+'">tahmine ulaşıldı</b>':' · <b style="color:'+LV[3]+'">tahminin gerisinde</b>'):''}`:'<span class="muted">—</span>'}</div>
+    ${a.exp?`<div><span class="bal est">${EST_L}</span><span class="badge" style="background:${esc(LV[a.exp.lv])}">${esc(a.exp.n)} ${a.exp.txt}</span></div>`:''}
+    <div><span class="bal${esc(good?' okm':'')}">${esc(lab)}${m&&m.date?' · '+dateTR(m.date):''}</span>${after?`${deltaHTML(a.before,after)}${a.exp&&m.linked?(after.lv<=a.exp.lv?' · <b style="color:'+LV[1]+'">tahmine ulaşıldı</b>':' · <b style="color:'+LV[3]+'">tahminin gerisinde</b>'):''}`:'<span class="muted">—</span>'}</div>
     ${m&&m.linked&&m.miss.length?`<div class="vmiss">Eksik: ${esc(m.miss.join('; '))}</div>`:''}
     ${m&&!m.linked?'<div class="vmiss">Bu sonuç önleme bağlı değil; “Ölçümü bağla” ile aynı koşulları ve fotoğrafları doğrula.</div>':''}
-    ${a.ver&&(a.ver.phB||a.ver.phA)?`<div class="vpair">${a.ver.phB?`<figure><img src="${a.ver.phB}" alt="Önce fotoğrafı"><figcaption>Önce</figcaption></figure>`:''}${a.ver.phA?`<figure><img src="${a.ver.phA}" alt="Sonra fotoğrafı"><figcaption>Sonra${m&&m.date?' · '+dateTR(m.date):''}</figcaption></figure>`:''}</div>`:''}
+    ${a.ver&&(a.ver.phB||a.ver.phA)?`<div class="vpair">${a.ver.phB?`<figure><img src="${esc(a.ver.phB)}" alt="Önce fotoğrafı"><figcaption>Önce</figcaption></figure>`:''}${a.ver.phA?`<figure><img src="${esc(a.ver.phA)}" alt="Sonra fotoğrafı"><figcaption>Sonra${m&&m.date?' · '+dateTR(m.date):''}</figcaption></figure>`:''}</div>`:''}
   </div>`;
 }
 function bindActions(root){
@@ -3027,10 +3027,10 @@ function bindActions(root){
 function renderActions(){
   const site=curSite(), all=S.actions.filter(a=>{const s=stOf(a.st); return s&&s.site===site;});
   const fs=$('#acSt').value, ft=$('#acStatus').value;
-  $('#acSt').innerHTML='<option value="">Tüm istasyonlar</option>'+S.stations.filter(s=>s.site===site).map(s=>`<option value="${s.id}"${fs===s.id?' selected':''}>${esc(s.name)}</option>`).join('');
+  $('#acSt').innerHTML='<option value="">Tüm istasyonlar</option>'+S.stations.filter(s=>s.site===site).map(s=>`<option value="${esc(s.id)}"${fs===s.id?' selected':''}>${esc(s.name)}</option>`).join('');
   const open=all.filter(a=>a.status==='plan'||a.status==='prog'), late=all.filter(overdue), done=all.filter(a=>a.status==='done');
   const verified=all.filter(fieldVerified);
-  $('#acStats').innerHTML=`<div class="stat"><b>${all.length}</b><span>önlem</span></div><div class="stat"><b>${open.length}</b><span>açık</span></div><div class="stat"><b style="color:${late.length?LV[4]:'inherit'}">${late.length}</b><span>gecikmiş</span></div><div class="stat"><b>${done.length}</b><span>tamamlandı</span></div><div class="stat"><b style="color:${LV[1]}">${verified.length}</b><span>sahada yeniden ölçülen iyileşme</span></div>`;
+  $('#acStats').innerHTML=`<div class="stat"><b>${all.length}</b><span>önlem</span></div><div class="stat"><b>${open.length}</b><span>açık</span></div><div class="stat"><b style="color:${esc(late.length?LV[4]:'inherit')}">${late.length}</b><span>gecikmiş</span></div><div class="stat"><b>${done.length}</b><span>tamamlandı</span></div><div class="stat"><b style="color:${esc(LV[1])}">${verified.length}</b><span>sahada yeniden ölçülen iyileşme</span></div>`;
   const rows=all.filter(a=>(!fs||a.st===fs)&&(!ft||(ft==='open'?(a.status==='plan'||a.status==='prog'):ft==='late'?overdue(a):a.status===ft)))
     .sort((x,y)=>(overdue(y)-overdue(x))||((x.status==='done')-(y.status==='done'))||(x.due||'9').localeCompare(y.due||'9'));
   $('#acList').innerHTML=rows.length?rows.map(actionCard).join(''):`<div class="card empty">${all.length?'Filtreye uyan önlem yok.':'Henüz önlem yok. Bir analizin “Ne yapılabilir?” listesindeki “+ Önlem” düğmesiyle veya buradan önlem ekleyebilirsin.'}</div>`;
@@ -3048,14 +3048,14 @@ function nmqRate(recs){const n=recs.filter(r=>r.type==='nmq'); if(!n.length)retu
 const MAP_COLS=['pos','mmh','rep','off','noise','vib','heat','light'];
 function renderStations(){
   const site=curSite(), sts=S.stations.filter(s=>s.site===site).sort((a,b)=>a.name.localeCompare(b.name,'tr'));
-  $('#siteSel').innerHTML=S.sites.map(s=>`<option value="${s.id}"${s.id===site?' selected':''}>${esc(s.name)}</option>`).join('')+'<option value="__new">＋ Yeni işyeri…</option>';
+  $('#siteSel').innerHTML=S.sites.map(s=>`<option value="${esc(s.id)}"${s.id===site?' selected':''}>${esc(s.name)}</option>`).join('')+'<option value="__new">＋ Yeni işyeri…</option>';
   const recs=sts.flatMap(s=>recsOfStation(s.id));
   $('#recStats').innerHTML=recs.length?statsHTML(recs):'';
   const cols=MAP_COLS.filter(c=>c in AREA_N&&(['pos','mmh','rep','off'].includes(c)||recs.some(r=>AREA_OF[r.type]===c)));
   $('#riskMap').innerHTML=sts.length?`<div class="tblwrap"><table class="rmap"><thead><tr><th>İstasyon</th>${cols.map(c=>`<th>${AREA_N[c]}</th>`).join('')}<th>Şikâyet</th><th>Çalışan</th><th>Açık önlem</th></tr></thead><tbody>${sts.map(s=>{
       const rs=recsOfStation(s.id), w=areaWorst(rs), nr=nmqRate(rs), ao=S.actions.filter(a=>a.st===s.id&&(a.status==='plan'||a.status==='prog')).length;
-      return `<tr><td><button class="linkbtn" data-goto="${s.id}">${esc(s.name)}</button>${s.dept?`<div class="muted" style="font-size:12px">${esc(s.dept)}</div>`:''}</td>${cols.map(c=>{const x=w[c]; return x?`<td style="background:${LV[x.m.lv]};color:#fff"><b>${LVT[x.m.lv]}</b><div style="font-size:12.5px">${esc(x.n)} ${x.m.txt}</div></td>`:'<td class="muted">—</td>';}).join('')}
-        <td>${nr?`<b style="color:${nr.p>=.5?LV[3]:nr.p>0?LV[2]:LV[1]}">%${Math.round(nr.p*100)}</b><div class="muted" style="font-size:12.5px">${nr.any}/${nr.n} kişi</div>`:'<span class="muted">—</span>'}</td><td>${s.workers||'—'}</td><td>${ao||'—'}</td></tr>`;}).join('')}</tbody></table></div><p class="muted" style="margin:6px 0 0">Her hücre o alandaki güncel en kötü sonucu gösterir (her görevde her yöntemin son ölçümü; duruşta son günün kareleri). Şikâyet: Nordik anketinde son 12 ayda en az bir bölgede şikâyet bildirenlerin oranı.</p>`
+      return `<tr><td><button class="linkbtn" data-goto="${esc(s.id)}">${esc(s.name)}</button>${s.dept?`<div class="muted" style="font-size:12px">${esc(s.dept)}</div>`:''}</td>${cols.map(c=>{const x=w[c]; return x?`<td style="background:${esc(LV[x.m.lv])};color:#fff"><b>${LVT[x.m.lv]}</b><div style="font-size:12.5px">${esc(x.n)} ${x.m.txt}</div></td>`:'<td class="muted">—</td>';}).join('')}
+        <td>${nr?`<b style="color:${esc(nr.p>=.5?LV[3]:nr.p>0?LV[2]:LV[1])}">%${Math.round(nr.p*100)}</b><div class="muted" style="font-size:12.5px">${nr.any}/${nr.n} kişi</div>`:'<span class="muted">—</span>'}</td><td>${s.workers||'—'}</td><td>${ao||'—'}</td></tr>`;}).join('')}</tbody></table></div><p class="muted" style="margin:6px 0 0">Her hücre o alandaki güncel en kötü sonucu gösterir (her görevde her yöntemin son ölçümü; duruşta son günün kareleri). Şikâyet: Nordik anketinde son 12 ayda en az bir bölgede şikâyet bildirenlerin oranı.</p>`
     :'<div class="empty">Henüz istasyon yok. “+ İstasyon” ile başla ya da bir analizi kaydederken yeni istasyon oluştur.</div>';
   $('#stList').innerHTML=sts.map(s=>stationCard(s)).join('');
   sts.forEach(s=>S.tasks.filter(t=>t.st===s.id).forEach(t=>{const pr=recsOfTask(t.id).filter(r=>r.type==='posture'&&r.time!=null); const el=$('#chart_'+t.id); if(el&&pr.length>=2)renderChart(el,pr,S.chartM[t.id]||'reba');}));
@@ -3065,7 +3065,7 @@ function renderStations(){
 /* ---------- günlük maruziyet (istasyon) ---------- */
 const TASKC=['#0f6b5f','#2563eb','#b45309','#7c3aed','#0e7490','#be185d','#4d7c0f','#475569'];
 function stackBar(parts,total){ // parts: [{w,c,l}]
-  return `<div class="sbar">${parts.filter(p=>p.w>0).map(p=>`<i style="width:${Math.max(.5,p.w/total*100)}%;background:${p.c}" title="${esc(p.l)}"></i>`).join('')}</div>`;}
+  return `<div class="sbar">${parts.filter(p=>p.w>0).map(p=>`<i style="width:${esc(Math.max(.5,p.w/total*100))}%;background:${p.c}" title="${esc(p.l)}"></i>`).join('')}</div>`;}
 // Bir görevin güncel duruş karelerinde yöntemin seviye payları
 function postureShares(tkId,M){const rs=currentRecs(recsOfTask(tkId)).filter(r=>r.type==='posture'); if(!rs.length)return null;
   const c=[0,0,0,0,0]; rs.forEach(r=>{c[postureCompute(r)[M].lv]++;}); return {n:rs.length,sh:c.map(x=>x/rs.length)};}
@@ -3085,17 +3085,17 @@ function exposureHTML(s){
   const E=exposureData(s); if(!E.tks.length)return '';
   const prof=`<div class="exrow"><b>Vardiya profili</b> <span class="muted">· ${String(+s.shiftH||8).replace('.',',')} saat = ${E.shiftMin} dk</span>
     ${stackBar([...E.timed.map((t,i)=>({w:+t.min,c:TASKC[i%TASKC.length],l:t.name+' '+t.min+' dk'})),{w:Math.max(0,E.shiftMin-E.sumMin),c:'#d6dbd5',l:'Tanımlanmamış süre'}],Math.max(E.shiftMin,E.sumMin))}
-    <div class="legend">${E.timed.map((t,i)=>`<span><i style="background:${TASKC[i%TASKC.length]}"></i>${esc(t.name)} ${t.min} dk</span>`).join('')}${E.shiftMin>E.sumMin?`<span><i style="background:#d6dbd5"></i>Tanımlanmamış ${E.shiftMin-E.sumMin} dk</span>`:''}</div>
+    <div class="legend">${E.timed.map((t,i)=>`<span><i style="background:${esc(TASKC[i%TASKC.length])}"></i>${esc(t.name)} ${t.min} dk</span>`).join('')}${E.shiftMin>E.sumMin?`<span><i style="background:#d6dbd5"></i>Tanımlanmamış ${E.shiftMin-E.sumMin} dk</span>`:''}</div>
     ${E.sumMin>E.shiftMin?`<div class="gnote">Görev süreleri toplamı (${E.sumMin} dk) vardiyayı aşıyor; süreleri kontrol et.</div>`:''}
     ${E.tks.some(t=>!(+t.min>0))?`<div class="muted" style="font-size:12.5px">Süresi girilmemiş görevler: ${E.tks.filter(t=>!(+t.min>0)).map(t=>esc(t.name)).join(', ')}. Süre girersen maruziyet dakika olarak hesaplanır.</div>`:''}</div>`;
   const pnames={reba:['REBA',['Önemsiz','Düşük','Orta','Yüksek','Çok yüksek']],owas:['OWAS',['','AC1','AC2','AC3','AC4']]};
   const posH=Object.entries(E.pos).map(([M,P])=>{const hi=P.tot[3]+P.tot[4];
     return `<div class="exrow"><b>Duruş maruziyeti · ${pnames[M][0]}</b> <span class="muted">· ${P.useMin?'görev süreleriyle ağırlıklı':'görev süresi eksik; görevler eşit ağırlıklı'}</span>
       ${stackBar([0,1,2,3,4].map(l=>({w:P.tot[l],c:LV[l],l:pnames[M][1][l]})).filter(x=>x.l),1)}
-      <div class="legend">${[0,1,2,3,4].filter(l=>pnames[M][1][l]&&P.tot[l]>0).map(l=>`<span><i style="background:${LV[l]}"></i>${pnames[M][1][l]} %${Math.round(P.tot[l]*100)}</span>`).join('')}</div>
+      <div class="legend">${[0,1,2,3,4].filter(l=>pnames[M][1][l]&&P.tot[l]>0).map(l=>`<span><i style="background:${esc(LV[l])}"></i>${pnames[M][1][l]} %${Math.round(P.tot[l]*100)}</span>`).join('')}</div>
       <div style="font-size:13.5px;margin-top:4px">${M==='owas'?'AC3–AC4 (en kısa sürede / hemen önlem) payı':'Yüksek veya çok yüksek riskli süre payı'}: <b>%${Math.round(hi*100)}</b>${P.anMin?` · yaklaşık <b>${Math.round(hi*P.anMin)} dk/vardiya</b>`:''}</div>
       <div class="muted" style="font-size:12.5px">${P.rows.map(x=>`${esc(x.t.name)}: ${x.ps.n} kare`).join(' · ')}. Kareler görevin duruşlarını temsil etmeli; düzenli aralıklarla kare almak (OWAS örnekleme yaklaşımı) sonucu güçlendirir.</div></div>`;}).join('');
-  const subH=E.subs.length?`<div class="exrow"><b>Alt faaliyetler</b> <span class="muted">· elle taşıma, tekrarlı iş ve diğer formlar</span><div class="tblwrap"><table class="cmp" style="min-width:520px"><thead><tr><th>Görev</th><th>Yöntem</th><th>Sonuç</th><th>Görev süresi</th></tr></thead><tbody>${E.subs.map(x=>`<tr><td>${esc(x.t.name)}</td><td>${esc(typeName(x.r.type))}</td><td><span class="badge" style="background:${LV[x.p.m.lv]}">${x.p.m.txt}</span> ${esc(x.p.m.nm)}</td><td>${+x.t.min>0?`${x.t.min} dk (%${Math.round(x.t.min/E.shiftMin*100)})`:'—'}</td></tr>`).join('')}</tbody></table></div>
+  const subH=E.subs.length?`<div class="exrow"><b>Alt faaliyetler</b> <span class="muted">· elle taşıma, tekrarlı iş ve diğer formlar</span><div class="tblwrap"><table class="cmp" style="min-width:520px"><thead><tr><th>Görev</th><th>Yöntem</th><th>Sonuç</th><th>Görev süresi</th></tr></thead><tbody>${E.subs.map(x=>`<tr><td>${esc(x.t.name)}</td><td>${esc(typeName(x.r.type))}</td><td><span class="badge" style="background:${esc(LV[x.p.m.lv])}">${x.p.m.txt}</span> ${esc(x.p.m.nm)}</td><td>${+x.t.min>0?`${x.t.min} dk (%${Math.round(x.t.min/E.shiftMin*100)})`:'—'}</td></tr>`).join('')}</tbody></table></div>
     ${E.subs.some(x=>['kim19','kimpp','kim'].includes(x.r.type))?'<div class="muted" style="font-size:12.5px">KIM puanları her alt faaliyet için ayrıdır; BAuA günlük toplam için ayrı bir birleştirme algoritması (LMM-E) kullanır, uygulamada bu toplama yapılmaz. En yüksek puanlı alt faaliyet önceliklidir.</div>':''}</div>`:'';
   return `<h3>Günlük maruziyet</h3><div class="expanel">${prof}${posH||'<div class="muted">Duruş maruziyeti için görevlere duruş analizi kaydet.</div>'}${subH}</div>`;
 }
@@ -3126,16 +3126,16 @@ function nmqRegions(recs){const n=recs.filter(r=>r.type==='nmq'); if(!n.length)r
   n.forEach(r=>{const hit=new Set(); Object.entries((r.data&&r.data.g)||{}).forEach(([k,x])=>{if(x&&(x.y12||x.d7||x.blk)&&NMQ_BR[k])hit.add(NMQ_BR[k]);}); hit.forEach(k=>c[k]=(c[k]||0)+1);});
   return {n:n.length,c};}
 const siteTasks=()=>S.tasks.filter(t=>{const s=stOf(t.st); return s&&s.site===curSite();}).sort((a,b)=>tkLabel(a.id).localeCompare(tkLabel(b.id),'tr'));
-const rcell=l=>l?`<div class="rcell" style="background:${LV[l]}">${LVT[l]}</div>`:'<div class="rcell none">—</div>';
+const rcell=l=>l?`<div class="rcell" style="background:${esc(LV[l])}">${LVT[l]}</div>`:'<div class="rcell none">—</div>';
 function bodySVG(lv){const c=k=>lv[k]?LV[lv[k]]:'#dfe3dd', t=k=>`<title>${BR_N[k]}: ${lv[k]?LVT[lv[k]]:'veri yok'}</title>`;
   return `<svg width="120" height="230" viewBox="0 0 120 230" role="img" aria-label="Vücut bölgeleri">
     <circle cx="60" cy="20" r="15" fill="#c9cec8"/>
-    <rect x="53" y="35" width="14" height="12" rx="3" fill="${c('neck')}">${t('neck')}</rect>
-    <rect x="40" y="47" width="40" height="66" rx="8" fill="${c('back')}">${t('back')}</rect>
-    <rect x="23" y="49" width="15" height="44" rx="7" fill="${c('sh')}">${t('sh')}</rect><rect x="82" y="49" width="15" height="44" rx="7" fill="${c('sh')}">${t('sh')}</rect>
-    <rect x="21" y="95" width="13" height="38" rx="6" fill="${c('elb')}">${t('elb')}</rect><rect x="86" y="95" width="13" height="38" rx="6" fill="${c('elb')}">${t('elb')}</rect>
-    <circle cx="27" cy="142" r="8" fill="${c('wr')}">${t('wr')}</circle><circle cx="93" cy="142" r="8" fill="${c('wr')}">${t('wr')}</circle>
-    <rect x="43" y="115" width="15" height="105" rx="7" fill="${c('leg')}">${t('leg')}</rect><rect x="62" y="115" width="15" height="105" rx="7" fill="${c('leg')}">${t('leg')}</rect></svg>`;}
+    <rect x="53" y="35" width="14" height="12" rx="3" fill="${esc(c('neck'))}">${t('neck')}</rect>
+    <rect x="40" y="47" width="40" height="66" rx="8" fill="${esc(c('back'))}">${t('back')}</rect>
+    <rect x="23" y="49" width="15" height="44" rx="7" fill="${esc(c('sh'))}">${t('sh')}</rect><rect x="82" y="49" width="15" height="44" rx="7" fill="${esc(c('sh'))}">${t('sh')}</rect>
+    <rect x="21" y="95" width="13" height="38" rx="6" fill="${esc(c('elb'))}">${t('elb')}</rect><rect x="86" y="95" width="13" height="38" rx="6" fill="${esc(c('elb'))}">${t('elb')}</rect>
+    <circle cx="27" cy="142" r="8" fill="${esc(c('wr'))}">${t('wr')}</circle><circle cx="93" cy="142" r="8" fill="${esc(c('wr'))}">${t('wr')}</circle>
+    <rect x="43" y="115" width="15" height="105" rx="7" fill="${esc(c('leg'))}">${t('leg')}</rect><rect x="62" y="115" width="15" height="105" rx="7" fill="${esc(c('leg'))}">${t('leg')}</rect></svg>`;}
 function renderBody(){
   const el=$('#bodyMap'); if(!el)return;
   const tks=siteTasks().map(t=>({t,...taskRegions(t.id)})).filter(x=>Object.keys(x.lv).length);
@@ -3143,8 +3143,8 @@ function renderBody(){
   if(!tks.length&&!nq){el.innerHTML='<div class="empty">Bölge profili için görevlere duruş analizi ya da bir form kaydet.</div>'; $('#rotPlan').innerHTML=''; return;}
   const all={}; tks.forEach(x=>BR_K.forEach(k=>{if(x.lv[k]&&(!all[k]||x.lv[k]>all[k]))all[k]=x.lv[k];}));
   el.innerHTML=`<div class="bodyfig">${bodySVG(all)}<div class="tblwrap" style="flex:1;min-width:300px"><table class="cmp"><thead><tr><th>Görev</th>${BR.map(b=>`<th>${b[1]}</th>`).join('')}</tr></thead><tbody>
-    ${tks.map(x=>`<tr><td><b>${esc(tkLabel(x.t.id))}</b></td>${BR_K.map(k=>`<td title="${x.src[k]?esc([...x.src[k]].join(', ')):''}">${rcell(x.lv[k])}</td>`).join('')}</tr>`).join('')}
-    ${nq?`<tr><td><b>Şikâyet bildirenler</b><div class="muted" style="font-size:12px">Nordik anketi, ${nq.n} kişi</div></td>${BR_K.map(k=>{const n=nq.c[k]||0, p=n/nq.n; return `<td><div class="rcell${n?'':' none'}" style="${n?`background:${p>=.5?LV[3]:LV[2]}`:''}">${n?'%'+Math.round(p*100):'—'}</div></td>`;}).join('')}</tr>`:''}
+    ${tks.map(x=>`<tr><td><b>${esc(tkLabel(x.t.id))}</b></td>${BR_K.map(k=>`<td title="${esc(x.src[k]?esc([...x.src[k]].join(', ')):'')}">${rcell(x.lv[k])}</td>`).join('')}</tr>`).join('')}
+    ${nq?`<tr><td><b>Şikâyet bildirenler</b><div class="muted" style="font-size:12px">Nordik anketi, ${nq.n} kişi</div></td>${BR_K.map(k=>{const n=nq.c[k]||0, p=n/nq.n; return `<td><div class="rcell${esc(n?'':' none')}" style="${n?`background:${p>=.5?LV[3]:LV[2]}`:''}">${n?'%'+Math.round(p*100):'—'}</div></td>`;}).join('')}</tr>`:''}
     </tbody></table></div></div>
     <div class="muted" style="font-size:12.5px;margin-top:6px">Figür, işyerindeki tüm görevlerde her bölgenin en kötü düzeyini gösterir. Duruş analizinde düzey REBA bileşen skorundan, QEC’te bölge puanından gelir; diğer formlarda yöntemin sonucu ilgili bölgelere yazılır. Hücrenin üzerine gelince kaynağı görünür.</div>`;
   renderRot(tks);
@@ -3169,13 +3169,13 @@ function rotPlan(tks,sel){
 function renderRot(tks){
   const el=$('#rotPlan'); if(!el)return; S.rot=S.rot||{sel:[]};
   const sel=S.rot.sel.filter(id=>tks.some(x=>x.t.id===id));
-  const pick=`<div class="rotpick">${tks.map(x=>`<label><input type="checkbox" data-rot="${x.t.id}"${sel.includes(x.t.id)?' checked':''}> ${esc(tkLabel(x.t.id))}</label>`).join('')}</div>`;
-  const chips=x=>`<div class="rchips">${BR_K.filter(k=>x.lv[k]>=2).map(k=>`<span style="background:${LV[x.lv[k]]}">${BR_N[k]} · ${LVT[x.lv[k]]}</span>`).join('')||'<span style="background:'+LV[1]+'">Belirgin zorlanma yok</span>'}</div>`;
+  const pick=`<div class="rotpick">${tks.map(x=>`<label><input type="checkbox" data-rot="${esc(x.t.id)}"${sel.includes(x.t.id)?' checked':''}> ${esc(tkLabel(x.t.id))}</label>`).join('')}</div>`;
+  const chips=x=>`<div class="rchips">${BR_K.filter(k=>x.lv[k]>=2).map(k=>`<span style="background:${esc(LV[x.lv[k]])}">${BR_N[k]} · ${LVT[x.lv[k]]}</span>`).join('')||'<span style="background:'+LV[1]+'">Belirgin zorlanma yok</span>'}</div>`;
   let out='';
   if(sel.length<2)out='<div class="muted">Rotasyona girecek en az iki görev seç.</div>';
   else {
     const {xs,warn,links}=rotPlan(tks,sel), n=xs.length;
-    const link=(both,last)=>both==null?'':(both.length?`<li class="link" style="color:${LV[4]}">⚠ ${both.map(k=>BR_N[k]).join(', ')} iki görevde de yüksek${last?' (son görevden ilkine dönüş)':''}</li>`:`<li class="link" style="color:${LV[1]}">✓ Farklı bölgeler çalışır${last?' (son görevden ilkine dönüş)':''}</li>`);
+    const link=(both,last)=>both==null?'':(both.length?`<li class="link" style="color:${esc(LV[4])}">⚠ ${both.map(k=>BR_N[k]).join(', ')} iki görevde de yüksek${last?' (son görevden ilkine dönüş)':''}</li>`:`<li class="link" style="color:${esc(LV[1])}">✓ Farklı bölgeler çalışır${last?' (son görevden ilkine dönüş)':''}</li>`);
     out=`<ol class="rotlist">${xs.map((x,i)=>`<li class="task"><b>${i+1}. ${esc(tkLabel(x.t.id))}</b>${x.t.min?` <span class="muted">· ${x.t.min} dk/vardiya</span>`:''}${chips(x)}</li>${link(links[i],i===n-1)}`).join('')}</ol>
       ${warn.length?`<div class="pwarn" style="margin-top:8px">${warn.map(w=>'<div>'+w+'</div>').join('')}</div>`:''}
       <div class="muted" style="font-size:12.5px;margin-top:6px">Sıra döngüseldir: son görevden sonra ilkine dönülür. Değişim aralığını işin yoğunluğuna göre belirle; çalışanlar rotasyondaki tüm görevler için eğitilmiş olmalı. Rotasyon bir idari önlemdir; teknik önlemin yerine geçmez.</div>`;
@@ -3203,14 +3203,14 @@ const pctS=x=>'%'+x;
 const payTxt=p=>p==null?'—':p<1?'1 aydan az':Math.ceil(p)+' ay';
 function renderRoi(){
   const el=$('#roiBox'); if(!el)return; const site=curSite(), {R,acts,sumA,nA,cost,annual,save,pay}=roiCalc(site), cur=esc(R.cur||''), f=v=>roiFmt(v,R);
-  el.innerHTML=`<div class="roigrid">${ROI_F.map(([k,l,u,h])=>`<label>${l} <span class="muted" style="font-size:12px">${u==='para'?cur:u}</span><input type="number" min="0" step="any" inputmode="decimal" data-roi="${k}" value="${esc(R[k]??'')}"${k==='cost'&&sumA?` placeholder="${Math.round(sumA)}"`:''} title="${esc(h)}"></label>`).join('')}
-    <label>Para birimi<input data-roi="cur" value="${cur}" maxlength="4"></label></div>
+  el.innerHTML=`<div class="roigrid">${ROI_F.map(([k,l,u,h])=>`<label>${l} <span class="muted" style="font-size:12px">${u==='para'?cur:u}</span><input type="number" min="0" step="any" inputmode="decimal" data-roi="${esc(k)}" value="${esc(R[k]??'')}"${k==='cost'&&sumA?` placeholder="${esc(Math.round(sumA))}"`:''} title="${esc(h)}"></label>`).join('')}
+    <label>Para birimi<input data-roi="cur" value="${esc(cur)}" maxlength="4"></label></div>
     ${!R.cost&&R.cost!==0&&nA?`<div class="muted" style="font-size:12.5px;margin-top:6px">Önlem maliyeti: ${nA} önlemde girilen tutarların toplamı (${f(sumA)}).</div>`:''}
     <div class="stats" style="margin-top:12px">
       <div class="stat"><b>${annual?f(annual):'—'}</b><span>yıllık tahmini maliyet</span></div>
       <div class="stat"><b>${save?f(save):'—'}</b><span>yıllık beklenen tasarruf</span></div>
       <div class="stat"><b>${payTxt(pay)}</b><span>geri ödeme süresi</span></div>
-      <div class="stat"><b style="color:${save*3-cost<0?LV[4]:'inherit'}">${save||cost?f(save*3-cost):'—'}</b><span>3 yıllık net kazanç</span></div></div>
+      <div class="stat"><b style="color:${esc(save*3-cost<0?LV[4]:'inherit')}">${save||cost?f(save*3-cost):'—'}</b><span>3 yıllık net kazanç</span></div></div>
     <div class="muted" style="font-size:12.5px;margin-top:6px">Hesap: vaka maliyeti = kayıp gün × günlük maliyet + diğer doğrudan maliyet; yıllık maliyet = vaka sayısı × vaka maliyeti × (1 + dolaylı çarpan); tasarruf = yıllık maliyet × beklenen azalma. Önlemlerin işletme giderleri ve verimlilik etkisi dahil değildir.</div>`;
   el.querySelectorAll('[data-roi]').forEach(i=>i.onchange=()=>{const k=i.dataset.roi; R[k]=k==='cur'?i.value.trim():(i.value===''?'':+i.value); persist(); renderRoi();});
 }
@@ -3218,13 +3218,13 @@ function renderRoi(){
 function stationCard(s){
   const tks=S.tasks.filter(t=>t.st===s.id), rs=recsOfStation(s.id), acts=S.actions.filter(a=>a.st===s.id);
   const open=S.openSt&&S.openSt[s.id]!==undefined?S.openSt[s.id]:false;
-  return `<div class="group" id="st_${s.id}"><div class="ghead"><div><button class="linkbtn" data-stog="${s.id}" style="font-size:16px;text-decoration:none">${open?'▾':'▸'} ${esc(s.name)}</button> <span class="muted">· ${tks.length} görev · ${rs.length} kayıt${s.workers?` · ${s.workers} çalışan`:''}${s.shiftH?` · ${String(s.shiftH).replace('.',',')} sa vardiya`:''}</span></div>
-    <div class="row" style="gap:6px"><button class="small" data-sted="${s.id}">Düzenle</button><button class="small" data-tkadd="${s.id}">+ Görev</button><button class="small xl" data-xls="${s.id}">Excel</button><button class="small xl" data-pdfst="${s.id}">PDF</button></div></div>
+  return `<div class="group" id="st_${esc(s.id)}"><div class="ghead"><div><button class="linkbtn" data-stog="${esc(s.id)}" style="font-size:16px;text-decoration:none">${open?'▾':'▸'} ${esc(s.name)}</button> <span class="muted">· ${tks.length} görev · ${rs.length} kayıt${s.workers?` · ${s.workers} çalışan`:''}${s.shiftH?` · ${String(s.shiftH).replace('.',',')} sa vardiya`:''}</span></div>
+    <div class="row" style="gap:6px"><button class="small" data-sted="${esc(s.id)}">Düzenle</button><button class="small" data-tkadd="${esc(s.id)}">+ Görev</button><button class="small xl" data-xls="${esc(s.id)}">Excel</button><button class="small xl" data-pdfst="${esc(s.id)}">PDF</button></div></div>
     ${open?`<div class="gbody">${s.desc?`<p class="about">${esc(s.desc)}</p>`:''}
       ${tks.map(t=>taskBlock(t)).join('')}
       ${exposureHTML(s)}
       ${nmqSummary(rs)}
-      <h3>Önlemler <button class="small" data-acst="${s.id}" style="margin-left:8px;text-transform:none;letter-spacing:0">+ Önlem</button></h3>
+      <h3>Önlemler <button class="small" data-acst="${esc(s.id)}" style="margin-left:8px;text-transform:none;letter-spacing:0">+ Önlem</button></h3>
       ${acts.length?`<div class="alist">${acts.map(actionCard).join('')}</div>`:'<div class="muted">Bu istasyon için önlem yok.</div>'}
     </div>`:''}</div>`;
 }
@@ -3232,9 +3232,9 @@ function taskBlock(t){
   const rs=recsOfTask(t.id).sort((a,b)=>(a.type==='posture'&&b.type==='posture')?((a.time??1e9)-(b.time??1e9)):a.created.localeCompare(b.created));
   const ba=beforeAfter(t.id), pr=rs.filter(r=>r.type==='posture'&&r.time!=null);
   return `<div class="tblock"><div class="row" style="justify-content:space-between"><div><b>${esc(t.name)}</b> <span class="muted">${t.min?`· ${t.min} dk/vardiya`:'· süre girilmedi'} · ${rs.length} kayıt</span></div>
-    <div class="row" style="gap:6px"><button class="small" data-tked="${t.id}">Düzenle</button><button class="small primary" data-tkgo="${t.id}">Bu görevi değerlendir</button></div></div>
+    <div class="row" style="gap:6px"><button class="small" data-tked="${esc(t.id)}">Düzenle</button><button class="small primary" data-tkgo="${esc(t.id)}">Bu görevi değerlendir</button></div></div>
     ${ba.length?`<div class="ba"><b>Önce → sonra</b>${ba.map(x=>`<div>${typeName(x.ty)} <span class="muted">(${dateTR(x.da)} → ${dateTR(x.db)})</span>: ${deltaHTML(x.a,x.b)}</div>`).join('')}</div>`:''}
-    ${pr.length>=2?`<div class="row" style="margin-top:8px"><span class="muted">Zaman grafiği:</span><div class="seg" data-cg="${t.id}">${['reba','rula','owas'].map(m=>`<button data-cm="${m}" class="${(S.chartM[t.id]||'reba')===m?'on':''}">${m.toUpperCase()}</button>`).join('')}</div></div><div class="chart" id="chart_${t.id}"></div>`:''}
+    ${pr.length>=2?`<div class="row" style="margin-top:8px"><span class="muted">Zaman grafiği:</span><div class="seg" data-cg="${esc(t.id)}">${['reba','rula','owas'].map(m=>`<button data-cm="${esc(m)}" class="${esc((S.chartM[t.id]||'reba')===m?'on':'')}">${m.toUpperCase()}</button>`).join('')}</div></div><div class="chart" id="chart_${esc(t.id)}"></div>`:''}
     ${rs.length?`<div class="items" style="margin-top:10px">${rs.map(r=>itemCard(r)).join('')}</div>`:'<div class="muted" style="margin-top:6px">Bu görevde henüz kayıt yok.</div>'}</div>`;
 }
 function bindStations(root){
@@ -3300,11 +3300,11 @@ function renderRiskTable(){
   $$('#rmSeg button').forEach(b=>b.classList.toggle('on',b.dataset.rm===(S.rm||'fk')));
   el.innerHTML=rows.length?`<div class="tblwrap"><table class="cmp rtbl"><thead><tr><th>#</th><th>İstasyon</th><th>Tehlike</th><th>Olası zarar</th><th>Mevcut durum</th><th>Etkilenen</th>${fk?'<th>O</th><th>F</th><th>Ş</th>':'<th>O</th><th>Ş</th>'}<th>Risk</th><th>Önlemler</th><th></th></tr></thead><tbody>${rows.map((r,i)=>`<tr>
     <td>${i+1}</td><td><b>${esc(r.s.name)}</b><div class="muted" style="font-size:12px">${esc(r.t?r.t.name:'')}</div></td><td>${esc(r.hazard)}</td><td style="font-size:12.5px">${esc(r.harm)}</td>
-    <td><span class="badge" style="background:${LV[r.x.m.lv]}">${esc(r.x.n)} ${r.x.m.txt}</span></td><td>${r.s.workers||'—'}</td>
+    <td><span class="badge" style="background:${esc(LV[r.x.m.lv])}">${esc(r.x.n)} ${r.x.m.txt}</span></td><td>${r.s.workers||'—'}</td>
     <td>${fmtN(r.O)}</td>${fk?`<td>${fmtN(r.F)}</td>`:''}<td>${fmtN(r.S)}</td>
-    <td><b style="font-size:15px">${fmtN(r.R)}</b><div><span class="badge" style="background:${LV[r.cls[0]]}">${r.cls[1]}</span></div></td>
+    <td><b style="font-size:15px">${fmtN(r.R)}</b><div><span class="badge" style="background:${esc(LV[r.cls[0]])}">${r.cls[1]}</span></div></td>
     <td style="font-size:12.5px">${r.acts.length?r.acts.map(a=>`${esc(a.title)} <span class="muted">(${(ASTAT.find(x=>x[0]===a.status)||[,''])[1]})</span>`).join('<br>'):'<span class="muted">Önlem yok</span>'}</td>
-    <td><button class="small" data-redit="${r.key}">Düzenle</button>${r.edited?'<div class="muted" style="font-size:12px">elle düzeltildi</div>':''}</td></tr>`).join('')}</tbody></table></div>
+    <td><button class="small" data-redit="${esc(r.key)}">Düzenle</button>${r.edited?'<div class="muted" style="font-size:12px">elle düzeltildi</div>':''}</td></tr>`).join('')}</tbody></table></div>
     <p class="muted" style="margin:6px 0 0">${fk?'Fine-Kinney: Risk = Olasılık × Frekans × Şiddet. Olasılık yöntemin risk düzeyinden, frekans görev süresinden (≥120 dk/vardiya → sürekli), şiddet tehlike türünden önerilir.':'5×5 matris: Risk = Olasılık × Şiddet. Olasılık yöntemin risk düzeyinden, şiddet tehlike türünden önerilir.'} Bunlar başlangıç değerleridir; uzman her satırı işyerinin koşullarına göre düzeltmelidir.</p>`
     :'<div class="muted">Risk satırları, istasyonlara kaydedilen analizlerden oluşur.</div>';
   el.querySelectorAll('[data-redit]').forEach(b=>b.onclick=()=>openRiskDlg(b.dataset.redit));
@@ -3505,7 +3505,7 @@ async function mzPick(){
     srcs.push({l:'Saha kaydı · '+new Date(c.created).toLocaleDateString('tr-TR'),thumb:p.th,load:()=>getPhoto(p),cal:c.cal&&c.cal[i],save:v=>{c.cal=c.cal||{}; c.cal[i]=v; persist();}});}
   $('#measBody').innerHTML=`<div class="row" style="justify-content:space-between"><h2 style="margin:0">Mesafe ölç · görüntü seç</h2><button class="ghost" data-mzx>✕</button></div>
     <p class="about">Ölçülecek nesnenin ve boyu bilinen bir referansın göründüğü bir kare seç.${tk?' Bu görevin görüntüleri listelenir.':''}</p>
-    <div class="mzsrc">${srcs.map((s,i)=>`<button data-mzs="${i}"><img src="${s.thumb||s.src}" alt=""><span>${esc(s.l)}</span>${s.cal&&s.cal.cm?'<em>kalibre</em>':''}</button>`).join('')}
+    <div class="mzsrc">${srcs.map((s,i)=>`<button data-mzs="${esc(i)}"><img src="${esc(s.thumb||s.src)}" alt=""><span>${esc(s.l)}</span>${s.cal&&s.cal.cm?'<em>kalibre</em>':''}</button>`).join('')}
     <button data-mzfile><b style="font-size:26px">＋</b><span>Cihazdan fotoğraf seç</span></button></div>
     <input type="file" id="mzFile" accept="image/*" hidden>`;
   $('#measBody [data-mzx]').onclick=mzClose;
@@ -3517,7 +3517,7 @@ function mzLoad(){ MZ.el=new Image(); MZ.el.onload=mzRender; MZ.el.src=MZ.img; }
 function mzRender(){
   const t=MZ.target, k=mzPx();
   $('#measBody').innerHTML=`<div class="row" style="justify-content:space-between"><h2 style="margin:0">Mesafe ölç${t?` · <span class="pill">${esc(t.label)}</span>`:''}</h2><button class="ghost" data-mzx>✕</button></div>
-   <div class="seg" style="margin:10px 0 6px"><button data-mzstep="ref" class="${MZ.step==='ref'?'on':''}">1 · Referans</button><button data-mzstep="meas" class="${MZ.step==='meas'?'on':''}" ${k?'':'disabled'}>2 · Ölç</button></div>
+   <div class="seg" style="margin:10px 0 6px"><button data-mzstep="ref" class="${esc(MZ.step==='ref'?'on':'')}">1 · Referans</button><button data-mzstep="meas" class="${esc(MZ.step==='meas'?'on':'')}" ${k?'':'disabled'}>2 · Ölç</button></div>
    <div class="hint" id="mzHint"></div>
    <div class="mzwrap"><canvas id="mzCv"></canvas></div>
    <div id="mzPanel"></div>
@@ -3535,7 +3535,7 @@ function mzPanel(){
     :(MZ.ms.some(m=>m.open)?'Ölçümün <b>bitiş noktasına</b> dokun.':'Ölçmek istediğin mesafenin <b>başlangıcına</b> dokun, sonra bitişine (ya da basılı tutup sürükle).');
   if(MZ.step==='ref'){
     const pre=c.preset||'';
-    P.innerHTML=`<div class="dfields" style="margin-top:8px"><label>Referans<select id="mzPre">${REF_PRESETS.map(([v,l])=>`<option value="${v}"${v===pre?' selected':''}>${l}</option>`).join('')}</select></label>
+    P.innerHTML=`<div class="dfields" style="margin-top:8px"><label>Referans<select id="mzPre">${REF_PRESETS.map(([v,l])=>`<option value="${esc(v)}"${v===pre?' selected':''}>${l}</option>`).join('')}</select></label>
       <label>Gerçek uzunluk (cm)<input id="mzCm" type="number" min="0" step="any" inputmode="decimal" value="${esc(c.cm)}"></label></div>
       <div class="row" style="justify-content:space-between;margin-top:8px"><span class="muted">${k?`Ölçek: 1 cm = ${cmT(k)} piksel`:'Ölçek henüz yok'}</span><button class="primary" id="mzGo" ${k?'':'disabled'}>Ölçmeye geç →</button></div>`;
     $('#mzPre').onchange=e=>{c.preset=e.target.value; if(e.target.value&&e.target.value!=='stature'){c.cm=e.target.value; $('#mzCm').value=c.cm;} else $('#mzCm').focus(); mzPanel(); mzDraw();};
@@ -3545,7 +3545,7 @@ function mzPanel(){
   }
   const auto=MZ.pts&&MZ.pts.an&&(MZ.pts.hd||MZ.pts.wr)?(()=>{const h=MZ.pts.hd||MZ.pts.wr, a=MZ.pts.an; return {H:Math.abs(h.x-a.x)/k,V:Math.max(0,(a.y-h.y)/k+ANKLE_CM)};})():null;
   P.innerHTML=`<div class="mzlist">${MZ.ms.filter(m=>!m.open).map((m,i)=>{const v=mzVals(m); return `<div class="mzrow"><b>M${i+1}</b><span><b>${cmT(v.len)} cm</b> <span class="muted">· yatay ${cmT(v.h)} · dikey ${cmT(v.v)}</span></span>
-      <span class="row" style="gap:6px">${t?`<button class="small primary" data-mzuse="${i}">${esc(t.label.split('·')[0].trim())} = ${cmT(v[t.ax||'len'])} cm</button>`:''}<button class="small ghost" data-mzdel="${i}" aria-label="Sil">✕</button></span></div>`;}).join('')||'<div class="muted">Henüz ölçüm yok.</div>'}</div>
+      <span class="row" style="gap:6px">${t?`<button class="small primary" data-mzuse="${esc(i)}">${esc(t.label.split('·')[0].trim())} = ${cmT(v[t.ax||'len'])} cm</button>`:''}<button class="small ghost" data-mzdel="${esc(i)}" aria-label="Sil">✕</button></span></div>`;}).join('')||'<div class="muted">Henüz ölçüm yok.</div>'}</div>
     ${auto?`<div class="mzauto"><b>Duruş noktalarından NIOSH ölçüleri</b><div>H (ayak bileği → el, yatay) ≈ <b>${cmT(auto.H)} cm</b> · V (ellerin yerden yüksekliği) ≈ <b>${cmT(auto.V)} cm</b></div><div class="muted" style="font-size:12.5px">V için ayak bileği noktasına ortalama ${ANKLE_CM} cm eklendi. El noktası olarak “El (parmak kökü)” kullanıldı.</div><button class="small primary" id="mzNiosh" style="margin-top:6px">NIOSH formunu bu değerlerle aç</button></div>`:''}
     ${t&&t.ax!=='len'?`<p class="muted" style="font-size:12.5px;margin:6px 0 0">Bu alan için ${AXN[t.ax]} bileşen kullanılır; iki noktayı tam ${t.ax==='h'?'yatay':'dikey'} hizalamana gerek yok.</p>`:''}`;
   $$('#mzPanel [data-mzdel]').forEach(b=>b.onclick=()=>{const L=MZ.ms.filter(m=>!m.open)[+b.dataset.mzdel]; MZ.ms=MZ.ms.filter(m=>m!==L); mzPanel(); mzDraw();});
@@ -3601,9 +3601,9 @@ const TAGK=Object.fromEntries(TAGS.map(t=>[t[0],t]));
 let SF={photos:[],tags:[],editing:null}, PEND=null, fromCap=false, sVidName='';
 function renderField(){
   renderAllCtx();
-  $('#sThumbs').innerHTML=SF.photos.map((p,i)=>`<div class="fth"><img src="${p.th}" alt="">${p.t!=null?`<small>t = ${fmt(p.t)}</small>`:''}<button class="small ghost danger" data-sfdel="${i}" aria-label="Kaldır">✕</button></div>`).join('');
+  $('#sThumbs').innerHTML=SF.photos.map((p,i)=>`<div class="fth"><img src="${esc(p.th)}" alt="">${p.t!=null?`<small>t = ${fmt(p.t)}</small>`:''}<button class="small ghost danger" data-sfdel="${esc(i)}" aria-label="Kaldır">✕</button></div>`).join('');
   $$('#sThumbs [data-sfdel]').forEach(b=>b.onclick=()=>{const [p]=SF.photos.splice(+b.dataset.sfdel,1); if(!SF.editing)MDB.del(p.id).catch(()=>{}); renderField();});
-  $('#sTags').innerHTML=TAGS.map(([k,l])=>`<button class="chip${SF.tags.includes(k)?' sel on':''}" data-stag="${k}">${SF.tags.includes(k)?'✓ ':''}${l}</button>`).join('');
+  $('#sTags').innerHTML=TAGS.map(([k,l])=>`<button class="chip${esc(SF.tags.includes(k)?' sel on':'')}" data-stag="${esc(k)}">${SF.tags.includes(k)?'✓ ':''}${l}</button>`).join('');
   $$('#sTags [data-stag]').forEach(b=>b.onclick=()=>{const k=b.dataset.stag; SF.tags=SF.tags.includes(k)?SF.tags.filter(x=>x!==k):[...SF.tags,k]; renderField();});
   $('#sSave').textContent=SF.editing?'Değişiklikleri kaydet':'Saha kaydını kaydet'; $('#sCancelEd').hidden=!SF.editing;
   renderFieldList();
@@ -3617,13 +3617,13 @@ function renderFieldList(){
   $('#sList').innerHTML=list.length?list.map(c=>{
     const ms=[...new Set(c.tags.flatMap(t=>TAGK[t]?TAGK[t][2]:[]))]; if(!ms.length&&c.photos.length)ms.push('posture');
     const recs=c.recs.map(id=>S.records.find(r=>r.id===id)).filter(Boolean);
-    return `<div class="fcap${c.done?' done':''}"><div class="row" style="justify-content:space-between;align-items:flex-start"><div><b>${esc(c.taskId?tkLabel(c.taskId):'Görev seçilmedi')}</b><div class="muted" style="font-size:12.5px">${new Date(c.created).toLocaleString('tr-TR',{dateStyle:'short',timeStyle:'short'})}${c.vname?' · video: '+esc(c.vname):''}</div></div>
-      <div class="row" style="gap:6px"><button class="small ghost danger" data-sfdel="${c.id}">Sil</button><button class="small" data-sfed="${c.id}">Düzenle</button><button class="small${c.done?'':' primary'}" data-sfdone="${c.id}">${c.done?'Yeniden aç':'Tamamlandı'}</button></div></div>
-      ${c.photos.length?`<div class="fths">${c.photos.map((p,i)=>`<div class="fth"><img src="${p.th}" alt="">${p.t!=null?`<small>t = ${fmt(p.t)}</small>`:''}<div class="row" style="gap:4px;margin-top:4px"><button class="small" data-sfpos="${c.id}.${i}">Duruş</button><button class="small" data-sfmz="${c.id}.${i}" aria-label="Mesafe ölç">📏</button></div></div>`).join('')}</div>`:''}
+    return `<div class="fcap${esc(c.done?' done':'')}"><div class="row" style="justify-content:space-between;align-items:flex-start"><div><b>${esc(c.taskId?tkLabel(c.taskId):'Görev seçilmedi')}</b><div class="muted" style="font-size:12.5px">${new Date(c.created).toLocaleString('tr-TR',{dateStyle:'short',timeStyle:'short'})}${c.vname?' · video: '+esc(c.vname):''}</div></div>
+      <div class="row" style="gap:6px"><button class="small ghost danger" data-sfdel="${esc(c.id)}">Sil</button><button class="small" data-sfed="${esc(c.id)}">Düzenle</button><button class="small${esc(c.done?'':' primary')}" data-sfdone="${esc(c.id)}">${c.done?'Yeniden aç':'Tamamlandı'}</button></div></div>
+      ${c.photos.length?`<div class="fths">${c.photos.map((p,i)=>`<div class="fth"><img src="${esc(p.th)}" alt="">${p.t!=null?`<small>t = ${fmt(p.t)}</small>`:''}<div class="row" style="gap:4px;margin-top:4px"><button class="small" data-sfpos="${esc(c.id)}.${i}">Duruş</button><button class="small" data-sfmz="${esc(c.id)}.${i}" aria-label="Mesafe ölç">📏</button></div></div>`).join('')}</div>`:''}
       <div class="fmeta">${c.tags.map(t=>`<span class="pill">${TAGK[t]?TAGK[t][1]:t}</span>`).join(' ')}${c.kg?` <span>Yük <b>${n1(+c.kg)} kg</b></span>`:''}${c.n?` <span><b>${c.n}</b> kez/vardiya</span>`:''}${c.min?` <span><b>${c.min}</b> dk/vardiya</span>`:''}</div>
       ${c.note?`<div style="font-size:13.5px;margin-top:4px;white-space:pre-wrap">${esc(c.note)}</div>`:''}
-      <div class="row" style="gap:6px;margin-top:8px;flex-wrap:wrap"><span class="muted" style="font-size:12.5px">Analiz et:</span>${ms.map(k=>`<button class="small" data-sfm="${c.id}.${k}">${k==='posture'?'Duruş (REBA/RULA/OWAS)':FORMS[k].short}</button>`).join('')}<button class="small ghost" data-sfm="${c.id}.__other">Başka yöntem…</button></div>
-      ${recs.length?`<div class="fmeta" style="margin-top:6px">Bağlı analizler: ${recs.map(r=>{const p=primary(r); return `<button class="linkbtn" data-open="${r.id}">${esc(typeName(r.type))}${p?` ${p.m.txt}`:''}</button>`;}).join(' · ')}</div>`:''}</div>`;}).join('')
+      <div class="row" style="gap:6px;margin-top:8px;flex-wrap:wrap"><span class="muted" style="font-size:12.5px">Analiz et:</span>${ms.map(k=>`<button class="small" data-sfm="${esc(c.id)}.${k}">${k==='posture'?'Duruş (REBA/RULA/OWAS)':FORMS[k].short}</button>`).join('')}<button class="small ghost" data-sfm="${esc(c.id)}.__other">Başka yöntem…</button></div>
+      ${recs.length?`<div class="fmeta" style="margin-top:6px">Bağlı analizler: ${recs.map(r=>{const p=primary(r); return `<button class="linkbtn" data-open="${esc(r.id)}">${esc(typeName(r.type))}${p?` ${p.m.txt}`:''}</button>`;}).join(' · ')}</div>`:''}</div>`;}).join('')
     :`<div class="empty">${mode==='wait'?'Analiz bekleyen saha kaydı yok.':'Saha kaydı yok.'}</div>`;
   const R=$('#sList'), cap=id=>S.field.find(c=>c.id===id);
   R.querySelectorAll('[data-sfdone]').forEach(b=>b.onclick=()=>{const c=cap(b.dataset.sfdone); c.done=!c.done; persist(); renderFieldList();});
@@ -3835,8 +3835,8 @@ const HELP=[
 function renderHelp(){
   const q=($('#hSearch').value||'').toLocaleLowerCase('tr').trim(), plain=h=>h.replace(/<[^>]+>/g,' ');
   const items=HELP.filter(h=>!q||(h.t+' '+plain(h.b)).toLocaleLowerCase('tr').includes(q));
-  $('#hToc').innerHTML=HELP.map(h=>`<button class="chipsel" data-hjump="${h.id}">${h.t.split(':')[0]}</button>`).join('');
-  $('#hBody').innerHTML=items.map(h=>`<details class="hsec" id="help_${h.id}"${q||S.helpOpen===h.id?' open':''}><summary>${h.t}</summary><div class="hbody">${h.b}</div></details>`).join('')||'<div class="empty">Bu aramayla eşleşen bölüm yok.</div>';
+  $('#hToc').innerHTML=HELP.map(h=>`<button class="chipsel" data-hjump="${esc(h.id)}">${h.t.split(':')[0]}</button>`).join('');
+  $('#hBody').innerHTML=items.map(h=>`<details class="hsec" id="help_${esc(h.id)}"${q||S.helpOpen===h.id?' open':''}><summary>${h.t}</summary><div class="hbody">${h.b}</div></details>`).join('')||'<div class="empty">Bu aramayla eşleşen bölüm yok.</div>';
   $$('#hToc [data-hjump]').forEach(b=>b.onclick=()=>openHelp(b.dataset.hjump));
 }
 function openHelp(id){S.helpOpen=id; if(view!=='help')go('help'); else renderHelp(); const d=$('#help_'+id); if(d){d.open=true; d.scrollIntoView({behavior:'smooth',block:'start'});}}
