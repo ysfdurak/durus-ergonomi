@@ -450,6 +450,7 @@ select.need{border-color:#dc2626;box-shadow:0 0 0 3px #dc262633}
 .chol>li>b{display:block;font-size:12px;letter-spacing:.02em}
 .chbd{font-size:12px;line-height:1.5;margin-top:2px}
 .chnew{font-size:12px;font-weight:600;margin-top:6px}.chdiff{margin-top:4px}.chdiff b{font-size:12px}.chdiff ul{margin:2px 0 0;padding-left:18px}
+input.bad{border-color:#c0392b!important;outline:2px solid rgba(192,57,43,.35)}
 </style>
 </head>
 <body>
@@ -2007,6 +2008,19 @@ function openCard(k){
 function closeCard(){$('#cardDlg').hidden=true;}
 $('#cardDlg').onclick=e=>{if(e.target.id==='cardDlg')closeCard();};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#cardDlg').hidden)closeCard();});
+/* Alt sınırı olan sayı alanları: sınırın altındaki değer (ör. eksi yük) hesaba girmez.
+   Yakalama aşamasında durdurulur; alan kırmızı çerçeveyle işaretlenir, alandan çıkınca alt sınıra çekilir. */
+document.addEventListener('input',e=>{const el=e.target;
+  if(!(el instanceof HTMLInputElement)||el.type!=='number'||el.min==='')return;
+  const bad=el.value!==''&&+el.value<+el.min;
+  el.toggleAttribute('aria-invalid',bad); el.classList.toggle('bad',bad);
+  if(bad){e.stopImmediatePropagation(); toast('This value is below the allowed minimum; it was not used in the calculation.');}
+},true);
+document.addEventListener('change',e=>{const el=e.target;
+  if(!(el instanceof HTMLInputElement)||el.type!=='number'||el.min===''||el.value===''||+el.value>=+el.min)return;
+  el.value=el.min; el.removeAttribute('aria-invalid'); el.classList.remove('bad');
+  el.dispatchEvent(new Event('input',{bubbles:true}));
+},true);
 
 document.addEventListener('click',e=>{
   const c=e.target.closest('[data-card]'); if(c){e.preventDefault(); openCard(c.dataset.card); return;}
@@ -2106,7 +2120,10 @@ function ornekKare(belirsiz){
   x.fillStyle='#55626c'; x.font='600 20px IBM Plex Sans, sans-serif'; x.fillText(belirsiz?'Sample frame: hand behind the box':'Sample frame: worker reaching for a box',24,40);
   return c.toDataURL('image/jpeg',.85);
 }
-$('#sampleBtn').onclick=()=>startAnalysis(ornekKare(false),null,'sample');
+// Örnek kare çizimdir (gerçek fotoğraf değil); poz modeli çizgi adamı tanımaz. "Noktaları otomatik bul" örnekte
+// noktaları çizimin kendi koordinatlarından koyar, böylece akış örnekle de denenebilir.
+const ORNEK_PTS={ear:{x:628,y:214},sh:{x:560,y:260},el:{x:610,y:370},wr:{x:650,y:460},hd:{x:675,y:485},hip:{x:400,y:360},kn:{x:470,y:455},an:{x:430,y:555}};
+$('#sampleBtn').onclick=()=>{startAnalysis(ornekKare(false),null,'sample'); if(cur)cur.sample=true;};
 // Tek karede belirsiz işaretleme: noktalar hazır, el noktası kolinin kenarına (görünen son yere) kondu. Kullanıcı eli
 // kolinin içinde tahmin ettiği yere sürükleyince #corrDiff hangi açının ve hangi puanın değiştiğini gösterir (dış inceleme, Kasım 2026).
 $('#ambBtn').onclick=()=>{
@@ -2170,6 +2187,8 @@ async function detectPose(img,side=cur&&cur.side){
 }
 async function autoPoints(){
   if(!cur||!imgEl){toast('Pick a frame first.');return;}
+  if(cur.sample){cur.points=JSON.parse(JSON.stringify(ORNEK_PTS)); cur.facing=1; cur.auto=true; if(!cur.side){cur.side='sag'; $('#pSide').value=cur.side;} activeKey=null; updateAll();
+    toast('The sample frame is a drawing: points were placed from the drawing. On a real photo or video the model finds the points itself.'); return;}
   const b=$('#autoBtn'), old=b.textContent; b.disabled=true; b.textContent='Searching…';
   try{
     const d=await detectPose(imgEl);
@@ -2187,11 +2206,14 @@ $$('#ptabs button').forEach(b=>b.onclick=()=>setPtab(b.dataset.ptab));
 
 const nextMissing=()=>PTS.find(p=>!cur.points[p.k])?.k||null;
 function toCanvas(e){const r=cv.getBoundingClientRect(); return {x:clamp((e.clientX-r.left)*cv.width/r.width,0,cv.width), y:clamp((e.clientY-r.top)*cv.height/r.height,0,cv.height)};}
-function nearest(p){let best=null, bd=cv.width*0.03; for(const k in cur.points){const q=cur.points[k], d=Math.hypot(q.x-p.x,q.y-p.y); if(d<bd){bd=d;best=k;}} return best;}
+function nearest(p,r=0.03){let best=null, bd=cv.width*r; for(const k in cur.points){const q=cur.points[k], d=Math.hypot(q.x-p.x,q.y-p.y); if(d<bd){bd=d;best=k;}} return best;}
 let raf=0; const reqDraw=()=>{if(!raf)raf=requestAnimationFrame(()=>{raf=0;draw();});};
 cv.addEventListener('pointerdown',e=>{
   if(!cur||!imgEl)return; const p=toCanvas(e);
-  drag=activeKey||nearest(p)||nextMissing(); if(!drag)return;
+  // Eksik nokta varken (ör. el bileğe çok yakın) yalnız işaretin tam üstüne basmak var olanı taşır; aksi hâlde sıradaki nokta konur.
+  const miss=nextMissing(), near=nearest(p,miss?0.012:0.03);
+  drag=activeKey||near||miss; if(!drag)return;
+  if(!activeKey&&near&&miss)toast(PTS.find(x=>x.k===near).n+' point was moved. '+PTS.find(x=>x.k===miss).n+': tap a little further away or pick it from the chips above.');
   // Var olan nokta taşınıyorsa düzeltme sayılır: önceki yer ve önceki sonuç saklanır, bırakınca fark gösterilir.
   corr=cur.points[drag]?{k:drag,pt:{...cur.points[drag]},r:postureCompute(cur)}:null;
   cur.points[drag]=p; dragPos=p; cv.setPointerCapture(e.pointerId); e.preventDefault(); reqDraw(); updateScores();
@@ -2254,9 +2276,12 @@ function updateScores(){
   const edges=ANG.filter(d=>cur.ov[d.k]==null&&nearEdge(d.k,r.a[d.k])!=null).map(d=>d.n);
   if(edges.length)W.push('<b>Borderline angles:</b> '+edges.join(', ')+'. At these angles a measurement error of a few degrees can change the score; check with a goniometer or look at neighbouring frames too.');
   const pw=$('#pWarn'); if(pw)pw.innerHTML=W.map(x=>'<div>'+x+'</div>').join('');
+  // Hiç nokta ya da açı yokken hesap "REBA 1 · önemsiz" gibi yanıltıcı bir sonuç verirdi; boş durum gri ve puansız gösterilir.
+  const none=r.miss.length>=ANG.filter(d=>d.k!=='kn').length, NONE={txt:'—',nm:'No measurement yet',ac:'Mark the points or enter the angles in the table.',lv:0};
+  if(none)['reba','rula','owas'].forEach(k=>{r[k]={...r[k],...NONE,bd:''};});
   $('#strip').innerHTML=['reba','rula','owas'].map(k=>{const m=r[k]; return '<button class="tile'+(S.ptab===k?' on':'')+'" data-m="'+k+'" style="background:'+LV[m.lv]+'"><small>'+k.toUpperCase()+'</small><b>'+m.txt+'</b><span>'+m.nm+'</span></button>';}).join('');
   $$('.tile').forEach(t=>t.onclick=()=>setPtab(t.dataset.m));
-  ['reba','rula','owas'].forEach(k=>{const el=$('#res_'+k); el.style.background=LV[r[k].lv]; el.innerHTML=resultHTML(r[k],r.miss);});
+  ['reba','rula','owas'].forEach(k=>{const el=$('#res_'+k); el.style.background=LV[r[k].lv]; el.innerHTML=resultHTML(r[k],none?[]:r.miss);});
   const c=r.owas.codes;
   [['owBack',c.aB,OW_BACK],['owArms',c.aA,OW_ARMS],['owLegs',c.aL,OW_LEGS]].forEach(([k,v,n])=>{$('[data-adj="'+k+'"] option[value="auto"]').textContent='Automatic ('+v+' · '+n[v-1]+')';});
   $('#pTips').innerHTML=tipsHTML(r.miss.length>=4?[]:r.tips,r.miss.length>=4?'Mark the points or enter the angles first to get suggestions.':'No clear source of risk is visible.',cur.id);
