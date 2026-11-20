@@ -134,6 +134,12 @@ async function baslat() {
   // Dış bağlantılar varsayılan tarayıcıda açılsın; uygulama penceresi başka siteye gitmesin
   win.webContents.setWindowOpenHandler(({ url }) => { if (/^https?:/.test(url)) shell.openExternal(url); return { action: 'deny' }; });
   win.webContents.on('will-navigate', (e, url) => { if (!url.startsWith('app://durus/')) { e.preventDefault(); if (/^https?:/.test(url)) shell.openExternal(url); } });
+  // İzinler: Electron varsayılan olarak sayfanın istediği her izni (kamera, mikrofon, konum, bildirim) sorgusuz verir.
+  // Uygulama yalnız panoya kopyalama ve tam ekran kullanır (fotoğraf dosya seçiciyle gelir, kamera izni gerekmez).
+  const IZINLI = new Set(['clipboard-sanitized-write', 'fullscreen']);
+  const bizden = (url) => String(url || '').startsWith('app://durus/');
+  session.defaultSession.setPermissionRequestHandler((wc, izin, cb) => { cb(IZINLI.has(izin) && bizden(wc.getURL())); });
+  session.defaultSession.setPermissionCheckHandler((_wc, izin, kaynak) => { return IZINLI.has(izin) && bizden(kaynak); });
   // İndirmelerde "Farklı kaydet" penceresi
   session.defaultSession.on('will-download', (_e, item) => {
     item.setSaveDialogOptions({ defaultPath: path.join(app.getPath('documents'), item.getFilename()) });
