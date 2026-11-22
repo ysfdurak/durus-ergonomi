@@ -142,7 +142,9 @@ async function baslat() {
   session.defaultSession.setPermissionCheckHandler((_wc, izin, kaynak) => { return IZINLI.has(izin) && bizden(kaynak); });
   // İndirmelerde "Farklı kaydet" penceresi
   session.defaultSession.on('will-download', (_e, item) => {
-    item.setSaveDialogOptions({ defaultPath: path.join(app.getPath('documents'), item.getFilename()) });
+    // Başlık verilmezse Windows pencere başlığında blob:app://... adresi görünüyordu.
+    const en = ayarOku().dil === 'en';
+    item.setSaveDialogOptions({ title: en ? 'Save file' : 'Dosyayı kaydet', defaultPath: path.join(app.getPath('documents'), item.getFilename()) });
   });
 
   win.loadURL(adres(dil));

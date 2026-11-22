@@ -2504,6 +2504,8 @@ const LVN=['Nötr','Düşük','Orta','Yüksek','Çok yüksek'];
 const plain=h=>String(h??'').replace(/<br\s*\/?>/g,'\n').replace(/<sup>(.*?)<\/sup>/g,'^$1').replace(/<sub>(.*?)<\/sub>/g,'$1').replace(/<[^>]+>/g,'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
 const today=()=>new Date().toISOString().slice(0,10);
 const slug=s=>String(s||'kayit').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/ı/g,'i').replace(/[^A-Za-z0-9]+/g,'_').replace(/^_|_$/g,'').slice(0,40)||'kayit';
+// Sayfa adı 31 karakterle sınırlı: metni kelime ortasından değil, kelime sınırında kısalt
+function shortWords(t,n){t=String(t);if(t.length<=n)return t;const k=t.slice(0,n-1),i=k.lastIndexOf(' ');return (i>n/2?k.slice(0,i):k).replace(/[\s›·-]+$/,'')+'…';}
 function sheetName(wb,n){n=String(n).replace(/[\[\]:*?\/\\]/g,'-').slice(0,31); let s=n,i=2; while(wb.getWorksheet(s))s=n.slice(0,27)+' ('+(i++)+')'; return s;}
 const ADJ_LBL={trunkTwist:'Gövde dönük',trunkSide:'Gövde yana eğik',neckTwist:'Boyun dönük',neckSide:'Boyun yana eğik',uaAbd:'Kol yana açık/dönük',uaRaised:'Omuz kalkık',uaSupported:'Kol destekli',wristDev:'Bilek yana sapmış',shock:'Ani/darbeli kuvvet',actStatic:'1 dk’dan uzun statik duruş',actRepeat:'Dakikada 4+ tekrar',actRapid:'Hızlı duruş değişimi',laMidline:'Ön kol orta hattı geçiyor',wristTwistEnd:'Bilek dönüşü sınırda'};
 const CPL=['İyi','Orta','Zayıf','Kabul edilemez'];
@@ -2549,7 +2551,7 @@ async function imgSize(src){return new Promise(r=>{const i=new Image(); i.onload
 
 // Tek kayıt: yazdırılabilir değerlendirme formu
 async function addFormSheet(wb,rec){
-  const ws=wb.addWorksheet(sheetName(wb,(rec.task||'Kayıt').slice(0,18)+' · '+typeName(rec.type)),
+  const tn=typeName(rec.type),ws=wb.addWorksheet(sheetName(wb,shortWords(rec.task||'Kayıt',Math.max(8,28-tn.length))+' · '+tn),
     {pageSetup:{paperSize:9,orientation:'portrait',fitToPage:true,fitToWidth:1,fitToHeight:0,margins:{left:.5,right:.5,top:.6,bottom:.6,header:.3,footer:.3}}});
   ws.columns=[{width:34},{width:64}];
   let r=1;
