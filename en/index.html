@@ -2504,6 +2504,8 @@ const LVN=['Neutral','Low','Medium','High','Very high'];
 const plain=h=>String(h??'').replace(/<br\s*\/?>/g,'\n').replace(/<sup>(.*?)<\/sup>/g,'^$1').replace(/<sub>(.*?)<\/sub>/g,'$1').replace(/<[^>]+>/g,'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
 const today=()=>new Date().toISOString().slice(0,10);
 const slug=s=>String(s||'kayit').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/ı/g,'i').replace(/[^A-Za-z0-9]+/g,'_').replace(/^_|_$/g,'').slice(0,40)||'kayit';
+// Sayfa adı 31 karakterle sınırlı: metni kelime ortasından değil, kelime sınırında kısalt
+function shortWords(t,n){t=String(t);if(t.length<=n)return t;const k=t.slice(0,n-1),i=k.lastIndexOf(' ');return (i>n/2?k.slice(0,i):k).replace(/[\s›·-]+$/,'')+'…';}
 function sheetName(wb,n){n=String(n).replace(/[\[\]:*?\/\\]/g,'-').slice(0,31); let s=n,i=2; while(wb.getWorksheet(s))s=n.slice(0,27)+' ('+(i++)+')'; return s;}
 const ADJ_LBL={trunkTwist:'Trunk twisted',trunkSide:'Trunk side-bent',neckTwist:'Neck twisted',neckSide:'Neck side-bent',uaAbd:'Arm abducted/rotated',uaRaised:'Shoulder raised',uaSupported:'Arm supported',wristDev:'Wrist deviated',shock:'Sudden/jerky force',actStatic:'Static posture over 1 min',actRepeat:'4+ repetitions per minute',actRapid:'Rapid change in posture',laMidline:'Forearm crosses the midline',wristTwistEnd:'Wrist twist near end of range'};
 const CPL=['Good','Medium','Poor','Unacceptable'];
@@ -2549,7 +2551,7 @@ async function imgSize(src){return new Promise(r=>{const i=new Image(); i.onload
 
 // Tek kayıt: yazdırılabilir değerlendirme formu
 async function addFormSheet(wb,rec){
-  const ws=wb.addWorksheet(sheetName(wb,(rec.task||'Record').slice(0,18)+' · '+typeName(rec.type)),
+  const tn=typeName(rec.type),ws=wb.addWorksheet(sheetName(wb,shortWords(rec.task||'Record',Math.max(8,28-tn.length))+' · '+tn),
     {pageSetup:{paperSize:9,orientation:'portrait',fitToPage:true,fitToWidth:1,fitToHeight:0,margins:{left:.5,right:.5,top:.6,bottom:.6,header:.3,footer:.3}}});
   ws.columns=[{width:34},{width:64}];
   let r=1;
