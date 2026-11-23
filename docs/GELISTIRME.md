@@ -181,3 +181,10 @@ Uygulama imzasız olduğu için Windows ilk açılışta SmartScreen uyarısı v
 - **Sunucu (VPS) gerekir mi?** Şu an hayır. Birden çok kişinin aynı kayıtları görmesi, merkezi yedek ya da kullanıcı girişi istenirse gerekir.
 - **Neden iki ayrı HTML var da tek dosyada dil seçimi yok?** Arama motorları her dili ayrı adreste görmek ister (`/` ve `/en/`), ve çeviri derleme anında yapıldığı için uygulama kodu tek dilde kalıp sadeleşir.
 - **Hesaplar doğru mu?** Her yöntemin kaynağı yöntem kartında yazar; örnek değerlerle test edildi. Sonuçlar karar desteğidir; uzman değerlendirmesinin yerine geçmez.
+
+## 7. Uçtan uca denetim · 23 Kasım 2026 (masaüstü 1.4.5)
+
+- **Puan doğrulaması:** REBA ve RULA, uygulamadan bağımsız yazılmış çalışma kâğıdı tablolarıyla (Hignett ve McAtamney 2000; McAtamney ve Corlett 1993) 20.000 rastgele duruş ve düzeltme seçeneği üzerinde karşılaştırıldı. Fark çıkmadı.
+- **Tarayıcıda uçtan uca (TR ve EN):** Örnekle dene, otomatik nokta bulma, kaydetme, 10 formun sonucu, PDF ve Excel rapor, yedek indir, tümünü sil, yedekten geri yükle. İngilizce PDF'te Türkçe metin kalmadı.
+- **Düzeltme:** "Tümünü sil"den sonra kendiliğinden boş bir "İşyerim" açılıyordu; yedek geri yüklenince yedekteki işyeri onun yanına ekleniyor, iki işyeri oluyordu. İçe aktarmada yedekte işyeri varsa bu boş varsayılan işyeri atılıyor (kaynak: `tools/i18n/source.html`, `#ioLoad`).
+

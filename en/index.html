@@ -2463,6 +2463,8 @@ $('#importBtn').onclick=()=>{$('#ioBox').hidden=false; $('#ioLoad').hidden=false
 $('#ioClose').onclick=()=>$('#ioBox').hidden=true;
 $('#ioLoad').onclick=()=>{
   try{const d=JSON.parse($('#ioText').value); const ids=new Set(S.records.map(i=>i.id)); let k=0;
+    // Yedekte işyeri varsa, “Tümünü sil”den sonra kendiliğinden açılan boş varsayılan işyerini at; yoksa geri yüklemede iki işyeri olur.
+    if(Array.isArray(d.sites)&&d.sites.length) S.sites=S.sites.filter(s=>S.stations.some(st=>st.site===s.id)||S.records.length||s.addr||s.assessor||s.name!=='My site');
     ['sites','stations','tasks','actions','field'].forEach(key=>{if(Array.isArray(d[key])){const have=new Set(S[key].map(x=>x.id)); d[key].forEach(x=>{if(x&&x.id&&!have.has(x.id))S[key].push(x);});}}); if(d.roi)S.roi={...d.roi,...(S.roi||{})}; if(d.riskOv)S.riskOv={...d.riskOv,...S.riskOv};
     if(Array.isArray(d.records)) d.records.forEach(r=>{if(r&&r.type&&!ids.has(r.id)){if(r.type==='posture')r.adj=migrateAdj(r.adj); S.records.push(r); k++;}});
     else if(Array.isArray(d.items)) d.items.forEach(i=>{if(i&&i.points&&!ids.has(i.id)){S.records.push({id:i.id,type:'posture',task:'Imported',note:i.note||'',created:new Date().toISOString(),time:i.time,src:i.src,img:i.img,thumb:i.thumb,points:i.points,facing:i.facing||1,ov:i.ov||{},adj:migrateAdj(i.adj),side:''}); k++;}});
