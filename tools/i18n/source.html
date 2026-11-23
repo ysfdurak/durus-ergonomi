@@ -2188,11 +2188,17 @@ const MP_BASE='/lib/pose/'; // depodaki kopya (tools/kutuphaneler.mjs); dış ad
 let poseP=null;
 function loadPose(){
   if(!poseP)poseP=new Promise((res,rej)=>{const s=document.createElement('script'); s.src=MP_BASE+'pose.js'; s.crossOrigin='anonymous';
-    s.onload=()=>{try{const p=new window.Pose({locateFile:f=>MP_BASE+f}); p.setOptions({modelComplexity:1,staticImageMode:true,smoothLandmarks:false,enableSegmentation:false,minDetectionConfidence:.3}); res(p);}catch(e){rej(e);}};
+    s.onload=()=>{try{const p=new window.Pose({locateFile:f=>MP_BASE+f}); p.setOptions({modelComplexity:1,staticImageMode:true,smoothLandmarks:false,enableSegmentation:true,minDetectionConfidence:.3}); res(p);}catch(e){rej(e);}};
     s.onerror=()=>rej(new Error('pose')); document.head.appendChild(s);}).catch(e=>{poseP=null; throw e;});
   return poseP;
 }
 // Bir görüntüde 33 vücut noktası bulur; Duruş'un 8 noktasına çevirir (yandan görünen taraf).
+// Segmentasyon maskesini küçük bir tuvale çizip okur (kırmızı kanal = kişi olasılığı).
+function maskOf(m){
+  if(!m)return null;
+  try{const w=160, h=Math.max(1,Math.round(w*(m.height||1)/(m.width||1))), c=document.createElement('canvas'); c.width=w; c.height=h;
+    const g=c.getContext('2d',{willReadFrequently:true}); g.drawImage(m,0,0,w,h); return {w,h,d:g.getImageData(0,0,w,h).data};}catch(e){return null;}
+}
 async function detectPose(img,side=cur&&cur.side){
   const pose=await loadPose();
   const res=await new Promise((ok,no)=>{pose.onResults(ok); pose.send({image:img}).catch(no);});
@@ -2201,7 +2207,14 @@ async function detectPose(img,side=cur&&cur.side){
   const RS={ear:8,sh:12,el:14,wr:16,pk:18,ix:20,hip:24,kn:26,an:28}, LS_={ear:7,sh:11,el:13,wr:15,pk:17,ix:19,hip:23,kn:25,an:27};
   const sum=m=>Object.values(m).reduce((a,i)=>a+v(i),0);
   const right=side==='sag'?true:side==='sol'?false:sum(RS)>=sum(LS_), I=right?RS:LS_;
-  const P=i=>({x:clamp(L[i].x*W,0,W),y:clamp(L[i].y*H,0,H)}), ok=i=>v(i)>=.3, pts={};
+  // Nokta kabulü: model yeterince eminse (görünürlük ≥ .5), nokta görüntünün içindeyse ve kişinin silüetinin
+  // (segmentasyon maskesi) üstünde ya da hemen yanındaysa. Gerçek videolarda elin ve kulağın kolinin üstüne
+  // konduğu, kadraj dışındaki kalçanın kenara yapıştırıldığı görüldü; bu noktalar artık konmaz, elle koyulur.
+  const M=maskOf(res.segmentationMask);
+  const onBody=i=>{if(!M)return true; const cx=Math.round(L[i].x*M.w), cy=Math.round(L[i].y*M.h), r=Math.max(2,Math.round(M.w*.02));
+    for(let y=cy-r;y<=cy+r;y++)for(let x=cx-r;x<=cx+r;x++){if(x>=0&&y>=0&&x<M.w&&y<M.h&&M.d[(y*M.w+x)*4]>110)return true;} return false;};
+  const inside=i=>L[i].x>=0&&L[i].x<=1&&L[i].y>=0&&L[i].y<=1;
+  const P=i=>({x:clamp(L[i].x*W,0,W),y:clamp(L[i].y*H,0,H)}), ok=i=>v(i)>=.5&&inside(i)&&onBody(i), pts={};
   ['ear','sh','el','wr','hip','kn','an'].forEach(k=>{if(ok(I[k]))pts[k]=P(I[k]);});
   if(ok(I.ix)||ok(I.pk)){const a=P(I.ix),c=P(I.pk); pts.hd={x:(a.x+c.x)/2,y:(a.y+c.y)/2};}
   // Yüz yönü: ayak ucu-topuk (yandan en güvenilir), görünmüyorsa burun-kulak.
