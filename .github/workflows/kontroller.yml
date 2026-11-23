@@ -26,5 +26,7 @@ jobs:
           cd tools && node i18n/extract.mjs && node i18n/build.mjs | tee /tmp/derleme.txt
           grep -q "çevrilmemiş Türkçe metin 0" /tmp/derleme.txt || (echo "İngilizce sayfada çevrilmemiş metin var." && exit 1)
           cd .. && git diff --exit-code -- index.html en/index.html tools/i18n/en.json || (echo "Sayfalar güncel değil: tools klasöründe i18n/extract.mjs ve i18n/build.mjs çalıştırıp gönder." && exit 1)
+      - name: REBA/RULA bağımsız tablolarla aynı mı
+        run: node tools/e2e/puan-karsilastir.mjs
       - name: Önbellek adı (sw.js) güncel mi
         run: node tools/sw-kontrol.mjs "${{ github.event.before || github.event.pull_request.base.sha }}"
