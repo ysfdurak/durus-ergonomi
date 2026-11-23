@@ -188,3 +188,13 @@ Uygulama imzasız olduğu için Windows ilk açılışta SmartScreen uyarısı v
 - **Tarayıcıda uçtan uca (TR ve EN):** Örnekle dene, otomatik nokta bulma, kaydetme, 10 formun sonucu, PDF ve Excel rapor, yedek indir, tümünü sil, yedekten geri yükle. İngilizce PDF'te Türkçe metin kalmadı.
 - **Düzeltme:** "Tümünü sil"den sonra kendiliğinden boş bir "İşyerim" açılıyordu; yedek geri yüklenince yedekteki işyeri onun yanına ekleniyor, iki işyeri oluyordu. İçe aktarmada yedekte işyeri varsa bu boş varsayılan işyeri atılıyor (kaynak: `tools/i18n/source.html`, `#ioLoad`).
 
+
+## 8. Gerçek videoyla deneme · 23 Kasım 2026 (masaüstü 1.4.6)
+
+Açık lisanslı (Pexels) gerçek depo videoları ve fotoğraflarıyla "Videoyu tara" ve "Noktaları otomatik bul" sınandı (Chromium, Playwright).
+
+- **Bulgu:** Kişi yandan görünmediğinde 2B çizimden ölçülen açı ciddi biçimde kısalıyordu. Kameraya çapraz dönük, yerden koli alan çalışanda göze 70–100° görünen gövde eğilmesi 2B'de 15–34° ölçüldü; bir karede yüz yönü (burun-kulak) yanlış seçildiği için öne eğilme geriye eğilme sayıldı. Tarama en kötü kareyi REBA 5 gösterdi.
+- **Düzeltme:** MediaPipe'ın 3B dünya noktalarından (`poseWorldLandmarks`) gövdeye göre açılar hesaplanıyor (`angles3`): gövde öne eğilme ve yana eğilme, boyun, üst kol (gövdeye göre), dirsek, bilek, diz. Omuzlar arası 2B uzaklığın gövde boyuna oranı 3B'deki oranın yarısından azsa kişi yandan görünüyor sayılır ve eski 2B ölçüm kullanılır; değilse 3B açılar geçerli olur ve ekranda "Kişi yandan görünmüyor" uyarısı çıkar. Bir nokta elle sürüklenince 3B açılar silinir, çizim esas alınır. Yüz yönü önce ayak ucu-topuktan bulunur.
+- **Sonuç:** Aynı videoda 16 karenin 10'unda 3B açı kullanıldı; derin eğilmede gövde 72–108°, en kötü kare REBA 8 (yüksek risk). Yandan görünen karelerde iki yöntem birkaç derece içinde aynı.
+- **Denetim:** `node tools/e2e/aci3b-kontrol.mjs` bilinen 12 duruştan üretilmiş 3B noktalarla açıları doğrular (CI'da çalışır).
+- **Bilinen sınırlar:** Karede birden çok kişi varsa model en belirgin olanı seçer; hangi kişinin ölçüleceği seçilemiyor. Arkası dönük ve kollar başın üstündeyken 3B kol açısı az çıkabiliyor. Uzaktaki küçük kişide (görüntünün ~%20'sinden kısa) nokta bulunamıyor. Bu durumlarda noktaları elle koymak gerekir.

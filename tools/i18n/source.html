@@ -844,6 +844,30 @@ function autoAngles(p,f){
   if(p.hip&&p.kn&&p.an) r.kn=180-inter(p.hip,p.kn,p.an);
   return r;
 }
+/* Kişi yandan görünmediğinde 2B çizimden ölçülen açı kısalır (öne eğilen gövde kameraya doğru eğilince dik görünür).
+   MediaPipe'ın 3B dünya noktalarından (metre, kalça merkezli, y aşağı) gövdeye göre açılar: gövde ve kol öne pozitif.
+   Gerçek depo videolarında denendi: kameraya dönük derin eğilmede 2B gövde 15–34°, 3B 39–106° (göze görünen 60–100°). */
+function angles3(W,right){
+  const v=(a,b)=>[b.x-a.x,b.y-a.y,b.z-a.z], dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2], nr=a=>Math.hypot(a[0],a[1],a[2])||1, un=a=>{const n=nr(a);return a.map(x=>x/n);};
+  const cr=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]], md=(a,b)=>({x:(a.x+b.x)/2,y:(a.y+b.y)/2,z:(a.z+b.z)/2}), dg=r=>r*180/Math.PI;
+  const ok=i=>W[i]&&(W[i].visibility??1)>=.5, ic=(a,b,c)=>{const p=v(b,a),q=v(b,c); return 180-dg(Math.acos(clamp(dot(p,q)/(nr(p)*nr(q)),-1,1)));};
+  if(![11,12,23,24].every(ok))return null;
+  const up=[0,-1,0], sh=md(W[11],W[12]), hp=md(W[23],W[24]), t=v(hp,sh), tu=un(t);
+  let lat=v(W[23],W[24]); lat[1]=0; lat=un(lat);
+  // Yön denetimi göğsün önüne göre (yataya göre değil): 90°'den fazla eğilen gövdede de burun öne bakar.
+  if(dot(cr(tu,lat),v(md(W[7],W[8]),W[0]))<0)lat=lat.map(x=>-x);
+  const fwd=un(cr(up,lat)), ant=un(cr(tu,lat)), r={};
+  r.trunk=dg(Math.atan2(dot(t,fwd),dot(t,up)));
+  r.side=dg(Math.asin(clamp(dot(tu,lat),-1,1)));
+  const I=right?{ear:8,sh:12,el:14,wr:16,pk:18,ix:20,hip:24,kn:26,an:28}:{ear:7,sh:11,el:13,wr:15,pk:17,ix:19,hip:23,kn:25,an:27};
+  if(ok(7)||ok(8)){const n=v(sh,md(W[7],W[8])); r.neck=dg(Math.atan2(dot(n,ant),dot(n,tu)));}
+  if(ok(I.el)){const u=v(W[I.sh],W[I.el]); r.ua=dg(Math.atan2(dot(u,ant),-dot(u,tu)));}
+  if(ok(I.el)&&ok(I.wr))r.la=ic(W[I.sh],W[I.el],W[I.wr]);
+  if(ok(I.wr)&&(ok(I.ix)||ok(I.pk)))r.wr=ic(W[I.el],W[I.wr],md(W[I.ix],W[I.pk]));
+  if(ok(I.kn)&&ok(I.an))r.kn=ic(W[I.hip],W[I.kn],W[I.an]);
+  for(const k in r)r[k]=Math.round(r[k]);
+  return r;
+}
 function uaBase(v){ if(v==null)return 1; if(v>=-20&&v<=20)return 1; if(v<-20||v<=45)return 2; if(v<=90)return 3; return 4; }
 function calcREBA(a,j){
   let t=1; if(a.trunk!=null){const v=a.trunk; if(Math.abs(v)<=5)t=1; else if(v>0)t=v<=20?2:v<=60?3:4; else t=-v<=20?2:3;}
@@ -900,6 +924,8 @@ function calcOWAS(a,j){
 }
 function postureCompute(rec){
   const au=autoAngles(rec.points||{},rec.facing||1), a={};
+  // Kişi yandan görünmüyorsa (rec.yan===false) model 3B açıları 2B ölçümün yerine geçer; nokta elle taşınınca a3 silinir.
+  if(rec.a3&&rec.yan===false)ANG.forEach(d=>{if(rec.a3[d.k]!=null)au[d.k]=rec.a3[d.k];});
   ANG.forEach(d=>{const o=rec.ov&&rec.ov[d.k]; a[d.k]=(o!==undefined&&o!==null&&o!=='')?+o:(au[d.k]??null);});
   const miss=ANG.filter(d=>a[d.k]==null&&d.k!=='kn').map(d=>d.n);
   const j=rec.adj, r={a,au,miss,reba:calcREBA(a,j),rula:calcRULA(a,j),owas:calcOWAS(a,j)};
@@ -2081,7 +2107,7 @@ async function scanVideo(){
       if(!d||n<5||!d.pts.sh||!d.pts.hip){miss++; show(i+1); continue;}
       tg.drawImage(c,0,0,th.width,th.height);
       made.push({id:uid(),type:'posture',task:tkLabel(tk.id),taskId:tk.id,note:'',side:side||(d.right?'sag':'sol'),created:new Date(base+i).toISOString(),time:times[i],src:videoName,img:null,thumb:th.toDataURL('image/jpeg',.6),
-        points:d.pts,facing:d.facing,ov:{},adj:migrateAdj({loadKg:kg}),auto:true,scan:scanId});
+        points:d.pts,facing:d.facing,a3:d.a3,yan:d.yan,ov:{},adj:migrateAdj({loadKg:kg}),auto:true,scan:scanId});
       show(i+1);
     }
   }catch(e){toast('Tarama yapılamadı: otomatik nokta bulma için model gerekir (web sürümünde ilk kullanımda internetten iner).');}
@@ -2092,6 +2118,7 @@ async function scanVideo(){
   pr.innerHTML=`<div class="scanres"><b>${made.length} kare kaydedildi</b> <span class="muted">· ${esc(tkLabel(tk.id))}${scanStop?' · tarama durduruldu':''}</span>
     ${stackBar([0,1,2,3,4].map(l=>({w:lv[l],c:LV[l],l:'REBA '+LVT[l]})),made.length)}
     <div style="font-size:13px">REBA yüksek veya çok yüksek: <b>%${Math.round(hi*100)}</b> karede. En kötü kare: <b>REBA ${Math.max(...made.map(r=>postureCompute(r).reba.v))}</b>.</div>
+    ${made.some(r=>r.a3&&r.yan===false)?`<div class="muted" style="font-size:12.5px;margin-top:4px">${made.filter(r=>r.a3&&r.yan===false).length} karede kişi yandan görünmediği için açılar modelin 3B tahmininden hesaplandı.</div>`:''}
     <div class="muted" style="font-size:12.5px;margin-top:4px">Noktalar otomatik bulundu; şüpheli kareleri İstasyonlar sayfasında açıp düzelt. Yük ve diğer gözlemler (dönme, tekrar) tüm karelere aynı girildi.</div>
     <div class="row" style="gap:6px;margin-top:6px"><button class="small primary" id="scanGo">Sonuçları istasyonda gör</button><button class="small ghost danger" id="scanUndo">Bu taramayı geri al</button></div></div>`;
   $('#scanGo').onclick=()=>{const t=tkOf(tk.id); S.openSt=S.openSt||{}; S.openSt[t.st]=true; go('stations'); setTimeout(()=>{const e=$('#st_'+t.st); if(e)e.scrollIntoView({behavior:'smooth'});},60);};
@@ -2177,7 +2204,14 @@ async function detectPose(img,side=cur&&cur.side){
   const P=i=>({x:clamp(L[i].x*W,0,W),y:clamp(L[i].y*H,0,H)}), ok=i=>v(i)>=.3, pts={};
   ['ear','sh','el','wr','hip','kn','an'].forEach(k=>{if(ok(I[k]))pts[k]=P(I[k]);});
   if(ok(I.ix)||ok(I.pk)){const a=P(I.ix),c=P(I.pk); pts.hd={x:(a.x+c.x)/2,y:(a.y+c.y)/2};}
-  return {pts,right,facing:L[0].x>=L[I.ear].x?1:-1};
+  // Yüz yönü: ayak ucu-topuk (yandan en güvenilir), görünmüyorsa burun-kulak.
+  const ft=right?[30,32]:[29,31], facing=(v(ft[0])>=.5&&v(ft[1])>=.5&&Math.abs(L[ft[1]].x-L[ft[0]].x)*W>4)?(L[ft[1]].x>=L[ft[0]].x?1:-1):(L[0].x>=L[I.ear].x?1:-1);
+  // Yandan görünüm: omuzlar arası 2B uzaklığın gövde boyuna oranı, 3B'deki oranın yarısından azsa kişi yandan görünüyor.
+  const WL=res.poseWorldLandmarks, a3=WL?angles3(WL,right):null; let yan=true;
+  if(WL){const d2=(a,b)=>Math.hypot((L[a].x-L[b].x)*W,(L[a].y-L[b].y)*H), d3=(a,b)=>Math.hypot(WL[a].x-WL[b].x,WL[a].y-WL[b].y,WL[a].z-WL[b].z);
+    const t2=Math.hypot(((L[11].x+L[12].x)-(L[23].x+L[24].x))/2*W,((L[11].y+L[12].y)-(L[23].y+L[24].y))/2*H), t3=Math.hypot(((WL[11].x+WL[12].x)-(WL[23].x+WL[24].x))/2,((WL[11].y+WL[12].y)-(WL[23].y+WL[24].y))/2,((WL[11].z+WL[12].z)-(WL[23].z+WL[24].z))/2);
+    if(t2>0&&t3>0)yan=(d2(11,12)/t2)/(d3(11,12)/t3)<.5;}
+  return {pts,right,facing,a3,yan};
 }
 async function autoPoints(){
   if(!cur||!imgEl){toast('Önce bir kare seç.');return;}
@@ -2187,7 +2221,7 @@ async function autoPoints(){
   try{
     const d=await detectPose(imgEl);
     if(!d||!Object.keys(d.pts).length){toast('Karede kişi bulunamadı. Kişinin tamamen göründüğü, yandan çekilmiş bir kare dene ya da noktaları elle koy.');return;}
-    cur.points=d.pts; cur.facing=d.facing; cur.auto=true; if(!cur.side){cur.side=d.right?'sag':'sol'; $('#pSide').value=cur.side;}
+    cur.points=d.pts; cur.facing=d.facing; cur.auto=true; cur.a3=d.a3; cur.yan=d.yan; if(!cur.side){cur.side=d.right?'sag':'sol'; $('#pSide').value=cur.side;}
     activeKey=null; updateAll();
     const miss=PTS.filter(p=>!d.pts[p.k]).map(p=>p.n);
     toast(Object.keys(d.pts).length+' nokta yerleştirildi'+(miss.length?' · bulunamayan: '+miss.join(', '):'')+'. Her noktayı kontrol et, gerekirse sürükle.');
@@ -2210,6 +2244,7 @@ cv.addEventListener('pointerdown',e=>{
   if(!activeKey&&near&&miss)toast(PTS.find(x=>x.k===near).n+' noktası taşındı. '+PTS.find(x=>x.k===miss).n+' için biraz daha uzağa dokun ya da üstteki çipten seç.');
   // Var olan nokta taşınıyorsa düzeltme sayılır: önceki yer ve önceki sonuç saklanır, bırakınca fark gösterilir.
   corr=cur.points[drag]?{k:drag,pt:{...cur.points[drag]},r:postureCompute(cur)}:null;
+  if(cur.a3){delete cur.a3; delete cur.yan;} // elle düzeltilen noktalar esas alınır
   cur.points[drag]=p; dragPos=p; cv.setPointerCapture(e.pointerId); e.preventDefault(); reqDraw(); updateScores();
 });
 cv.addEventListener('pointermove',e=>{if(!drag)return; const p=toCanvas(e); cur.points[drag]=p; dragPos=p; reqDraw(); updateScores();});
@@ -2265,6 +2300,7 @@ function updateScores(){
     if(near!=null){if(!tag){tag=document.createElement('span'); tag.className='edge'; cell.querySelector('b').after(tag);} tag.textContent='sınırda ('+near+'°)'; tag.title='Puanı değiştiren eşik '+near+'°. Ölçüm hatası puanı bir basamak değiştirebilir.';}
     else if(tag)tag.remove();});
   const W=[], j=cur.adj||{};
+  if(cur.a3&&cur.yan===false)W.push('<b>Kişi yandan görünmüyor.</b> Gövde, boyun, kol ve diz açıları çizimdeki noktalardan değil, modelin 3B tahmininden hesaplandı; çizim ile açı bu yüzden birebir örtüşmeyebilir. Bir noktayı sürüklersen çizimden ölçülen 2B açılara dönülür.');
   if(cur.auto)W.push('<b>Noktalar otomatik bulundu.</b> Her noktanın yerini kontrol et ve gerekirse sürükle; el, bilek ve kulak en sık kayan noktalardır. Kişinin arkası dönük ya da bir kısmı görünmüyorsa elle düzelt.');
   if(imgEl&&!(+j.loadKg>0)&&r.miss.length<4)W.push('<b>Yük girilmedi</b>, 0 kg sayıldı. Elde yük ya da uygulanan kuvvet varsa “Taşınan yük” alanına yaz: 5 kg ve üstü REBA’yı, 2 kg ve üstü RULA’yı artırabilir.');
   const edges=ANG.filter(d=>cur.ov[d.k]==null&&nearEdge(d.k,r.a[d.k])!=null).map(d=>d.n);
