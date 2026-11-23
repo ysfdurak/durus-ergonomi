@@ -20,7 +20,7 @@
     "electron": "^45.3.3",
     "electron-builder": "^26.18.1",
     "exceljs": "4.4.0",
-    "pdfmake": "0.3.14"
+    "pdfmake": "0.3.15"
   },
   "build": {
     "appId": "com.ysfdurak.durus",
