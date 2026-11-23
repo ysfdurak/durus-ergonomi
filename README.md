@@ -8,7 +8,9 @@
 
 > **English:** Duruş is an ergonomic risk analysis app (REBA, RULA, OWAS, QEC, NIOSH lifting equation, KIM, Liberty Mutual, OCRA, ROSA, Nordic questionnaire and more) with Excel/PDF reports. Use it in the browser at durus.ysfdurak.com/en/ or download the Windows app from Releases. Records stay on your device.
 
-![Duruş analizi: örnek karede eklemler işaretlenmiş, REBA, RULA ve OWAS birlikte hesaplanmış](docs/ekran/durus-analizi.webp)
+![Duruş analizi: gerçek bir depo videosunda koliyi yerden alan çalışanın eklemleri otomatik bulunmuş; gövde 82°, 12 kg yükle REBA 10](docs/ekran/durus-analizi.webp)
+
+<sub>Ekrandaki kare gerçek bir depo videosundan (Pexels, Pexels Lisansı; yüzler bulanıklaştırıldı). Kişi yandan görünmediği için açılar modelin 3B tahmininden hesaplandı.</sub>
 
 
 **Kurumda kullanacaksan:** Çalışanların kişisel verisi işlenir. KVKK notları, çalışan duyurusu ve (video projelerinde) çekim öncesi onay şablonu: [docs/KVKK_VE_CALISAN_BILGILENDIRME.md](docs/KVKK_VE_CALISAN_BILGILENDIRME.md).
