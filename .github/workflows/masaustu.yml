@@ -3,13 +3,15 @@
 # - main'e gönderim, PR ve elle çalıştırma: yalnızca derler, EXE'leri Actions çıktısı (artifact) olarak saklar.
 #   Herkese açık Release'e dokunmaz.
 # - "v1.5.0" gibi bir etiket gönderilince: etiket desktop/package.json'daki "version" ile aynı olmalı.
-#   O sürüm için daha önce Release yoksa yeni Release oluşturulur. Varsa iş durur: yayımlanmış bir sürümün
+#   O sürüm için daha önce Release yoksa yeni Release oluşturulur. Release GitHub arayüzünden elle açılmışsa ve
+#   içinde dosya yoksa dosyalar o Release'e eklenir. Release'te dosya varsa iş durur: yayımlanmış bir sürümün
 #   dosyaları asla değiştirilmez (aynı sürüm numarası = aynı dosya).
 #
 # Yeni sürüm yayımlama: desktop/package.json'da "version"ı artır → main'e gönder, sonra şunlardan biri:
 #   a) git tag v1.5.0 && git push origin v1.5.0
 #   b) git gerekmez: Actions → "Masaüstü (Windows)" → Run workflow → "surum" kutusuna v1.5.0 yaz.
 #      Etiket, Release ile birlikte o anki main commit'ine oluşturulur. Kutu boşsa yalnızca derler.
+#      Etiket zaten varsa (ör. Release arayüzden açıldı, dosyası yok) o etiketin commit'i derlenip boş Release doldurulur.
 name: Masaüstü (Windows)
 on:
   push:
@@ -33,7 +35,32 @@ env:
   # Yayımlanacak etiket: etiket gönderiminde etiketin adı, elle çalıştırmada "surum" kutusu; ikisi de yoksa boş.
   ETIKET: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || inputs.surum }}
 jobs:
+  # Yayımlamada: hangi commit derlenecek ve Release'in durumu ne (yok / dosyasız / dosyalı)?
+  hazirla:
+    runs-on: ubuntu-latest
+    outputs:
+      ref: ${{ steps.d.outputs.ref }}
+      release: ${{ steps.d.outputs.release }}
+    steps:
+      - id: d
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ref="$GITHUB_SHA"; release=yok
+          if [ -n "$ETIKET" ]; then
+            if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$ETIKET" >/dev/null 2>&1; then ref="refs/tags/$ETIKET"; fi
+            if adet=$(gh release view "$ETIKET" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets | length' 2>/dev/null); then
+              if [ "$adet" -gt 0 ]; then
+                echo "::error::$ETIKET zaten yayımlanmış ve $adet dosyası var. Yayımlanmış dosyalar değiştirilmez; desktop/package.json'da sürümü artırıp yeni sürüm yayımla."
+                exit 1
+              fi
+              release=bos
+            fi
+          fi
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"; echo "release=$release" >> "$GITHUB_OUTPUT"
+          echo "Derlenecek: $ref · Release: $release"
   derle:
+    needs: hazirla
     runs-on: windows-latest
     defaults:
       run:
@@ -42,6 +69,8 @@ jobs:
       surum: ${{ steps.surum.outputs.v }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.hazirla.outputs.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -76,32 +105,25 @@ jobs:
           retention-days: 30
 
   yayimla:
-    needs: derle
+    needs: [hazirla, derle]
     if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.surum != '' && github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - name: Bu sürüm daha önce yayımlanmış mı
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          if gh release view "$ETIKET" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
-            echo "::error::$ETIKET zaten yayımlanmış. Yayımlanmış dosyalar değiştirilmez; desktop/package.json'da sürümü artırıp yeni sürüm yayımla."
-            exit 1
-          fi
-          # Elle çalıştırmada etiket henüz olmamalı; varsa başka bir commit'i gösteriyor olabilir.
-          if [ "$GITHUB_EVENT_NAME" = workflow_dispatch ] && gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$ETIKET" >/dev/null 2>&1; then
-            echo "::error::$ETIKET etiketi zaten var. Etiketten yayımlamak için etiketi yeniden gönder ya da yeni bir sürüm numarası kullan."
-            exit 1
-          fi
       - uses: actions/download-artifact@v4
         with:
           name: Durus-Windows-${{ needs.derle.outputs.surum }}-${{ github.sha }}
           path: dist
       - name: SHA-256 özetleri
         run: cd dist && sha256sum *.exe > SHA256SUMS.txt && cat SHA256SUMS.txt
+      - name: Elle açılmış boş Release'e dosyaları ekle
+        if: needs.hazirla.outputs.release == 'bos'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$ETIKET" dist/*.exe dist/SHA256SUMS.txt --repo "$GITHUB_REPOSITORY"
       - name: Release oluştur
+        if: needs.hazirla.outputs.release == 'yok'
         uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3.0.4 — yazma yetkili üçüncü parti eylem, etiket kayarsa diye commit ile sabitlendi
         with:
           tag_name: ${{ env.ETIKET }}
