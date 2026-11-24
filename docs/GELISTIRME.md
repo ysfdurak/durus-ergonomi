@@ -214,6 +214,6 @@ Gerçek bir Windows 11 bilgisayarda, kurulu 1.4.1'in üzerine yapıldı (örnekl
 | Tek kare | Noktalar kişinin üzerinde, kolilerde değil; etiketler çakışmıyor; "Kişi yandan görünmüyor" uyarısı çıktı. |
 | PDF rapor | İstasyonlar › PDF rapor indir: 3 sayfa, Türkçe karakterler doğru. |
 
-**Not (iyileştirilebilir):** Pencere kapatma düğmesi uygulamayı tam kapatmıyor gibi görünüyor; kurulum "Duruş çalışıyor" dedi. Kapatınca süreç de bitmeli ya da tepsi simgesi açıkça görünmeli. Bir test daha: pencereyi kapatıp Görev Yöneticisi'nde "Duruş" süreci kalıyor mu bakın.
+**Kapanış (doğrulandı, sorun yok):** Kurulumdaki "Duruş çalışıyor" uyarısı, denemede eski pencerenin kapatma düğmesi yerine yanına tıklandığı için çıktı. Ayrıca ölçüldü: Duruş açıkken 4 süreç (Electron ana + yardımcılar), X ile kapatınca 0. `main.js` `window-all-closed` olayında `app.quit()` çağırıyor; tepside bekleme yok.
 
 **Not:** Taşınabilir exe Gezgin'den başlatılırken bu oturumda pencere açılmadı (otomasyon kısıtından olabilir); kullanıcının kendisinin bir kez çift tıklayıp SmartScreen uyarısı çıkıp çıkmadığını görmesi yeterli.
