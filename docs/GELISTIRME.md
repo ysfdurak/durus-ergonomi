@@ -200,3 +200,20 @@ Açık lisanslı (Pexels) gerçek depo videoları ve fotoğraflarıyla "Videoyu 
 - **Nokta kabulü (ikinci tur):** Kamyon yüklemesi fotoğrafında (arkası dönük, kollar yukarıda) kulak ve el noktaları kolinin üstüne, görüntü dışında kalan kalça görüntünün kenarına konuyordu. Artık bir nokta ancak model yeterince eminse (görünürlük ≥ 0,5), görüntünün içindeyse ve kişinin silüetinin (MediaPipe segmentasyon maskesi) üstünde ya da 2% yakınındaysa konuyor; değilse boş kalır ve elle konur. Aynı videolarda tarama sonucu değişmedi (en kötü kare REBA 8).
 - **Açı etiketleri:** Eğilmiş gövdede eklemler birbirine yakın düştüğü için Gövde, Üst kol ve Boyun etiketleri üst üste biniyor, nokta işaretleri yazıyı kapatıyordu. Etiketler artık birbirini ve noktaları engel sayarak yerleşiyor; uzağa kayan etiket ince bir çizgiyle eklemine bağlanıyor.
 - **Bilinen sınırlar:** Karede birden çok kişi varsa model en belirgin olanı seçer; hangi kişinin ölçüleceği seçilemiyor. Arkası dönük ve kollar başın üstündeyken 3B kol açısı az çıkabiliyor. Uzaktaki küçük kişide (görüntünün ~%20'sinden kısa) nokta bulunamıyor. Bu durumlarda noktaları elle koymak gerekir.
+
+## 9. Windows'ta kurulum ve uçtan uca deneme · 24 Kasım 2026 (masaüstü 1.4.6)
+
+Gerçek bir Windows 11 bilgisayarda, kurulu 1.4.1'in üzerine yapıldı (örneklem; her adım değil, kullanıcının ilk yapacakları):
+
+| Adım | Sonuç |
+|---|---|
+| Güncelleme bildirimi | 1.4.1, Yardım menüsü açılınca "Yeni sürüm var: 1.4.6" penceresini gösterdi. |
+| Kurulum (`Durus-1.4.6-kurulum.exe`, SHA256 sürüm sayfasıyla aynı) | "Sadece benim için" + varsayılan klasör. Eski sürüm açıkken "Duruş çalışıyor, kapatmak için Tamam" uyarısı çıktı, Tamam ile kapattı ve kurdu. Yardım › Sürüm 1.4.6. |
+| Kayıtlar | Güncellemeden önceki kayıt korundu (Son kayıtlar: 1). |
+| Video tarama | Bulanıklaştırılmış gerçek yükleme videosu (8,4 sn, 2 sn aralık): 2 kare kaydedildi, en kötü REBA 3; 1 karede 3D açı kullanıldı. |
+| Tek kare | Noktalar kişinin üzerinde, kolilerde değil; etiketler çakışmıyor; "Kişi yandan görünmüyor" uyarısı çıktı. |
+| PDF rapor | İstasyonlar › PDF rapor indir: 3 sayfa, Türkçe karakterler doğru. |
+
+**Not (iyileştirilebilir):** Pencere kapatma düğmesi uygulamayı tam kapatmıyor gibi görünüyor; kurulum "Duruş çalışıyor" dedi. Kapatınca süreç de bitmeli ya da tepsi simgesi açıkça görünmeli. Bir test daha: pencereyi kapatıp Görev Yöneticisi'nde "Duruş" süreci kalıyor mu bakın.
+
+**Not:** Taşınabilir exe Gezgin'den başlatılırken bu oturumda pencere açılmadı (otomasyon kısıtından olabilir); kullanıcının kendisinin bir kez çift tıklayıp SmartScreen uyarısı çıkıp çıkmadığını görmesi yeterli.
