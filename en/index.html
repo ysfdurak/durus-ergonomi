@@ -518,7 +518,7 @@ input.bad{border-color:#c0392b!important;outline:2px solid rgba(192,57,43,.35)}
       <div class="row" style="justify-content:center">
         <button class="primary" id="pickBtn">Choose a video or photo</button>
         <button id="sampleBtn">Try with a sample frame</button>
-        <button id="ambBtn" title="A frame where the hand is hidden behind a box: correct the point and see which angle and score change">Ambiguous point example</button>
+        <button id="ambBtn" title="A frame where the hand is hidden under the box: correct the point and see which angle and score change">Ambiguous point example</button>
         <button id="noImgBtn">No image: enter angles by hand</button>
       </div>
       <span class="muted">Drag and drop works too. The file stays on your device and is never uploaded.</span>
@@ -2133,31 +2133,23 @@ async function scanVideo(){
 }
 $('#scanBtn').onclick=scanVideo;
 $('#noImgBtn').onclick=()=>startAnalysis(null,null,'no image');
-function ornekKare(belirsiz){
-  const c=document.createElement('canvas'); c.width=960; c.height=640; const x=c.getContext('2d');
-  const g=x.createLinearGradient(0,0,0,640); g.addColorStop(0,'#d9dee3'); g.addColorStop(1,'#b8c0c6'); x.fillStyle=g; x.fillRect(0,0,960,640);
-  x.fillStyle='#8a7b66'; x.fillRect(0,560,960,80); x.fillStyle='#b0855a'; x.fillRect(640,470,130,90); x.strokeStyle='#7a5a3a'; x.lineWidth=3; x.strokeRect(640,470,130,90);
-  x.lineCap='round'; x.lineJoin='round'; x.strokeStyle='#33414d';
-  const P={an:[430,555],kn:[470,455],hip:[400,360],sh:[560,260],el:[610,370],wr:[650,460],hd:[675,485]};
-  x.lineWidth=34; [['an','kn'],['kn','hip'],['hip','sh']].forEach(([a,b])=>{x.beginPath();x.moveTo(...P[a]);x.lineTo(...P[b]);x.stroke();});
-  x.lineWidth=24; [['sh','el'],['el','wr'],['wr','hd']].forEach(([a,b])=>{x.beginPath();x.moveTo(...P[a]);x.lineTo(...P[b]);x.stroke();});
-  x.fillStyle='#33414d'; x.beginPath(); x.arc(632,212,34,0,7); x.fill(); x.fillRect(410,545,70,18);
-  // Belirsiz örnek: önde ikinci bir koli eli kapatıyor; bilek görünüyor, el (parmak kökü) yalnız tahmin edilebilir.
-  if(belirsiz){x.fillStyle='#c39563'; x.fillRect(640,472,160,88); x.strokeStyle='#7a5a3a'; x.lineWidth=3; x.strokeRect(640,472,160,88); x.strokeStyle='#9c7448'; x.lineWidth=2; x.beginPath(); x.moveTo(640,500); x.lineTo(800,500); x.stroke();}
-  x.fillStyle='#55626c'; x.font='600 20px IBM Plex Sans, sans-serif'; x.fillText(belirsiz?'Sample frame: hand behind the box':'Sample frame: worker reaching for a box',24,40);
-  return c.toDataURL('image/jpeg',.85);
+// Örnek kareler gerçek bir depo videosundan (Pexels, Pexels Lisansı; yüzler bulanıklaştırıldı): koliyi yerden almak için
+// uzanan ve koliyi kaldıran çalışan. Kare veri adresine çevrilir; kayıt, PDF ve Excel aynı yoldan çalışır.
+async function ornekKare(belirsiz){
+  const r=await fetch(belirsiz?'/ornek/kaldirma.jpg':'/ornek/uzanma.jpg'); const b=await r.blob();
+  return await new Promise((ok,no)=>{const f=new FileReader(); f.onload=()=>ok(f.result); f.onerror=no; f.readAsDataURL(b);});
 }
-// Örnek kare çizimdir (gerçek fotoğraf değil); poz modeli çizgi adamı tanımaz. "Noktaları otomatik bul" örnekte
-// noktaları çizimin kendi koordinatlarından koyar, böylece akış örnekle de denenebilir.
-const ORNEK_PTS={ear:{x:628,y:214},sh:{x:560,y:260},el:{x:610,y:370},wr:{x:650,y:460},hd:{x:675,y:485},hip:{x:400,y:360},kn:{x:470,y:455},an:{x:430,y:555}};
-$('#sampleBtn').onclick=()=>{startAnalysis(ornekKare(false),null,'sample'); if(cur)cur.sample=true;};
+// Noktalar modelin (MediaPipe Pose) bu kare için bulduğu konumlar; örnekte model indirilmeden hemen yerleştirilir.
+const ORNEK_PTS={ear:{x:684,y:295},sh:{x:613,y:316},el:{x:587,y:387},wr:{x:618,y:476},hd:{x:626,y:499},hip:{x:522,y:343},kn:{x:559,y:431},an:{x:514,y:532}};
+$('#sampleBtn').onclick=async()=>{try{const im=await ornekKare(false); startAnalysis(im,null,'sample'); if(cur)cur.sample=true;}catch(e){toast('The sample frame could not be loaded.');}};
 // Tek karede belirsiz işaretleme: noktalar hazır, el noktası kolinin kenarına (görünen son yere) kondu. Kullanıcı eli
-// kolinin içinde tahmin ettiği yere sürükleyince #corrDiff hangi açının ve hangi puanın değiştiğini gösterir (dış inceleme, Kasım 2026).
-$('#ambBtn').onclick=()=>{
-  startAnalysis(ornekKare(true),null,'ambiguous sample');
+// kolinin altında tahmin ettiği yere sürükleyince #corrDiff hangi açının ve hangi puanın değiştiğini gösterir (dış inceleme, Kasım 2026).
+$('#ambBtn').onclick=async()=>{
+  let im; try{im=await ornekKare(true);}catch(e){toast('The sample frame could not be loaded.'); return;}
+  startAnalysis(im,null,'ambiguous sample');
   cur.facing=1;
-  cur.points={ear:{x:628,y:214},sh:{x:560,y:260},el:{x:610,y:370},wr:{x:650,y:460},hd:{x:662,y:472},hip:{x:400,y:360},kn:{x:470,y:455},an:{x:430,y:555}};
-  setTimeout(()=>{updateAll(); toast('The hand is behind the box: the point was placed at the last visible spot. Drag the hand point to where you estimate it is inside the box and see which angle and score change.');},80);
+  cur.points={ear:{x:658,y:217},sh:{x:595,y:238},el:{x:566,y:317},wr:{x:578,y:401},hd:{x:580,y:408},hip:{x:520,y:318},kn:{x:547,y:414},an:{x:510,y:519}};
+  setTimeout(()=>{updateAll(); toast('The hand is under the box: the point was placed at the last visible spot. Drag the hand point to where you estimate it is under the box and see which angle and score change.');},80);
 };
 
 const cv=$('#cv'), ctx=cv.getContext('2d'), buf=document.createElement('canvas'), bctx=buf.getContext('2d');
@@ -2235,7 +2227,7 @@ async function detectPose(img,side=cur&&cur.side){
 async function autoPoints(){
   if(!cur||!imgEl){toast('Pick a frame first.');return;}
   if(cur.sample){cur.points=JSON.parse(JSON.stringify(ORNEK_PTS)); cur.facing=1; cur.auto=true; if(!cur.side){cur.side='sag'; $('#pSide').value=cur.side;} activeKey=null; updateAll();
-    toast('The sample frame is a drawing: points were placed from the drawing. On a real photo or video the model finds the points itself.'); return;}
+    toast('In the sample frame the points were placed right away from the positions the model found for this frame. On your own photo or video the model finds the points on your device.'); return;}
   const b=$('#autoBtn'), old=b.textContent; b.disabled=true; b.textContent='Searching…';
   try{
     const d=await detectPose(imgEl);

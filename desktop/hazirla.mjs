@@ -15,4 +15,6 @@ for (const f of ['index.html', 'en/index.html', 'favicon.svg']) kopya(path.join(
 // Kütüphaneler ve yazı tipleri: web sürümüyle aynı, depo kökündeki lib/ klasöründen (tools/kutuphaneler.mjs üretir).
 if (!fs.existsSync(path.join(KOK, 'lib', 'exceljs.min.js'))) { console.error('lib/ yok: önce node tools/kutuphaneler.mjs'); process.exit(1); }
 fs.cpSync(path.join(KOK, 'lib'), path.join(WEB, 'lib'), { recursive: true });
+// Örnek kareler (gerçek depo videosundan, yüzler bulanık): "Örnek kareyle dene" ve "Belirsiz nokta örneği".
+fs.cpSync(path.join(KOK, 'ornek'), path.join(WEB, 'ornek'), { recursive: true });
 console.log('web/ hazır:', fs.readdirSync(WEB).join(', '));
