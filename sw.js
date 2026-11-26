@@ -3,8 +3,8 @@
 // Strateji: önce ağ (her zaman en yeni sürüm), ağ yoksa önbellek. Otomatik nokta bulma dosyaları (lib/pose, ~25 MB)
 // baştan indirilmez; ilk kullanımda önbelleğe girer ve sonrasında internetsiz de çalışır.
 // Yeni sürümde CACHE adını değiştir; eski önbellek "activate" adımında silinir.
-const CACHE = 'durus-2026-11-23-etiket01';
-const FILES = ['/', '/index.html', '/en/', '/en/index.html', '/favicon.svg', '/lib/fonts/fonts.css', '/lib/exceljs.min.js', '/lib/pdfmake.min.js', '/lib/vfs_fonts.js'];
+const CACHE = 'durus-2026-11-26-ornek01';
+const FILES = ['/', '/index.html', '/en/', '/en/index.html', '/favicon.svg', '/ornek/uzanma.jpg', '/ornek/kaldirma.jpg', '/lib/fonts/fonts.css', '/lib/exceljs.min.js', '/lib/pdfmake.min.js', '/lib/vfs_fonts.js'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FILES)).then(() => self.skipWaiting()));
